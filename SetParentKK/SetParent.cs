@@ -44,6 +44,7 @@ namespace SetParent
 			ModPrefs.GetBool("SetParent", "SetCollider", true, true);
 			ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
 			ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
+			this.gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 			ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
 			ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
 			this.f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -123,13 +124,16 @@ namespace SetParent
 			this.canvasScalerSetParent.referencePixelsPerUnit = 80000f;
 			this.canvasSetParent.renderMode = RenderMode.WorldSpace;
 			this.objCanvasSetParent.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			VRTK_UIPointer vrtk_UIPointer = this.cameraEye.AddComponent<VRTK_UIPointer>();
-			vrtk_UIPointer.activationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
-			vrtk_UIPointer.activationMode = VRTK_UIPointer.ActivationMethods.AlwaysOn;
-			vrtk_UIPointer.selectionButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
-			vrtk_UIPointer.clickMethod = VRTK_UIPointer.ClickMethods.ClickOnButtonUp;
-			vrtk_UIPointer.clickAfterHoverDuration = 1f;
-			vrtk_UIPointer.controller = this.cameraEye.AddComponent<VRTK_ControllerEvents>();
+			if (this.gazeControl)
+			{
+				VRTK_UIPointer vrtk_UIPointer = this.cameraEye.AddComponent<VRTK_UIPointer>();
+				vrtk_UIPointer.activationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
+				vrtk_UIPointer.activationMode = VRTK_UIPointer.ActivationMethods.AlwaysOn;
+				vrtk_UIPointer.selectionButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
+				vrtk_UIPointer.clickMethod = VRTK_UIPointer.ClickMethods.ClickOnButtonUp;
+				vrtk_UIPointer.clickAfterHoverDuration = 1f;
+				vrtk_UIPointer.controller = this.cameraEye.AddComponent<VRTK_ControllerEvents>();
+			}
 			this.eventSystemSetParent = new GameObject("CanvasSetParentEventSystem", new Type[]
 			{
 				typeof(EventSystem)
@@ -1970,6 +1974,7 @@ namespace SetParent
 			this.setCollider = ModPrefs.GetBool("SetParent", "SetCollider", true, true);
 			this.parentPart = ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
 			this.trackingMode = ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
+			this.gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 		}
 
 		private bool setFlag;
@@ -2107,5 +2112,7 @@ namespace SetParent
 		private bool hideCanvas;
 
 		private bool parentIsLeft;
+
+		private bool gazeControl;
 	}
 }
