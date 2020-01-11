@@ -700,7 +700,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "騎乗位";
+			text.text = "騎乗位(二体位)";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 4f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -727,7 +727,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "側位";
+			text.text = "片足上げ側位";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 4f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -862,7 +862,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "椅子バック";
+			text.text = "足閉じ立バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 52f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -889,7 +889,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "腕引っ張り椅子バック";
+			text.text = "腕引っ張り立バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 52f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -916,7 +916,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "机寝位";
+			text.text = "騎乗位(単一体位)";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 68f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -970,7 +970,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "机バック";
+			text.text = "跳び箱バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 84f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -997,7 +997,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "腕引っ張り机バック";
+			text.text = "脚持つ正常位";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 84f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1051,7 +1051,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "壁バック";
+			text.text = "立バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 100f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1078,7 +1078,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "片足上げ壁バック";
+			text.text = "片足上げ立バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 116f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1105,7 +1105,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "プールバック";
+			text.text = "水中バック";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 116f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1132,7 +1132,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "フェンス後背位";
+			text.text = "うっ伏せ後背位";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 132f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1159,7 +1159,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "フェンス掴まり駅弁";
+			text.text = "駅弁(単一体位)";
 			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 132f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1381,17 +1381,17 @@ namespace SetParentKK
 
 		private void PushTukueNeiButton()
 		{
-			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n13");
+			ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27");
 		}
 
 		private void PushTukueBackButton()
 		{
-			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_14");
+			ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25");
 		}
 
 		private void PushUdeHippariTukueBackButton()
 		{
-			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n14");
+			ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24");
 		}
 
 		private void PushTukueSokuiButton()
@@ -1421,7 +1421,7 @@ namespace SetParentKK
 
 		private void PushFenceKouhaiiButton()
 		{
-			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21");
+			ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26");
 		}
 
 		private void PushFenceTukamariEkibenButton()
