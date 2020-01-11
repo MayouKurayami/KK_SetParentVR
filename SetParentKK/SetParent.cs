@@ -62,7 +62,7 @@ namespace SetParent
 		private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
 		{
 			this.femaleFlag = false;
-			this.hideCanvas = false;
+			this.hideCanvas = ModPrefs.GetBool("SetParent", "hideMenuAtStart", true, true); ;
 		}
 
 		private void InitCanvas()
@@ -1562,6 +1562,11 @@ namespace SetParent
 			if (this.objCanvasSetParent == null)
 			{
 				this.InitCanvas();
+				if (this.hideCanvas)
+				{
+					this.objCanvasSetParent.SetActive(false);
+					this.objCanvasMotion.SetActive(false);
+				}
 			}
 			else
 			{
