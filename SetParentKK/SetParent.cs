@@ -1573,7 +1573,7 @@ namespace SetParent
 				if (this.RightMenuPress() || this.LeftMenuPress())
 				{
 					this.hideCount += Time.deltaTime;
-					if (this.hideCount >= 2f)
+					if (this.hideCount >= 1f)
 					{
 						this.objCanvasSetParent.SetActive(!this.objCanvasSetParent.activeSelf);
 						this.objCanvasMotion.SetActive(!this.objCanvasMotion.activeSelf);
