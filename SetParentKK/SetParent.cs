@@ -44,6 +44,8 @@ namespace SetParent
 			ModPrefs.GetBool("SetParent", "SetCollider", true, true);
 			ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
 			ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
+			ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
+			ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
 			this.f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			SceneManager.sceneLoaded += this.OnSceneLoaded;
 		}
