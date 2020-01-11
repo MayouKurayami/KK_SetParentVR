@@ -1767,7 +1767,7 @@ namespace SetParent
 					{
 						vector = this.cameraEye.transform.position - this.leftController.transform.position;
 					}
-					if (vector.magnitude <= 0.4f)
+					if (vector.magnitude <= 0.2f)
 					{
 						this.objCanvasSetParent.SetActive(true);
 						this.objCanvasMotion.SetActive(true);
