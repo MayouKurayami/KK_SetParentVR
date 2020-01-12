@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
-using Illusion.Component.Correct;
+﻿using Illusion.Component.Correct;
 using IllusionPlugin;
+using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -30,13 +30,13 @@ namespace SetParent
 
 		public void OnApplicationStart()
 		{
-			this.setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
+			setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
 			ModPrefs.GetFloat("SetParent", "threshold1", 0.05f, true);
 			ModPrefs.GetFloat("SetParent", "threshold2", 0.3f, true);
 			ModPrefs.GetInt("SetParent", "moveDistancePoolSize", 100, true);
 			ModPrefs.GetInt("SetParent", "calcPattern", 0, true);
 			ModPrefs.GetFloat("SetParent", "finishcount", 5f, true);
-			this.setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
+			setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
 			ModPrefs.GetInt("SetParent", "moveCoordinatePoolSize", 100, true);
 			ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
 			ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
@@ -44,11 +44,11 @@ namespace SetParent
 			ModPrefs.GetBool("SetParent", "SetCollider", true, true);
 			ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
 			ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
-			this.gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
+			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 			ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
 			ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
-			this.f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			SceneManager.sceneLoaded += this.OnSceneLoaded;
+			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			SceneManager.sceneLoaded += OnSceneLoaded;
 		}
 
 		public void OnApplicationQuit()
@@ -61,85 +61,85 @@ namespace SetParent
 
 		private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
 		{
-			this.femaleFlag = false;
-			this.hideCanvas = ModPrefs.GetBool("SetParent", "hideMenuAtStart", true, true); ;
+			femaleFlag = false;
+			hideCanvas = ModPrefs.GetBool("SetParent", "hideMenuAtStart", true, true); ;
 		}
 
 		private void InitCanvas()
 		{
-			this.cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			this.femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			this.hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
-			this.hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas").Find("MainCanvas").GetComponent<HSprite>();
-			if (this.cameraEye == null)
+			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
+			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
+			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
+			hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas").Find("MainCanvas").GetComponent<HSprite>();
+			if (cameraEye == null)
 			{
 				return;
 			}
-			if (this.femaleAim == null)
+			if (femaleAim == null)
 			{
 				return;
 			}
-			if (this.hSprite == null)
+			if (hSprite == null)
 			{
 				return;
 			}
-			this.obj_cf_t_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R");
-			this.bd_cf_t_hand_R = this.obj_cf_t_hand_R.GetComponent<BaseData>();
-			this.obj_cf_pv_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
+			obj_cf_t_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R");
+			bd_cf_t_hand_R = obj_cf_t_hand_R.GetComponent<BaseData>();
+			obj_cf_pv_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
 			GameObject gameObject = new GameObject("RightHandCollider");
 			gameObject.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
-			gameObject.transform.parent = this.obj_cf_t_hand_R.transform;
+			gameObject.transform.parent = obj_cf_t_hand_R.transform;
 			gameObject.transform.localPosition = Vector3.zero;
-			this.obj_cf_t_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L");
-			this.bd_cf_t_hand_L = this.obj_cf_t_hand_L.GetComponent<BaseData>();
-			this.obj_cf_pv_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
+			obj_cf_t_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L");
+			bd_cf_t_hand_L = obj_cf_t_hand_L.GetComponent<BaseData>();
+			obj_cf_pv_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
 			GameObject gameObject2 = new GameObject("LeftHandCollider");
 			gameObject2.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
-			gameObject2.transform.parent = this.obj_cf_t_hand_L.transform;
+			gameObject2.transform.parent = obj_cf_t_hand_L.transform;
 			gameObject2.transform.localPosition = Vector3.zero;
-			this.obj_cf_t_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_R");
-			this.bd_cf_t_leg_R = this.obj_cf_t_leg_R.GetComponent<BaseData>();
-			this.obj_cf_pv_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_R");
+			obj_cf_t_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_R");
+			bd_cf_t_leg_R = obj_cf_t_leg_R.GetComponent<BaseData>();
+			obj_cf_pv_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_R");
 			GameObject gameObject3 = new GameObject("RightLegCollider");
 			gameObject3.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
-			gameObject3.transform.parent = this.obj_cf_t_leg_R.transform;
+			gameObject3.transform.parent = obj_cf_t_leg_R.transform;
 			gameObject3.transform.localPosition = Vector3.zero;
-			this.obj_cf_t_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_L");
-			this.bd_cf_t_leg_L = this.obj_cf_t_leg_L.GetComponent<BaseData>();
-			this.obj_cf_pv_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_L");
+			obj_cf_t_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_L");
+			bd_cf_t_leg_L = obj_cf_t_leg_L.GetComponent<BaseData>();
+			obj_cf_pv_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_L");
 			GameObject gameObject4 = new GameObject("LeftLegCollider");
 			gameObject4.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
-			gameObject4.transform.parent = this.obj_cf_t_leg_L.transform;
+			gameObject4.transform.parent = obj_cf_t_leg_L.transform;
 			gameObject4.transform.localPosition = Vector3.zero;
-			this.objCanvasSetParent = new GameObject("CanvasSetParent", new Type[]
+			objCanvasSetParent = new GameObject("CanvasSetParent", new Type[]
 			{
 				typeof(Canvas)
 			});
-			this.canvasSetParent = this.objCanvasSetParent.GetComponent<Canvas>();
-			this.objCanvasSetParent.AddComponent<GraphicRaycaster>();
-			this.objCanvasSetParent.AddComponent<VRTK_UICanvas>();
-			this.objCanvasSetParent.AddComponent<VRTK_UIGraphicRaycaster>();
-			this.canvasScalerSetParent = this.objCanvasSetParent.AddComponent<CanvasScaler>();
-			this.canvasScalerSetParent.dynamicPixelsPerUnit = 20000f;
-			this.canvasScalerSetParent.referencePixelsPerUnit = 80000f;
-			this.canvasSetParent.renderMode = RenderMode.WorldSpace;
-			this.objCanvasSetParent.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			if (this.gazeControl)
+			canvasSetParent = objCanvasSetParent.GetComponent<Canvas>();
+			objCanvasSetParent.AddComponent<GraphicRaycaster>();
+			objCanvasSetParent.AddComponent<VRTK_UICanvas>();
+			objCanvasSetParent.AddComponent<VRTK_UIGraphicRaycaster>();
+			canvasScalerSetParent = objCanvasSetParent.AddComponent<CanvasScaler>();
+			canvasScalerSetParent.dynamicPixelsPerUnit = 20000f;
+			canvasScalerSetParent.referencePixelsPerUnit = 80000f;
+			canvasSetParent.renderMode = RenderMode.WorldSpace;
+			objCanvasSetParent.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+			if (gazeControl)
 			{
-				VRTK_UIPointer vrtk_UIPointer = this.cameraEye.AddComponent<VRTK_UIPointer>();
+				VRTK_UIPointer vrtk_UIPointer = cameraEye.AddComponent<VRTK_UIPointer>();
 				vrtk_UIPointer.activationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
 				vrtk_UIPointer.activationMode = VRTK_UIPointer.ActivationMethods.AlwaysOn;
 				vrtk_UIPointer.selectionButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
 				vrtk_UIPointer.clickMethod = VRTK_UIPointer.ClickMethods.ClickOnButtonUp;
 				vrtk_UIPointer.clickAfterHoverDuration = 1f;
-				vrtk_UIPointer.controller = this.cameraEye.AddComponent<VRTK_ControllerEvents>();
+				vrtk_UIPointer.controller = cameraEye.AddComponent<VRTK_ControllerEvents>();
 			}
-			this.eventSystemSetParent = new GameObject("CanvasSetParentEventSystem", new Type[]
+			eventSystemSetParent = new GameObject("CanvasSetParentEventSystem", new Type[]
 			{
 				typeof(EventSystem)
 			});
-			this.eventSystemSetParent.AddComponent<StandaloneInputModule>();
-			this.eventSystemSetParent.transform.SetParent(this.objCanvasSetParent.transform);
+			eventSystemSetParent.AddComponent<StandaloneInputModule>();
+			eventSystemSetParent.transform.SetParent(objCanvasSetParent.transform);
 			GameObject gameObject5 = new GameObject("button");
 			GameObject gameObject6 = new GameObject("text", new Type[]
 			{
@@ -159,13 +159,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "右手固定";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -48f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFixRightHandButton();
+				PushFixRightHandButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -186,13 +186,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "左手固定";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, -48f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFixLeftHandButton();
+				PushFixLeftHandButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -213,13 +213,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "右足固定";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFixRightLegButton();
+				PushFixRightLegButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -240,20 +240,20 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "左足固定";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFixLeftLegButton();
+				PushFixLeftLegButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
 			{
 				typeof(Text)
 			});
-			text = (this.txtFixBody = gameObject6.GetComponent<Text>());
+			text = (txtFixBody = gameObject6.GetComponent<Text>());
 			Image image5 = gameObject5.AddComponent<Image>();
 			image5.rectTransform.sizeDelta = new Vector2(0.24f, 0.08f);
 			image5.color = new Color(0.8f, 0.8f, 0.8f);
@@ -267,20 +267,20 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "手足固定 On";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -8f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFixBodyButton();
+				PushFixBodyButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
 			{
 				typeof(Text)
 			});
-			text = (this.txtSetParentL = gameObject6.GetComponent<Text>());
+			text = (txtSetParentL = gameObject6.GetComponent<Text>());
 			Image image6 = gameObject5.AddComponent<Image>();
 			image6.rectTransform.sizeDelta = new Vector2(0.24f, 0.08f);
 			image6.color = new Color(0.8f, 0.8f, 0.8f);
@@ -294,20 +294,20 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "左 親子付け On";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 16f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushPLButton();
+				PushPLButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
 			{
 				typeof(Text)
 			});
-			text = (this.txtSetParentR = gameObject6.GetComponent<Text>());
+			text = (txtSetParentR = gameObject6.GetComponent<Text>());
 			Image image7 = gameObject5.AddComponent<Image>();
 			image7.rectTransform.sizeDelta = new Vector2(0.24f, 0.08f);
 			image7.color = new Color(0.8f, 0.8f, 0.8f);
@@ -321,13 +321,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "右 親子付け On";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 16f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushPRButton();
+				PushPRButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -348,13 +348,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "モーション 強弱";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 40f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushMotionChangeButton();
+				PushMotionChangeButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -375,13 +375,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "モーション 開始/停止";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 40f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushModeChangeButton();
+				PushModeChangeButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -402,13 +402,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "中に出すよ";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 60f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFIButton();
+				PushFIButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -429,13 +429,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "外に出すよ";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 60f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFOButton();
+				PushFOButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -456,13 +456,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "入れるよ";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 80f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIButton();
+				PushIButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -483,13 +483,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "イレル";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 80f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushINButton();
+				PushINButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -510,13 +510,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "アナル入れるよ";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 100f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIAButton();
+				PushIAButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -537,13 +537,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "アナルイレル";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 100f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIANButton();
+				PushIANButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -564,38 +564,38 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "ヌク";
-			gameObject5.transform.SetParent(this.objCanvasSetParent.transform);
+			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 120f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushPullButton();
+				PushPullButton();
 			});
-			Vector3 point = this.femaleAim.transform.position - this.cameraEye.transform.position;
+			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
 			point.Normalize();
-			this.canvasSetParent.transform.position = new Vector3(this.femaleAim.transform.position.x, this.cameraEye.transform.position.y - 0.4f, this.femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
-			this.canvasSetParent.transform.forward = (this.canvasSetParent.transform.position - this.cameraEye.transform.position).normalized;
-			this.objCanvasMotion = new GameObject("CanvasMotion", new Type[]
+			canvasSetParent.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
+			canvasSetParent.transform.forward = (canvasSetParent.transform.position - cameraEye.transform.position).normalized;
+			objCanvasMotion = new GameObject("CanvasMotion", new Type[]
 			{
 				typeof(Canvas)
 			});
-			this.canvasMotion = this.objCanvasMotion.GetComponent<Canvas>();
-			this.objCanvasMotion.AddComponent<GraphicRaycaster>();
-			this.objCanvasMotion.AddComponent<VRTK_UICanvas>();
-			this.objCanvasMotion.AddComponent<VRTK_UIGraphicRaycaster>();
-			this.canvasScalerMotion = this.objCanvasMotion.AddComponent<CanvasScaler>();
-			this.canvasScalerMotion.dynamicPixelsPerUnit = 20000f;
-			this.canvasScalerMotion.referencePixelsPerUnit = 80000f;
-			this.canvasMotion.renderMode = RenderMode.WorldSpace;
-			this.objCanvasMotion.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			this.eventSystemMotion = new GameObject("CanvasEventSystemMotion", new Type[]
+			canvasMotion = objCanvasMotion.GetComponent<Canvas>();
+			objCanvasMotion.AddComponent<GraphicRaycaster>();
+			objCanvasMotion.AddComponent<VRTK_UICanvas>();
+			objCanvasMotion.AddComponent<VRTK_UIGraphicRaycaster>();
+			canvasScalerMotion = objCanvasMotion.AddComponent<CanvasScaler>();
+			canvasScalerMotion.dynamicPixelsPerUnit = 20000f;
+			canvasScalerMotion.referencePixelsPerUnit = 80000f;
+			canvasMotion.renderMode = RenderMode.WorldSpace;
+			objCanvasMotion.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+			eventSystemMotion = new GameObject("CanvasEventSystemMotion", new Type[]
 			{
 				typeof(EventSystem)
 			});
-			this.eventSystemMotion.AddComponent<StandaloneInputModule>();
-			this.eventSystemMotion.transform.SetParent(this.objCanvasMotion.transform);
+			eventSystemMotion.AddComponent<StandaloneInputModule>();
+			eventSystemMotion.transform.SetParent(objCanvasMotion.transform);
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
 			{
@@ -615,13 +615,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "正常位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushSeijyouiButton();
+				PushSeijyouiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -642,13 +642,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "開脚正常位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKSeijyouiButton();
+				PushKSeijyouiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -669,13 +669,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "後背位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -12f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKohaiiButton();
+				PushKohaiiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -696,13 +696,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "腕引っ張り後背位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, -12f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushUdeHippariKohaiiButton();
+				PushUdeHippariKohaiiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -723,13 +723,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "騎乗位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 4f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKijyouiButton();
+				PushKijyouiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -750,13 +750,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "側位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 4f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushSokuiButton();
+				PushSokuiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -777,13 +777,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "立位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 20f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushRituiButton();
+				PushRituiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -804,13 +804,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "駅弁";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 20f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushEkibenButton();
+				PushEkibenButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -831,13 +831,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "椅子対面";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 36f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIsuTaimenButton();
+				PushIsuTaimenButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -858,13 +858,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "椅子背面";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 36f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIsuHaimenButton();
+				PushIsuHaimenButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -885,13 +885,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "椅子バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 52f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushIsuBackButton();
+				PushIsuBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -912,13 +912,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "腕引っ張り椅子バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 52f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushUdeHippariIsuBackButton();
+				PushUdeHippariIsuBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -939,13 +939,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "机寝位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 68f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushTukueNeiButton();
+				PushTukueNeiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -966,13 +966,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "机側位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 68f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushTukueSokuiButton();
+				PushTukueSokuiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -993,13 +993,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "机バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 84f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushTukueBackButton();
+				PushTukueBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1020,13 +1020,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "腕引っ張り机バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 84f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushUdeHippariTukueBackButton();
+				PushUdeHippariTukueBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1047,13 +1047,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "壁対面片足上げ";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 100f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKabeTaimenKataasiageButton();
+				PushKabeTaimenKataasiageButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1074,13 +1074,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "壁バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 100f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKabeBackButton();
+				PushKabeBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1101,13 +1101,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "片足上げ壁バック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 116f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushKataasiageKabeBackButton();
+				PushKataasiageKabeBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1128,13 +1128,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "プールバック";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 116f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushPoolBackButton();
+				PushPoolBackButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1155,13 +1155,13 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "フェンス後背位";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, 132f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFenceKouhaiiButton();
+				PushFenceKouhaiiButton();
 			});
 			gameObject5 = new GameObject("button");
 			gameObject6 = new GameObject("text", new Type[]
@@ -1182,20 +1182,20 @@ namespace SetParent
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "フェンス掴まり駅弁";
-			gameObject5.transform.SetParent(this.objCanvasMotion.transform);
+			gameObject5.transform.SetParent(objCanvasMotion.transform);
 			gameObject5.transform.localPosition = new Vector3(28f, 132f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
-			gameObject5.GetComponent<Button>().onClick.AddListener(delegate()
+			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
 			{
-				this.PushFenceTukamariEkibenButton();
+				PushFenceTukamariEkibenButton();
 			});
-			point = this.femaleAim.transform.position - this.cameraEye.transform.position;
+			point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
 			point.Normalize();
-			this.canvasMotion.transform.position = new Vector3(this.femaleAim.transform.position.x, this.cameraEye.transform.position.y - 0.4f, this.femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
-			this.canvasMotion.transform.forward = (this.canvasMotion.transform.position - this.cameraEye.transform.position).normalized;
-			if (this.setCollider)
+			canvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
+			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
+			if (setCollider)
 			{
 				foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
 				{
@@ -1236,7 +1236,7 @@ namespace SetParent
 					}
 				}
 				GameObject gameObject8 = new GameObject("SPCollider");
-				gameObject8.transform.parent = this.cameraEye.transform;
+				gameObject8.transform.parent = cameraEye.transform;
 				gameObject8.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
 				gameObject8.transform.localRotation = Quaternion.identity;
 				BoxCollider boxCollider2 = gameObject8.AddComponent<BoxCollider>();
@@ -1249,67 +1249,67 @@ namespace SetParent
 
 		private void PushFixBodyButton()
 		{
-			this.bFixBody = !this.bFixBody;
+			bFixBody = !bFixBody;
 		}
 
 		public void PushFixRightHandButton()
 		{
-			if (this.objRightHand == null)
+			if (objRightHand == null)
 			{
-				this.objRightHand = new GameObject("objRightHand");
-				this.objRightHand.transform.position = this.obj_cf_pv_hand_R.transform.position;
-				this.objRightHand.transform.rotation = this.obj_cf_pv_hand_R.transform.rotation;
-				this.bd_cf_t_hand_R.bone = this.objRightHand.transform;
+				objRightHand = new GameObject("objRightHand");
+				objRightHand.transform.position = obj_cf_pv_hand_R.transform.position;
+				objRightHand.transform.rotation = obj_cf_pv_hand_R.transform.rotation;
+				bd_cf_t_hand_R.bone = objRightHand.transform;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(this.objRightHand);
-			this.objRightHand = null;
-			this.bd_cf_t_hand_R.bone = this.obj_cf_pv_hand_R.transform;
+			UnityEngine.Object.DestroyImmediate(objRightHand);
+			objRightHand = null;
+			bd_cf_t_hand_R.bone = obj_cf_pv_hand_R.transform;
 		}
 
 		public void PushFixLeftHandButton()
 		{
-			if (this.objLeftHand == null)
+			if (objLeftHand == null)
 			{
-				this.objLeftHand = new GameObject("objLeftHand");
-				this.objLeftHand.transform.position = this.obj_cf_pv_hand_L.transform.position;
-				this.objLeftHand.transform.rotation = this.obj_cf_pv_hand_L.transform.rotation;
-				this.bd_cf_t_hand_L.bone = this.objLeftHand.transform;
+				objLeftHand = new GameObject("objLeftHand");
+				objLeftHand.transform.position = obj_cf_pv_hand_L.transform.position;
+				objLeftHand.transform.rotation = obj_cf_pv_hand_L.transform.rotation;
+				bd_cf_t_hand_L.bone = objLeftHand.transform;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(this.objLeftHand);
-			this.objLeftHand = null;
-			this.bd_cf_t_hand_L.bone = this.obj_cf_pv_hand_L.transform;
+			UnityEngine.Object.DestroyImmediate(objLeftHand);
+			objLeftHand = null;
+			bd_cf_t_hand_L.bone = obj_cf_pv_hand_L.transform;
 		}
 
 		public void PushFixRightLegButton()
 		{
-			if (this.objRightLeg == null)
+			if (objRightLeg == null)
 			{
-				this.objRightLeg = new GameObject("objRightLeg");
-				this.objRightLeg.transform.position = this.obj_cf_pv_leg_R.transform.position;
-				this.objRightLeg.transform.rotation = this.obj_cf_pv_leg_R.transform.rotation;
-				this.bd_cf_t_leg_R.bone = this.objRightLeg.transform;
+				objRightLeg = new GameObject("objRightLeg");
+				objRightLeg.transform.position = obj_cf_pv_leg_R.transform.position;
+				objRightLeg.transform.rotation = obj_cf_pv_leg_R.transform.rotation;
+				bd_cf_t_leg_R.bone = objRightLeg.transform;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(this.objRightLeg);
-			this.objRightLeg = null;
-			this.bd_cf_t_leg_R.bone = this.obj_cf_pv_leg_R.transform;
+			UnityEngine.Object.DestroyImmediate(objRightLeg);
+			objRightLeg = null;
+			bd_cf_t_leg_R.bone = obj_cf_pv_leg_R.transform;
 		}
 
 		public void PushFixLeftLegButton()
 		{
-			if (this.objLeftLeg == null)
+			if (objLeftLeg == null)
 			{
-				this.objLeftLeg = new GameObject("objLeftLeg");
-				this.objLeftLeg.transform.position = this.obj_cf_pv_leg_L.transform.position;
-				this.objLeftLeg.transform.rotation = this.obj_cf_pv_leg_L.transform.rotation;
-				this.bd_cf_t_leg_L.bone = this.objLeftLeg.transform;
+				objLeftLeg = new GameObject("objLeftLeg");
+				objLeftLeg.transform.position = obj_cf_pv_leg_L.transform.position;
+				objLeftLeg.transform.rotation = obj_cf_pv_leg_L.transform.rotation;
+				bd_cf_t_leg_L.bone = objLeftLeg.transform;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(this.objLeftLeg);
-			this.objLeftLeg = null;
-			this.bd_cf_t_leg_L.bone = this.obj_cf_pv_leg_L.transform;
+			UnityEngine.Object.DestroyImmediate(objLeftLeg);
+			objLeftLeg = null;
+			bd_cf_t_leg_L.bone = obj_cf_pv_leg_L.transform;
 		}
 
 		private void ChangeMotion(string path, string name)
@@ -1328,173 +1328,173 @@ namespace SetParent
 
 		private void PushSeijyouiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00");
 		}
 
 		private void PushKSeijyouiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00");
 		}
 
 		private void PushKohaiiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02");
 		}
 
 		private void PushUdeHippariKohaiiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02");
 		}
 
 		private void PushKijyouiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04");
 		}
 
 		private void PushSokuiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06");
 		}
 
 		private void PushRituiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07");
 		}
 
 		private void PushEkibenButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08");
 		}
 
 		private void PushIsuTaimenButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09");
 		}
 
 		private void PushIsuHaimenButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10");
 		}
 
 		private void PushIsuBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11");
 		}
 
 		private void PushUdeHippariIsuBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11");
 		}
 
 		private void PushTukueNeiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n13");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n13");
 		}
 
 		private void PushTukueBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_14");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_14");
 		}
 
 		private void PushUdeHippariTukueBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n14");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n14");
 		}
 
 		private void PushTukueSokuiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16");
 		}
 
 		private void PushKabeTaimenKataasiageButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n17");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n17");
 		}
 
 		private void PushKabeBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18");
 		}
 
 		private void PushKataasiageKabeBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18");
 		}
 
 		private void PushPoolBackButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20");
 		}
 
 		private void PushFenceKouhaiiButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21");
 		}
 
 		private void PushFenceTukamariEkibenButton()
 		{
-			this.ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22");
+			ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22");
 		}
 
 		private void PushPullButton()
 		{
-			this.hSprite.OnPullClick();
+			hSprite.OnPullClick();
 		}
 
 		private void PushIANButton()
 		{
-			this.hSprite.OnInsertAnalNoVoiceClick();
+			hSprite.OnInsertAnalNoVoiceClick();
 		}
 
 		private void PushIAButton()
 		{
-			this.hSprite.OnInsertAnalClick();
+			hSprite.OnInsertAnalClick();
 		}
 
 		private void PushINButton()
 		{
-			this.hSprite.OnInsertNoVoiceClick();
+			hSprite.OnInsertNoVoiceClick();
 		}
 
 		private void PushIButton()
 		{
-			this.hSprite.OnInsertClick();
+			hSprite.OnInsertClick();
 		}
 
 		private void PushPLButton()
 		{
-			if (!this.setFlag)
+			if (!setFlag)
 			{
-				this.SetP(true);
+				SetP(true);
 			}
 			else
 			{
-				this.UnsetP();
+				UnsetP();
 			}
-			this.setFlag = !this.setFlag;
+			setFlag = !setFlag;
 		}
 
 		private void PushPRButton()
 		{
-			if (!this.setFlag)
+			if (!setFlag)
 			{
-				this.SetP(false);
+				SetP(false);
 			}
 			else
 			{
-				this.UnsetP();
+				UnsetP();
 			}
-			this.setFlag = !this.setFlag;
+			setFlag = !setFlag;
 		}
 
 		private void PushModeChangeButton()
 		{
-			this.hFlag.click = HFlag.ClickKind.modeChange;
+			hFlag.click = HFlag.ClickKind.modeChange;
 		}
 
 		private void PushMotionChangeButton()
 		{
-			this.hFlag.click = HFlag.ClickKind.motionchange;
+			hFlag.click = HFlag.ClickKind.motionchange;
 			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
@@ -1504,7 +1504,7 @@ namespace SetParent
 
 		private void PushFIButton()
 		{
-			this.hSprite.OnInsideClick();
+			hSprite.OnInsideClick();
 			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
@@ -1515,7 +1515,7 @@ namespace SetParent
 
 		private void PushFOButton()
 		{
-			this.hSprite.OnOutsideClick();
+			hSprite.OnOutsideClick();
 			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
@@ -1534,280 +1534,280 @@ namespace SetParent
 
 		public void OnUpdate()
 		{
-			if (!this.femaleFlag)
+			if (!femaleFlag)
 			{
 				if (GameObject.Find("chaF_001") == null)
 				{
-					this.femaleFlag = false;
+					femaleFlag = false;
 					return;
 				}
-				this.femaleFlag = true;
+				femaleFlag = true;
 			}
-			if (this.leftDevice == null)
+			if (leftDevice == null)
 			{
-				this.leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
-				this.leftVVC = this.leftController.GetComponent<VRViveController>();
-				this.leftDevice = (this.f_device.GetValue(this.leftVVC) as SteamVR_Controller.Device);
+				leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
+				leftVVC = leftController.GetComponent<VRViveController>();
+				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
 			}
-			if (this.rightDevice == null)
+			if (rightDevice == null)
 			{
-				this.rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
-				this.rightVVC = this.rightController.GetComponent<VRViveController>();
-				this.rightDevice = (this.f_device.GetValue(this.rightVVC) as SteamVR_Controller.Device);
+				rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
+				rightVVC = rightController.GetComponent<VRViveController>();
+				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
 			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
 			{
-				this.LoadFromModPref();
+				LoadFromModPref();
 			}
-			if (this.objCanvasSetParent == null)
+			if (objCanvasSetParent == null)
 			{
-				this.InitCanvas();
-				if (this.hideCanvas)
+				InitCanvas();
+				if (hideCanvas)
 				{
-					this.objCanvasSetParent.SetActive(false);
-					this.objCanvasMotion.SetActive(false);
+					objCanvasSetParent.SetActive(false);
+					objCanvasMotion.SetActive(false);
 				}
 			}
 			else
 			{
-				if (this.RightMenuPress() || this.LeftMenuPress())
+				if (RightMenuPress() || LeftMenuPress())
 				{
-					this.hideCount += Time.deltaTime;
-					if (this.hideCount >= 1f)
+					hideCount += Time.deltaTime;
+					if (hideCount >= 1f)
 					{
-						this.objCanvasSetParent.SetActive(!this.objCanvasSetParent.activeSelf);
-						this.objCanvasMotion.SetActive(!this.objCanvasMotion.activeSelf);
-						this.hideCount = 0f;
-						if (this.objCanvasSetParent.activeSelf)
+						objCanvasSetParent.SetActive(!objCanvasSetParent.activeSelf);
+						objCanvasMotion.SetActive(!objCanvasMotion.activeSelf);
+						hideCount = 0f;
+						if (objCanvasSetParent.activeSelf)
 						{
-							this.hideCanvas = false;
+							hideCanvas = false;
 						}
 						else
 						{
-							this.hideCanvas = true;
+							hideCanvas = true;
 						}
 					}
 				}
 				else
 				{
-					this.hideCount = 0f;
+					hideCount = 0f;
 				}
-				Vector3 point = this.femaleAim.transform.position - this.cameraEye.transform.position;
+				Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 				point.y = 0f;
 				point.Normalize();
-				this.objCanvasSetParent.transform.position = new Vector3(this.femaleAim.transform.position.x, this.cameraEye.transform.position.y, this.femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 0.4f;
-				this.objCanvasSetParent.transform.forward = (this.objCanvasSetParent.transform.position - this.cameraEye.transform.position).normalized;
-				this.objCanvasMotion.transform.position = new Vector3(this.femaleAim.transform.position.x, this.cameraEye.transform.position.y, this.femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
-				this.objCanvasMotion.transform.forward = (this.objCanvasMotion.transform.position - this.cameraEye.transform.position).normalized;
+				objCanvasSetParent.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 0.4f;
+				objCanvasSetParent.transform.forward = (objCanvasSetParent.transform.position - cameraEye.transform.position).normalized;
+				objCanvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
+				objCanvasMotion.transform.forward = (objCanvasMotion.transform.position - cameraEye.transform.position).normalized;
 			}
-			if (this.objRightHand != null && !this.bFixBody)
+			if (objRightHand != null && !bFixBody)
 			{
-				if ((this.obj_cf_t_hand_R.transform.position - this.obj_cf_pv_hand_R.transform.position).magnitude > 0.5f)
+				if ((obj_cf_t_hand_R.transform.position - obj_cf_pv_hand_R.transform.position).magnitude > 0.5f)
 				{
-					this.PushFixRightHandButton();
+					PushFixRightHandButton();
 				}
 				else
 				{
-					this.bd_cf_t_hand_R.bone = this.objRightHand.transform;
+					bd_cf_t_hand_R.bone = objRightHand.transform;
 				}
 			}
-			if (this.objLeftHand != null && !this.bFixBody)
+			if (objLeftHand != null && !bFixBody)
 			{
-				if ((this.obj_cf_t_hand_L.transform.position - this.obj_cf_pv_hand_L.transform.position).magnitude > 0.5f)
+				if ((obj_cf_t_hand_L.transform.position - obj_cf_pv_hand_L.transform.position).magnitude > 0.5f)
 				{
-					this.PushFixLeftHandButton();
+					PushFixLeftHandButton();
 				}
 				else
 				{
-					this.bd_cf_t_hand_L.bone = this.objLeftHand.transform;
+					bd_cf_t_hand_L.bone = objLeftHand.transform;
 				}
 			}
-			if (this.objRightLeg != null && !this.bFixBody)
+			if (objRightLeg != null && !bFixBody)
 			{
-				if ((this.obj_cf_t_leg_R.transform.position - this.obj_cf_pv_leg_R.transform.position).magnitude > 0.5f)
+				if ((obj_cf_t_leg_R.transform.position - obj_cf_pv_leg_R.transform.position).magnitude > 0.5f)
 				{
-					this.PushFixRightLegButton();
+					PushFixRightLegButton();
 				}
 				else
 				{
-					this.bd_cf_t_leg_R.bone = this.objRightLeg.transform;
+					bd_cf_t_leg_R.bone = objRightLeg.transform;
 				}
 			}
-			if (this.objLeftLeg != null && !this.bFixBody)
+			if (objLeftLeg != null && !bFixBody)
 			{
-				if ((this.obj_cf_t_leg_L.transform.position - this.obj_cf_pv_leg_L.transform.position).magnitude > 0.5f)
+				if ((obj_cf_t_leg_L.transform.position - obj_cf_pv_leg_L.transform.position).magnitude > 0.5f)
 				{
-					this.PushFixLeftLegButton();
+					PushFixLeftLegButton();
 				}
 				else
 				{
-					this.bd_cf_t_leg_L.bone = this.objLeftLeg.transform;
+					bd_cf_t_leg_L.bone = objLeftLeg.transform;
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.Backslash) || (this.RightMenuPress() && this.RightTriggerPressDown()) || (this.LeftMenuPress() && this.LeftTriggerPressDown()))
+			if (Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPress() && RightTriggerPressDown()) || (LeftMenuPress() && LeftTriggerPressDown()))
 			{
-				if (!this.setFlag)
+				if (!setFlag)
 				{
-					if (this.RightMenuPress() && this.RightTriggerPressDown())
+					if (RightMenuPress() && RightTriggerPressDown())
 					{
-						this.SetP(true);
+						SetP(true);
 					}
-					else if (this.LeftMenuPress() && this.LeftTriggerPressDown())
+					else if (LeftMenuPress() && LeftTriggerPressDown())
 					{
-						this.SetP(false);
+						SetP(false);
 					}
 					else
 					{
-						this.SetP(true);
+						SetP(true);
 					}
 				}
 				else
 				{
-					this.UnsetP();
+					UnsetP();
 				}
-				this.setFlag = !this.setFlag;
+				setFlag = !setFlag;
 			}
-			if (this.setFlag)
+			if (setFlag)
 			{
-				if (this.nameAnimation != this.hFlag.nowAnimationInfo.nameAnimation)
+				if (nameAnimation != hFlag.nowAnimationInfo.nameAnimation)
 				{
-					this.UnsetP();
-					this.setFlag = !this.setFlag;
+					UnsetP();
+					setFlag = !setFlag;
 					GameObject.Find("chaF_001");
-					this.nameAnimation = this.hFlag.nowAnimationInfo.nameAnimation;
+					nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 				}
-				if (this.setParentMode == 0 || this.setParentMode == 1)
+				if (setParentMode == 0 || setParentMode == 1)
 				{
-					if (this.leftController == null)
+					if (leftController == null)
 					{
-						this.leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
+						leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
 					}
-					this.quatSpineRot[this.indexSpineRot] = this.objSpinePos.transform.rotation;
-					if (this.indexSpineRot >= 19)
+					quatSpineRot[indexSpineRot] = objSpinePos.transform.rotation;
+					if (indexSpineRot >= 19)
 					{
-						this.indexSpineRot = 0;
+						indexSpineRot = 0;
 					}
 					else
 					{
-						this.indexSpineRot++;
+						indexSpineRot++;
 					}
-					Quaternion quaternion = this.quatSpineRot[0];
+					Quaternion quaternion = quatSpineRot[0];
 					for (int i = 1; i < 20; i++)
 					{
-						quaternion = Quaternion.Lerp(quaternion, this.quatSpineRot[i], 1f / (float)(i + 1));
+						quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
 					}
-					if (this.trackingMode)
+					if (trackingMode)
 					{
-						switch (this.parentPart)
+						switch (parentPart)
 						{
-						case 0:
-							this.obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						case 1:
-							this.obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						case 2:
-							this.obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(this.obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						default:
-							this.obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
+							case 0:
+								obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							case 1:
+								obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							case 2:
+								obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							default:
+								obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
 						}
 					}
 					else
 					{
-						switch (this.parentPart)
+						switch (parentPart)
 						{
-						case 0:
-							this.obj_p_cf_body_bone.transform.rotation = this.objSpinePos.transform.rotation * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						case 1:
-							this.obj_p_cf_body_bone.transform.rotation = this.objSpinePos.transform.rotation * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						case 2:
-							this.obj_p_cf_body_bone.transform.rotation = this.objSpinePos.transform.rotation * Quaternion.Inverse(this.obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
-						default:
-							this.obj_p_cf_body_bone.transform.rotation = this.objSpinePos.transform.rotation * Quaternion.Inverse(this.obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(this.obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(this.obj_cf_j_root.transform.localRotation);
-							break;
+							case 0:
+								obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							case 1:
+								obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							case 2:
+								obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
+							default:
+								obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+								break;
 						}
 					}
-					this.vecSpinePos[this.indexSpinePos] = this.objSpinePos.transform.position;
-					if (this.indexSpinePos >= 19)
+					vecSpinePos[indexSpinePos] = objSpinePos.transform.position;
+					if (indexSpinePos >= 19)
 					{
-						this.indexSpinePos = 0;
+						indexSpinePos = 0;
 					}
 					else
 					{
-						this.indexSpinePos++;
+						indexSpinePos++;
 					}
 					Vector3 a = Vector3.zero;
-					foreach (Vector3 b in this.vecSpinePos)
+					foreach (Vector3 b in vecSpinePos)
 					{
 						a += b;
 					}
 					a /= 20f;
-					if (this.trackingMode)
+					if (trackingMode)
 					{
-						this.obj_p_cf_body_bone.transform.position += a - this.objBase.transform.position;
+						obj_p_cf_body_bone.transform.position += a - objBase.transform.position;
 					}
 					else
 					{
-						this.obj_p_cf_body_bone.transform.position += this.objSpinePos.transform.position - this.objBase.transform.position;
+						obj_p_cf_body_bone.transform.position += objSpinePos.transform.position - objBase.transform.position;
 					}
 				}
-				if (this.hideCanvas)
+				if (hideCanvas)
 				{
 					Vector3 vector;
-					if (this.parentIsLeft)
+					if (parentIsLeft)
 					{
-						vector = this.cameraEye.transform.position - this.rightController.transform.position;
+						vector = cameraEye.transform.position - rightController.transform.position;
 					}
 					else
 					{
-						vector = this.cameraEye.transform.position - this.leftController.transform.position;
+						vector = cameraEye.transform.position - leftController.transform.position;
 					}
 					if (vector.magnitude <= 0.2f)
 					{
-						this.objCanvasSetParent.SetActive(true);
-						this.objCanvasMotion.SetActive(true);
+						objCanvasSetParent.SetActive(true);
+						objCanvasMotion.SetActive(true);
 					}
 					else
 					{
-						this.objCanvasSetParent.SetActive(false);
-						this.objCanvasMotion.SetActive(false);
+						objCanvasSetParent.SetActive(false);
+						objCanvasMotion.SetActive(false);
 					}
 				}
-				this.txtSetParentL.text = "親子付け Off";
-				this.txtSetParentR.text = "親子付け Off";
+				txtSetParentL.text = "親子付け Off";
+				txtSetParentR.text = "親子付け Off";
 			}
 			else
 			{
-				this.txtSetParentL.text = "左 親子付け On";
-				this.txtSetParentR.text = "右 親子付け On";
+				txtSetParentL.text = "左 親子付け On";
+				txtSetParentR.text = "右 親子付け On";
 			}
-			if (this.bFixBody)
+			if (bFixBody)
 			{
-				if (this.objRightHand != null)
+				if (objRightHand != null)
 				{
-					this.bd_cf_t_hand_R.bone = this.objRightHand.transform;
+					bd_cf_t_hand_R.bone = objRightHand.transform;
 				}
-				if (this.objLeftHand != null)
+				if (objLeftHand != null)
 				{
-					this.bd_cf_t_hand_L.bone = this.objLeftHand.transform;
+					bd_cf_t_hand_L.bone = objLeftHand.transform;
 				}
-				if (this.objRightLeg != null)
+				if (objRightLeg != null)
 				{
-					this.bd_cf_t_leg_R.bone = this.objRightLeg.transform;
+					bd_cf_t_leg_R.bone = objRightLeg.transform;
 				}
-				if (this.objLeftLeg != null)
+				if (objLeftLeg != null)
 				{
-					this.bd_cf_t_leg_L.bone = this.objLeftLeg.transform;
+					bd_cf_t_leg_L.bone = objLeftLeg.transform;
 				}
-				this.txtFixBody.text = "手足固定 On";
+				txtFixBody.text = "手足固定 On";
 				return;
 			}
-			this.txtFixBody.text = "手足固定 Off";
+			txtFixBody.text = "手足固定 Off";
 		}
 
 		private void SetP(bool _parentIsLeft)
@@ -1822,81 +1822,81 @@ namespace SetParent
 			{
 				return;
 			}
-			this.parentIsLeft = _parentIsLeft;
-			this.hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
-			this.nameAnimation = this.hFlag.nowAnimationInfo.nameAnimation;
-			this.cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			this.maleAim = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			this.femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			this.leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
-			this.rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
-			if (this.setParentMode == 0 || this.setParentMode == 1)
+			parentIsLeft = _parentIsLeft;
+			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
+			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
+			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
+			maleAim = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
+			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
+			leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
+			rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
+			if (setParentMode == 0 || setParentMode == 1)
 			{
-				this.obj_chaF_001 = GameObject.Find("chaF_001");
-				this.obj_BodyTop = GameObject.Find("chaF_001/BodyTop");
-				this.obj_p_cf_body_bone = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
-				this.obj_cf_j_root = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root");
-				this.obj_cf_n_height = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height");
-				this.obj_cf_j_hips = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips");
-				this.obj_cf_j_spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
-				this.obj_cf_j_spine02 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02");
-				this.obj_cf_j_spine03 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03");
-				this.obj_cf_j_neck = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");
-				switch (this.parentPart)
+				obj_chaF_001 = GameObject.Find("chaF_001");
+				obj_BodyTop = GameObject.Find("chaF_001/BodyTop");
+				obj_p_cf_body_bone = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
+				obj_cf_j_root = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root");
+				obj_cf_n_height = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height");
+				obj_cf_j_hips = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips");
+				obj_cf_j_spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
+				obj_cf_j_spine02 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02");
+				obj_cf_j_spine03 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03");
+				obj_cf_j_neck = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");
+				switch (parentPart)
 				{
-				case 0:
-					this.objBase = this.obj_cf_j_hips;
-					break;
-				case 1:
-					this.objBase = this.obj_cf_j_spine02;
-					break;
-				case 2:
-					this.objBase = this.obj_cf_j_neck;
-					break;
-				default:
-					this.objBase = this.obj_cf_j_spine02;
-					break;
+					case 0:
+						objBase = obj_cf_j_hips;
+						break;
+					case 1:
+						objBase = obj_cf_j_spine02;
+						break;
+					case 2:
+						objBase = obj_cf_j_neck;
+						break;
+					default:
+						objBase = obj_cf_j_spine02;
+						break;
 				}
-				if (this.objSpinePos == null)
+				if (objSpinePos == null)
 				{
-					this.objSpinePos = new GameObject("objSpinePos");
+					objSpinePos = new GameObject("objSpinePos");
 				}
 				if (_parentIsLeft)
 				{
-					this.objSpinePos.transform.parent = this.leftController.transform;
+					objSpinePos.transform.parent = leftController.transform;
 					GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model").SetActive(false);
 				}
 				else
 				{
-					this.objSpinePos.transform.parent = this.rightController.transform;
+					objSpinePos.transform.parent = rightController.transform;
 					GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)/Model").SetActive(false);
 				}
-				this.objSpinePos.transform.position = this.objBase.transform.position;
-				this.objSpinePos.transform.rotation = this.objBase.transform.rotation;
+				objSpinePos.transform.position = objBase.transform.position;
+				objSpinePos.transform.rotation = objBase.transform.rotation;
 				for (int i = 0; i < 20; i++)
 				{
-					this.vecSpinePos[i] = this.objSpinePos.transform.position;
+					vecSpinePos[i] = objSpinePos.transform.position;
 				}
-				this.indexSpinePos = 0;
+				indexSpinePos = 0;
 				for (int j = 0; j < 20; j++)
 				{
-					this.quatSpineRot[j] = this.objSpinePos.transform.rotation;
+					quatSpineRot[j] = objSpinePos.transform.rotation;
 				}
-				this.indexSpineRot = 0;
+				indexSpineRot = 0;
 			}
-			if (this.setParentMale)
+			if (setParentMale)
 			{
-				gameObject2.GetComponent<Transform>().parent = this.cameraEye.transform;
+				gameObject2.GetComponent<Transform>().parent = cameraEye.transform;
 			}
-			if (this.setParentMode == 1 || this.setParentMode == 2)
+			if (setParentMode == 1 || setParentMode == 2)
 			{
 				AnimSpeedController animSpeedController = gameObject.AddComponent<AnimSpeedController>();
 				if (_parentIsLeft)
 				{
-					animSpeedController.SetController(this.leftController, this.rightController);
+					animSpeedController.SetController(leftController, rightController);
 					return;
 				}
-				animSpeedController.SetController(this.rightController, this.leftController);
+				animSpeedController.SetController(rightController, leftController);
 			}
 		}
 
@@ -1924,62 +1924,62 @@ namespace SetParent
 
 		private bool RightTrackPadPressDown()
 		{
-			return this.rightVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || this.rightDevice.GetPressDown(4294967296UL);
+			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || rightDevice.GetPressDown(4294967296UL);
 		}
 
 		private bool LeftTrackPadPressDown()
 		{
-			return this.leftVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || this.leftDevice.GetPressDown(4294967296UL);
+			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || leftDevice.GetPressDown(4294967296UL);
 		}
 
 		private bool RightMenuPress()
 		{
-			return this.rightVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || this.rightDevice.GetPress(2UL);
+			return rightVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || rightDevice.GetPress(2UL);
 		}
 
 		private bool LeftMenuPress()
 		{
-			return this.leftVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || this.leftDevice.GetPress(2UL);
+			return leftVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || leftDevice.GetPress(2UL);
 		}
 
 		private bool RightTriggerPressDown()
 		{
-			return this.rightVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || this.rightDevice.GetPressDown(8589934592UL);
+			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || rightDevice.GetPressDown(8589934592UL);
 		}
 
 		private bool LeftTriggerPressDown()
 		{
-			return this.leftVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || this.leftDevice.GetPressDown(8589934592UL);
+			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPressDown(8589934592UL);
 		}
 
 		private bool LeftGripPress()
 		{
-			return this.leftVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || this.leftDevice.GetPress(4UL);
+			return leftVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPress(4UL);
 		}
 
 		private bool LeftGripPressDown()
 		{
-			return this.leftVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || this.leftDevice.GetPressDown(4UL);
+			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPressDown(4UL);
 		}
 
 		private bool RightGripPress()
 		{
-			return this.rightVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || this.rightDevice.GetPress(4UL);
+			return rightVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPress(4UL);
 		}
 
 		private bool RightGripPressDown()
 		{
-			return this.rightVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || this.rightDevice.GetPressDown(4UL);
+			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPressDown(4UL);
 		}
 
 		private void LoadFromModPref()
 		{
-			this.setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
-			this.setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
-			this.setCollider = ModPrefs.GetBool("SetParent", "SetCollider", true, true);
-			this.parentPart = ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
-			this.trackingMode = ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
-			this.gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
+			setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
+			setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
+			setCollider = ModPrefs.GetBool("SetParent", "SetCollider", true, true);
+			parentPart = ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
+			trackingMode = ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
+			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 		}
 
 		private bool setFlag;

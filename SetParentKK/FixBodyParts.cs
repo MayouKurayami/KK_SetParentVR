@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SetParent
 {
@@ -7,22 +6,22 @@ namespace SetParent
 	{
 		public void Init(SetParent sp, FixBodyParts.bodyParts p)
 		{
-			this.setParent = sp;
-			this.parts = p;
+			setParent = sp;
+			parts = p;
 		}
 
 		private void Start()
 		{
-			this.rg = base.gameObject.AddComponent<Rigidbody>();
-			this.sc = base.gameObject.AddComponent<SphereCollider>();
-			this.rg.isKinematic = true;
-			this.sc.radius = 0.05f;
-			this.sc.isTrigger = true;
+			rg = base.gameObject.AddComponent<Rigidbody>();
+			sc = base.gameObject.AddComponent<SphereCollider>();
+			rg.isKinematic = true;
+			sc.radius = 0.05f;
+			sc.isTrigger = true;
 		}
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!this.setParent.setCollider)
+			if (!setParent.setCollider)
 			{
 				return;
 			}
@@ -30,37 +29,37 @@ namespace SetParent
 			{
 				return;
 			}
-			switch (this.parts)
+			switch (parts)
 			{
-			case FixBodyParts.bodyParts.hand_L:
-				if (this.setParent.objLeftHand == null)
-				{
-					this.setParent.PushFixLeftHandButton();
+				case FixBodyParts.bodyParts.hand_L:
+					if (setParent.objLeftHand == null)
+					{
+						setParent.PushFixLeftHandButton();
+						return;
+					}
+					break;
+				case FixBodyParts.bodyParts.hand_R:
+					if (setParent.objRightHand == null)
+					{
+						setParent.PushFixRightHandButton();
+						return;
+					}
+					break;
+				case FixBodyParts.bodyParts.leg_L:
+					if (setParent.objLeftLeg == null)
+					{
+						setParent.PushFixLeftLegButton();
+						return;
+					}
+					break;
+				case FixBodyParts.bodyParts.leg_R:
+					if (setParent.objRightLeg == null)
+					{
+						setParent.PushFixRightLegButton();
+					}
+					break;
+				default:
 					return;
-				}
-				break;
-			case FixBodyParts.bodyParts.hand_R:
-				if (this.setParent.objRightHand == null)
-				{
-					this.setParent.PushFixRightHandButton();
-					return;
-				}
-				break;
-			case FixBodyParts.bodyParts.leg_L:
-				if (this.setParent.objLeftLeg == null)
-				{
-					this.setParent.PushFixLeftLegButton();
-					return;
-				}
-				break;
-			case FixBodyParts.bodyParts.leg_R:
-				if (this.setParent.objRightLeg == null)
-				{
-					this.setParent.PushFixRightLegButton();
-				}
-				break;
-			default:
-				return;
 			}
 		}
 

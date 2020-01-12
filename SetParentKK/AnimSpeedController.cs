@@ -1,6 +1,5 @@
-﻿using System;
+﻿using IllusionPlugin;
 using System.Collections;
-using IllusionPlugin;
 using UnityEngine;
 
 namespace SetParent
@@ -9,227 +8,227 @@ namespace SetParent
 	{
 		public void SetController(GameObject leftcon, GameObject rightcon)
 		{
-			this.leftController = leftcon;
-			this.rightController = rightcon;
+			leftController = leftcon;
+			rightController = rightcon;
 		}
 
 		private void Start()
 		{
-			this.animObject = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
-			if (this.animObject == null)
+			animObject = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
+			if (animObject == null)
 			{
 				return;
 			}
-			this.anim = this.animObject.GetComponent<Animator>();
-			this.orgSpeed = this.anim.speed;
-			this.hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
+			anim = animObject.GetComponent<Animator>();
+			orgSpeed = anim.speed;
+			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
 			Transform transform = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas");
 			if (transform == null)
 			{
 				transform = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase").transform.Find("[CameraRig]").Find("HSceneMainCanvas");
 			}
-			this.hSprite = transform.Find("MainCanvas").GetComponent<HSprite>();
+			hSprite = transform.Find("MainCanvas").GetComponent<HSprite>();
 			base.StartCoroutine("GuageControll");
-			this.LoadFromModPref();
-			this.female = GameObject.Find("chaF_001");
-			this.spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
-			this.nameAnimation = this.hFlag.nowAnimationInfo.nameAnimation;
-			this.leftConVecBefore = (this.leftConVecNow = this.leftController.transform.position);
-			this.rightConVecBefore = (this.rightConVecNow = this.rightController.transform.position);
-			this.guagef = this.hFlag.lockGugeFemale;
-			this.guagem = this.hFlag.lockGugeMale;
-			this.hFlag.lockGugeFemale = true;
-			this.hFlag.lockGugeMale = true;
-			this.weakMotion = true;
+			LoadFromModPref();
+			female = GameObject.Find("chaF_001");
+			spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
+			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
+			leftConVecBefore = (leftConVecNow = leftController.transform.position);
+			rightConVecBefore = (rightConVecNow = rightController.transform.position);
+			guagef = hFlag.lockGugeFemale;
+			guagem = hFlag.lockGugeMale;
+			hFlag.lockGugeFemale = true;
+			hFlag.lockGugeMale = true;
+			weakMotion = true;
 		}
 
 		private void LoadFromModPref()
 		{
-			this.threshold1 = ModPrefs.GetFloat("SetParent", "threshold1", 0.05f, true);
-			this.threshold2 = ModPrefs.GetFloat("SetParent", "threshold2", 0.3f, true);
-			this.moveDistancePoolSize = ModPrefs.GetInt("SetParent", "moveDistancePoolSize", 100, true);
-			this.moveDistance = new float[this.moveDistancePoolSize];
-			this.calcPattern = ModPrefs.GetInt("SetParent", "calcPattern", 0, true);
-			this.finishCount = ModPrefs.GetFloat("SetParent", "finishcount", 5f, true);
-			this.moveCoordinatePoolSize = ModPrefs.GetInt("SetParent", "moveCoordinatePoolSize", 100, true);
-			this.moveCoordinate = new Vector3[this.moveCoordinatePoolSize];
-			this.strongMotionThreshold = ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
-			this.weakMotionThreshold = ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
-			this.sMThreshold2Ratio = ModPrefs.GetFloat("SetParent", "sMThreshold2Ratio", 1.3f, true);
-			this.sonyuGaugeMax = ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
-			this.houshiGaugeMax = ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
+			threshold1 = ModPrefs.GetFloat("SetParent", "threshold1", 0.05f, true);
+			threshold2 = ModPrefs.GetFloat("SetParent", "threshold2", 0.3f, true);
+			moveDistancePoolSize = ModPrefs.GetInt("SetParent", "moveDistancePoolSize", 100, true);
+			moveDistance = new float[moveDistancePoolSize];
+			calcPattern = ModPrefs.GetInt("SetParent", "calcPattern", 0, true);
+			finishCount = ModPrefs.GetFloat("SetParent", "finishcount", 5f, true);
+			moveCoordinatePoolSize = ModPrefs.GetInt("SetParent", "moveCoordinatePoolSize", 100, true);
+			moveCoordinate = new Vector3[moveCoordinatePoolSize];
+			strongMotionThreshold = ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
+			weakMotionThreshold = ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
+			sMThreshold2Ratio = ModPrefs.GetFloat("SetParent", "sMThreshold2Ratio", 1.3f, true);
+			sonyuGaugeMax = ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
+			houshiGaugeMax = ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
 		}
 
 		private void Update()
 		{
-			if (this.animObject == null)
+			if (animObject == null)
 			{
 				return;
 			}
-			if (this.nameAnimation != this.hFlag.nowAnimationInfo.nameAnimation)
+			if (nameAnimation != hFlag.nowAnimationInfo.nameAnimation)
 			{
 				UnityEngine.Object.DestroyImmediate(this);
 				return;
 			}
 			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
 			{
-				this.LoadFromModPref();
+				LoadFromModPref();
 			}
-			this.leftConVecNow = this.leftController.transform.position;
-			this.rightConVecNow = this.rightController.transform.position;
-			switch (this.calcPattern)
+			leftConVecNow = leftController.transform.position;
+			rightConVecNow = rightController.transform.position;
+			switch (calcPattern)
 			{
-			case 0:
-				this.SaveMoveDistance(Mathf.Clamp((this.leftConVecNow - this.leftConVecBefore).magnitude, 0f, 0.005f));
-				break;
-			case 1:
-				this.SaveMoveDistance(Mathf.Clamp((this.rightConVecNow - this.rightConVecBefore).magnitude, 0f, 0.005f));
-				break;
-			case 2:
-				this.SaveMoveDistance(Mathf.Clamp((this.leftConVecNow - this.leftConVecBefore).magnitude + (this.rightConVecNow - this.rightConVecBefore).magnitude, 0f, 0.005f));
-				break;
-			default:
-				this.SaveMoveDistance(Mathf.Clamp((this.leftConVecNow - this.leftConVecBefore).magnitude, 0f, 0.005f));
-				break;
+				case 0:
+					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude, 0f, 0.005f));
+					break;
+				case 1:
+					SaveMoveDistance(Mathf.Clamp((rightConVecNow - rightConVecBefore).magnitude, 0f, 0.005f));
+					break;
+				case 2:
+					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude + (rightConVecNow - rightConVecBefore).magnitude, 0f, 0.005f));
+					break;
+				default:
+					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude, 0f, 0.005f));
+					break;
 			}
-			this.diffSum = this.LoadMoveDistance();
-			this.SaveMoveCoordinate(this.leftConVecNow);
-			if (this.hFlag.nowAnimStateName == "WLoop" || this.hFlag.nowAnimStateName == "SLoop" || this.hFlag.nowAnimStateName == "A_WLoop" || this.hFlag.nowAnimStateName == "A_SLoop")
+			diffSum = LoadMoveDistance();
+			SaveMoveCoordinate(leftConVecNow);
+			if (hFlag.nowAnimStateName == "WLoop" || hFlag.nowAnimStateName == "SLoop" || hFlag.nowAnimStateName == "A_WLoop" || hFlag.nowAnimStateName == "A_SLoop")
 			{
-				if (this.diffSum < this.threshold1)
+				if (diffSum < threshold1)
 				{
-					if (this.moveFlag)
+					if (moveFlag)
 					{
-						this.stopCount += Time.deltaTime;
-						if (this.stopCount >= 2f)
+						stopCount += Time.deltaTime;
+						if (stopCount >= 2f)
 						{
-							this.hFlag.speedCalc = 0f;
-							this.stopCount = 0f;
-							this.moveFlag = false;
+							hFlag.speedCalc = 0f;
+							stopCount = 0f;
+							moveFlag = false;
 						}
 						else
 						{
-							this.hFlag.speedCalc = 0.1f;
+							hFlag.speedCalc = 0.1f;
 						}
 					}
 				}
-				else if (this.threshold1 <= this.diffSum)
+				else if (threshold1 <= diffSum)
 				{
-					this.moveFlag = true;
-					this.stopCount = 0f;
-					if (this.weakMotion)
+					moveFlag = true;
+					stopCount = 0f;
+					if (weakMotion)
 					{
-						if ((this.leftConVecNow - this.CalcAvgCoordinate()).magnitude >= this.strongMotionThreshold)
+						if ((leftConVecNow - CalcAvgCoordinate()).magnitude >= strongMotionThreshold)
 						{
-							this.hFlag.click = HFlag.ClickKind.motionchange;
-							this.weakMotion = false;
-							this.weakMotionCount = 2f;
+							hFlag.click = HFlag.ClickKind.motionchange;
+							weakMotion = false;
+							weakMotionCount = 2f;
 						}
 					}
-					else if ((this.leftConVecNow - this.CalcAvgCoordinate()).magnitude <= this.weakMotionThreshold)
+					else if ((leftConVecNow - CalcAvgCoordinate()).magnitude <= weakMotionThreshold)
 					{
-						this.weakMotionCount -= Time.deltaTime;
-						if (this.weakMotionCount < 0f)
+						weakMotionCount -= Time.deltaTime;
+						if (weakMotionCount < 0f)
 						{
-							this.hFlag.click = HFlag.ClickKind.motionchange;
-							this.weakMotion = true;
+							hFlag.click = HFlag.ClickKind.motionchange;
+							weakMotion = true;
 						}
 					}
 					else
 					{
-						this.weakMotionCount = 2f;
+						weakMotionCount = 2f;
 					}
-					if (this.weakMotion)
+					if (weakMotion)
 					{
-						this.hFlag.speedCalc = Mathf.Clamp((this.diffSum - this.threshold1) / (this.threshold2 - this.threshold1), 0.1f, 1f);
+						hFlag.speedCalc = Mathf.Clamp((diffSum - threshold1) / (threshold2 - threshold1), 0.1f, 1f);
 					}
 					else
 					{
-						this.hFlag.speedCalc = Mathf.Clamp((this.diffSum - this.threshold1) / (this.threshold2 * this.sMThreshold2Ratio - this.threshold1), 0.1f, 1f);
+						hFlag.speedCalc = Mathf.Clamp((diffSum - threshold1) / (threshold2 * sMThreshold2Ratio - threshold1), 0.1f, 1f);
 					}
-					if (this.hFlag.gaugeFemale > 70f)
+					if (hFlag.gaugeFemale > 70f)
 					{
-						if (this.hFlag.speedCalc >= 1f)
+						if (hFlag.speedCalc >= 1f)
 						{
-							this.fcount += Time.deltaTime;
+							fcount += Time.deltaTime;
 						}
 						else
 						{
-							this.fcount = 0f;
+							fcount = 0f;
 						}
 					}
 					else
 					{
-						this.fcount = 0f;
+						fcount = 0f;
 					}
-					if (this.fcount >= this.finishCount)
+					if (fcount >= finishCount)
 					{
-						this.hSprite.OnInsideClick();
-						this.fcount = 0f;
-						this.moveFlag = false;
+						hSprite.OnInsideClick();
+						fcount = 0f;
+						moveFlag = false;
 					}
 				}
 			}
-			else if (this.hFlag.nowAnimStateName == "InsertIdle" || this.hFlag.nowAnimStateName == "A_InsertIdle" || this.hFlag.nowAnimStateName == "IN_A" || this.hFlag.nowAnimStateName == "A_IN_A")
+			else if (hFlag.nowAnimStateName == "InsertIdle" || hFlag.nowAnimStateName == "A_InsertIdle" || hFlag.nowAnimStateName == "IN_A" || hFlag.nowAnimStateName == "A_IN_A")
 			{
-				this.moveFlag = false;
-				if (this.threshold1 <= this.diffSum)
+				moveFlag = false;
+				if (threshold1 <= diffSum)
 				{
-					this.hFlag.click = HFlag.ClickKind.speedup;
-					this.weakMotion = true;
+					hFlag.click = HFlag.ClickKind.speedup;
+					weakMotion = true;
 				}
 			}
-			this.leftConVecBefore = this.leftConVecNow;
-			this.rightConVecBefore = this.rightConVecNow;
+			leftConVecBefore = leftConVecNow;
+			rightConVecBefore = rightConVecNow;
 		}
 
 		private void OnDestroy()
 		{
-			this.hFlag.lockGugeFemale = this.guagef;
-			this.hFlag.lockGugeMale = this.guagem;
+			hFlag.lockGugeFemale = guagef;
+			hFlag.lockGugeMale = guagem;
 			base.StopCoroutine("GuageControll");
 		}
 
 		private void SaveMoveDistance(float dis)
 		{
-			if (this.moveDistanceIndex >= this.moveDistancePoolSize - 1)
+			if (moveDistanceIndex >= moveDistancePoolSize - 1)
 			{
-				this.moveDistanceIndex = 0;
+				moveDistanceIndex = 0;
 			}
 			else
 			{
-				this.moveDistanceIndex++;
+				moveDistanceIndex++;
 			}
-			this.moveDistance[this.moveDistanceIndex] = dis;
+			moveDistance[moveDistanceIndex] = dis;
 		}
 
 		private void SaveMoveCoordinate(Vector3 vec)
 		{
-			if (this.moveCoordinateIndex >= this.moveCoordinatePoolSize - 1)
+			if (moveCoordinateIndex >= moveCoordinatePoolSize - 1)
 			{
-				this.moveCoordinateIndex = 0;
+				moveCoordinateIndex = 0;
 			}
 			else
 			{
-				this.moveCoordinateIndex++;
+				moveCoordinateIndex++;
 			}
-			this.moveCoordinate[this.moveCoordinateIndex] = vec;
+			moveCoordinate[moveCoordinateIndex] = vec;
 		}
 
 		private Vector3 CalcAvgCoordinate()
 		{
 			Vector3 a = Vector3.zero;
-			for (int i = 0; i < this.moveCoordinatePoolSize; i++)
+			for (int i = 0; i < moveCoordinatePoolSize; i++)
 			{
-				a += this.moveCoordinate[i];
+				a += moveCoordinate[i];
 			}
-			return a / (float)this.moveCoordinatePoolSize;
+			return a / moveCoordinatePoolSize;
 		}
 
 		private float LoadMoveDistance()
 		{
 			float num = 0f;
-			foreach (float num2 in this.moveDistance)
+			foreach (float num2 in moveDistance)
 			{
 				num += num2;
 			}
@@ -239,13 +238,13 @@ namespace SetParent
 		private float LoadRecentMoveDistance(int num)
 		{
 			float num2 = 0f;
-			int num3 = this.moveDistanceIndex;
+			int num3 = moveDistanceIndex;
 			for (int i = 0; i < num; i++)
 			{
-				num2 += this.moveDistance[num3];
+				num2 += moveDistance[num3];
 				if (num3 <= 0)
 				{
-					num3 = this.moveDistanceIndex - 1;
+					num3 = moveDistanceIndex - 1;
 				}
 				else
 				{
@@ -257,43 +256,43 @@ namespace SetParent
 
 		private IEnumerator GuageControll()
 		{
-			for (;;)
+			for (; ; )
 			{
 				yield return new WaitForSeconds(1f);
-				if (this.moveFlag)
+				if (moveFlag)
 				{
-					if (this.hFlag.mode == HFlag.EMode.houshi)
+					if (hFlag.mode == HFlag.EMode.houshi)
 					{
-						if (this.hFlag.gaugeFemale < this.houshiGaugeMax)
+						if (hFlag.gaugeFemale < houshiGaugeMax)
 						{
-							this.hFlag.gaugeFemale += 1f;
+							hFlag.gaugeFemale += 1f;
 						}
-						if (this.hFlag.gaugeMale < this.houshiGaugeMax)
+						if (hFlag.gaugeMale < houshiGaugeMax)
 						{
-							this.hFlag.gaugeMale += 1f;
+							hFlag.gaugeMale += 1f;
 						}
 					}
 					else
 					{
-						if (this.hFlag.gaugeFemale < this.sonyuGaugeMax)
+						if (hFlag.gaugeFemale < sonyuGaugeMax)
 						{
-							this.hFlag.gaugeFemale += 1f;
+							hFlag.gaugeFemale += 1f;
 						}
-						if (this.hFlag.gaugeMale < this.sonyuGaugeMax)
+						if (hFlag.gaugeMale < sonyuGaugeMax)
 						{
-							this.hFlag.gaugeMale += 1f;
+							hFlag.gaugeMale += 1f;
 						}
 					}
 				}
 				else
 				{
-					if (this.hFlag.gaugeFemale > 5f)
+					if (hFlag.gaugeFemale > 5f)
 					{
-						this.hFlag.gaugeFemale -= 2f;
+						hFlag.gaugeFemale -= 2f;
 					}
-					if (this.hFlag.gaugeMale > 5f)
+					if (hFlag.gaugeMale > 5f)
 					{
-						this.hFlag.gaugeMale -= 2f;
+						hFlag.gaugeMale -= 2f;
 					}
 				}
 			}
