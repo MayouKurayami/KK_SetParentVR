@@ -21,7 +21,7 @@ namespace SetParent
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!setParent.setCollider)
+			if (!setParent.setCollider || !setParent.setFlag)
 			{
 				return;
 			}

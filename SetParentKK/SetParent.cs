@@ -1982,7 +1982,7 @@ namespace SetParent
 			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 		}
 
-		private bool setFlag;
+		internal bool setFlag;
 
 		private bool femaleFlag;
 
