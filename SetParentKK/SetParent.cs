@@ -1570,7 +1570,7 @@ namespace SetParent
 			}
 			else
 			{
-				if (RightMenuPress() || LeftMenuPress())
+				if (RightMenuPressing() || LeftMenuPressing())
 				{
 					hideCount += Time.deltaTime;
 					if (hideCount >= 1f)
@@ -1644,15 +1644,15 @@ namespace SetParent
 					bd_cf_t_leg_L.bone = objLeftLeg.transform;
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPress() && RightTriggerPressDown()) || (LeftMenuPress() && LeftTriggerPressDown()))
+			if (Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown()))
 			{
 				if (!setFlag)
 				{
-					if (RightMenuPress() && RightTriggerPressDown())
+					if (RightMenuPressing() && RightTriggerPressDown())
 					{
 						SetP(true);
 					}
-					else if (LeftMenuPress() && LeftTriggerPressDown())
+					else if (LeftMenuPressing() && LeftTriggerPressDown())
 					{
 						SetP(false);
 					}
@@ -1922,22 +1922,22 @@ namespace SetParent
 			}
 		}
 
-		private bool RightTrackPadPressDown()
+		private bool RightTrackPadPressing()
 		{
-			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || rightDevice.GetPressDown(4294967296UL);
+			return rightVVC.IsState(VRViveController.EViveButtonKind.Touchpad, -1) || rightDevice.GetPress(4294967296UL);
 		}
 
-		private bool LeftTrackPadPressDown()
+		private bool LeftTrackPadPressing()
 		{
-			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Touchpad, -1) || leftDevice.GetPressDown(4294967296UL);
+			return leftVVC.IsState(VRViveController.EViveButtonKind.Touchpad, -1) || leftDevice.GetPress(4294967296UL);
 		}
 
-		private bool RightMenuPress()
+		private bool RightMenuPressing()
 		{
 			return rightVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || rightDevice.GetPress(2UL);
 		}
 
-		private bool LeftMenuPress()
+		private bool LeftMenuPressing()
 		{
 			return leftVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || leftDevice.GetPress(2UL);
 		}
@@ -1952,7 +1952,7 @@ namespace SetParent
 			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPressDown(8589934592UL);
 		}
 
-		private bool LeftGripPress()
+		private bool LeftGripPressing()
 		{
 			return leftVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPress(4UL);
 		}
@@ -1962,7 +1962,7 @@ namespace SetParent
 			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPressDown(4UL);
 		}
 
-		private bool RightGripPress()
+		private bool RightGripPressing()
 		{
 			return rightVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPress(4UL);
 		}
