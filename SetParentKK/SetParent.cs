@@ -1952,6 +1952,16 @@ namespace SetParent
 			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPressDown(8589934592UL);
 		}
 
+		private bool RightTriggerPressing()
+		{
+			return rightVVC.IsState(VRViveController.EViveButtonKind.Trigger, -1) || rightDevice.GetPress(8589934592UL);
+		}
+
+		private bool LeftTriggerPressing()
+		{
+			return leftVVC.IsState(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPress(8589934592UL);
+		}
+
 		private bool LeftGripPressing()
 		{
 			return leftVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPress(4UL);
