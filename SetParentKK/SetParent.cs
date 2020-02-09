@@ -1790,14 +1790,15 @@ namespace SetParent
 				}
 
 				////////////////////////////////////////////////////////////
-				//Disable male hands IK if 
+				//Disable male and female IK's if 
+				// -male body is found
 				// -position has changed via floating menu, or
 				// -female is moving with controller, pr
 				// -male is rotating to HMD
 				////////////////////////////////////////////////////////////
 				if (chaMale != null && (positionMenuPressed || setParentMode == 0 || setParentMode == 1 || setParentMale))
 				{
-					DisableIKs(true, false);
+					DisableIKs(true, true);
 				}
 
 				if (chaMale != null && setParentMale)
@@ -2030,6 +2031,25 @@ namespace SetParent
 				male_bd_cf_t_hand_L.bone = male_cf_pv_hand_L.transform;
 			}
 			
+			if (female)
+			{
+				if (objRightHand == null)
+				{
+					bd_cf_t_hand_R.bone = obj_cf_pv_hand_R.transform;
+				}
+				if (objLeftHand == null)
+				{
+					bd_cf_t_hand_L.bone = obj_cf_pv_hand_L.transform;
+				}
+				if (objRightLeg == null)
+				{
+					bd_cf_t_leg_R.bone = obj_cf_pv_leg_R.transform;
+				}
+				if (objLeftLeg == null)
+				{
+					bd_cf_t_leg_L.bone = obj_cf_pv_leg_L.transform;
+				}
+			}
 		}
 
 		private bool RightTrackPadPressing()
