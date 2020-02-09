@@ -1754,7 +1754,33 @@ namespace SetParent
 					else
 					{
 						obj_p_cf_body_bone.transform.position += objSpinePos.transform.position - objBase.transform.position;
-					}
+					}	
+				}
+
+				if (chaMale != null && setParentMale)
+				{
+					/////////////////////////
+					// Make the male body rotate around the crotch to keep its head align with the HMD without moving the crotch by
+					// -Create vector from male crotch to HMD position, then another vector from male crotch to male head to represent the spine
+					// -Calculate the rotation from spine vector to HMD vector, then apply the rotation to the male body
+					/////////////////////////
+					Vector3 cameraVec = cameraEye.transform.position - maleCrotchPos.transform.position;
+					Vector3 maleSpineVec = maleHeadPos.transform.position - maleCrotchPos.transform.position;
+					Quaternion.FromToRotation(maleSpineVec, cameraVec).ToAngleAxis(out float lookRotAngle, out Vector3 lookRotAxis);
+					chaMale.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);
+
+					/////////////////////////
+					// Update position of the spine vector, and using it as an axis to rotate the male body to "look" left or right by following the HMD's rotation
+					//
+					// - Since we're only interested in HMD's rotation along the spine axis, we take the HMD's right vector which will give us the rotation we need 
+					//   and align it with the direction of the penis by rotating it to the left by 90 degress,  
+					//   then calculate the rotation between the two vectors projected on the plane normal to the spine before applying it the male body
+					/////////////////////////
+					maleSpineVec = maleHeadPos.transform.position - maleCrotchPos.transform.position;
+					Vector3 malePenisProjected = Vector3.ProjectOnPlane(maleCrotchPos.transform.forward, maleSpineVec);
+					Vector3 cameraForwardProjected = Quaternion.AngleAxis(-90, maleSpineVec) * Vector3.ProjectOnPlane(cameraEye.transform.right, maleSpineVec);
+					Quaternion.FromToRotation(malePenisProjected, cameraForwardProjected).ToAngleAxis(out lookRotAngle, out lookRotAxis);
+					chaMale.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);		
 				}
 				if (hideCanvas)
 				{
@@ -1817,8 +1843,8 @@ namespace SetParent
 			{
 				return;
 			}
-			GameObject gameObject2 = GameObject.Find("chaM_001");
-			if (gameObject2 == null)
+			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
+			if (chaMale == null)
 			{
 				return;
 			}
@@ -1886,7 +1912,18 @@ namespace SetParent
 			}
 			if (setParentMale)
 			{
-				gameObject2.GetComponent<Transform>().parent = cameraEye.transform;
+				GameObject maleNeck = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");	
+				maleHeadPos = new GameObject("maleHeadPos");
+				maleHeadPos.transform.position = maleNeck.transform.position;
+				maleHeadPos.transform.rotation = maleNeck.transform.rotation;
+				maleHeadPos.transform.parent = maleNeck.transform;
+				maleHeadPos.transform.localPosition = new Vector3(0, 0, 0.08f);
+
+				GameObject maleCrotch = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_waist01/cf_j_waist02/cf_d_kokan/cm_J_dan_top");
+				maleCrotchPos = new GameObject("maleCrotchPos");
+				maleCrotchPos.transform.position = maleCrotch.transform.position;
+				maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
+				maleCrotchPos.transform.parent = chaMale.transform;
 			}
 			if (setParentMode == 1 || setParentMode == 2)
 			{
@@ -1908,6 +1945,9 @@ namespace SetParent
 				return;
 			}
 			gameObject.transform.parent = GameObject.Find("Component").transform;
+
+			UnityEngine.Object.Destroy(maleHeadPos);
+			UnityEngine.Object.Destroy(maleCrotchPos);
 			GameObject gameObject2 = GameObject.Find("chaM_001");
 			if (gameObject2 == null)
 			{
@@ -2101,6 +2141,12 @@ namespace SetParent
 		private GameObject objBase;
 
 		private GameObject objSpinePos;
+
+		private GameObject chaMale;
+
+		private GameObject maleHeadPos;
+
+		private GameObject maleCrotchPos;
 
 		private Text txtSetParentL;
 
