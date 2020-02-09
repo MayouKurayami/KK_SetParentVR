@@ -1790,12 +1790,14 @@ namespace SetParent
 				}
 
 				////////////////////////////////////////////////////////////
-				//Disable male hands IK
+				//Disable male hands IK if 
+				// -position has changed via floating menu, or
+				// -female is moving with controller, pr
+				// -male is rotating to HMD
 				////////////////////////////////////////////////////////////
-				if (chaMale != null && (positionMenuPressed || setParentMode == 0 || setParentMode == 1))
+				if (chaMale != null && (positionMenuPressed || setParentMode == 0 || setParentMode == 1 || setParentMale))
 				{
-					male_bd_cf_t_hand_R.bone = male_cf_pv_hand_R.transform;
-					male_bd_cf_t_hand_L.bone = male_cf_pv_hand_L.transform;
+					DisableIKs(true, false);
 				}
 
 				if (chaMale != null && setParentMale)
@@ -1909,10 +1911,6 @@ namespace SetParent
 				obj_cf_j_spine02 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02");
 				obj_cf_j_spine03 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03");
 				obj_cf_j_neck = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");
-				male_bd_cf_t_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R").GetComponent<BaseData>();
-				male_bd_cf_t_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L").GetComponent<BaseData>();
-				male_cf_pv_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
-				male_cf_pv_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
 
 				switch (parentPart)
 				{
@@ -2006,6 +2004,32 @@ namespace SetParent
 			{
 				UnityEngine.Object.Destroy(gameObject.GetComponent<AnimSpeedController>());
 			}
+		}
+
+		private void DisableIKs(bool male, bool female)
+		{
+			if (male)
+			{
+				if (male_bd_cf_t_hand_R == null)
+				{
+					male_bd_cf_t_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R").GetComponent<BaseData>();
+				}
+				if (male_bd_cf_t_hand_L == null)
+				{
+					male_bd_cf_t_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L").GetComponent<BaseData>();
+				}
+				if (male_cf_pv_hand_R == null)
+				{
+					male_cf_pv_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
+				}
+				if (male_cf_pv_hand_L == null)
+				{
+					male_cf_pv_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
+				}
+				male_bd_cf_t_hand_R.bone = male_cf_pv_hand_R.transform;
+				male_bd_cf_t_hand_L.bone = male_cf_pv_hand_L.transform;
+			}
+			
 		}
 
 		private bool RightTrackPadPressing()
