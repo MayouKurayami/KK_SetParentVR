@@ -1670,6 +1670,35 @@ namespace SetParent
 				}
 				setFlag = !setFlag;
 			}
+			if (chaMale != null)
+			{
+				if ( (RightTrackPadPressing() && RightGripPressing()) || (LeftTrackPadPressing() && LeftGripPressing()) )
+				{
+					if (!maleFollowController)
+					{
+						chaMale.transform.parent = RightGripPressing() ? rightController.transform : leftController.transform;
+						maleFollowFemale = false;
+						maleFollowController = true;
+					}
+				}
+				else if (setParentMode!= 2 && ( (RightTrackPadPressing() && RightTriggerPressing() ) || ( LeftTrackPadPressing() && LeftTriggerPressing()) ) )
+				{
+					if (!maleFollowFemale)
+					{
+						chaMale.transform.parent = obj_p_cf_body_bone.transform;
+
+						maleFollowFemale = true;
+						maleFollowController = false;
+					}
+				}
+				else if (maleFollowController || maleFollowFemale)
+				{
+					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
+					maleFollowFemale = false;
+					maleFollowController = false;
+				}
+			}
+
 			if (setFlag)
 			{
 				if (nameAnimation != hFlag.nowAnimationInfo.nameAnimation)
@@ -2078,6 +2107,10 @@ namespace SetParent
 		private SteamVR_Controller.Device rightDevice;
 
 		private bool setParentMale;
+
+		private bool maleFollowController;
+
+		private bool maleFollowFemale;
 
 		private int setParentMode;
 
