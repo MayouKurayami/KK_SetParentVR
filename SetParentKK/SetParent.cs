@@ -72,6 +72,7 @@ namespace SetParent
 			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
 			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
 			hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas").Find("MainCanvas").GetComponent<HSprite>();
+			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			if (cameraEye == null)
 			{
 				return;
@@ -1887,10 +1888,9 @@ namespace SetParent
 			{
 				return;
 			}
-			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			if (chaMale == null)
 			{
-				return;
+				GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			}
 			parentIsLeft = _parentIsLeft;
 			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
@@ -1955,7 +1955,7 @@ namespace SetParent
 				}
 				indexSpineRot = 0;
 			}
-			if (setParentMale)
+			if (setParentMale && chaMale != null)
 			{
 				GameObject maleNeck = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");	
 				maleHeadPos = new GameObject("maleHeadPos");
@@ -1994,11 +1994,10 @@ namespace SetParent
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			GameObject gameObject2 = GameObject.Find("chaM_001");
-			if (gameObject2 == null)
+			if (gameObject2 != null)
 			{
-				return;
+				gameObject2.transform.parent = GameObject.Find("Component").transform;
 			}
-			gameObject2.transform.parent = GameObject.Find("Component").transform;
 			GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model").SetActive(true);
 			GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)/Model").SetActive(true);
 			if (gameObject.GetComponent<AnimSpeedController>() != null)
