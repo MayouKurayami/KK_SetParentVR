@@ -61,7 +61,7 @@ namespace SetParent
 
 		private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
 		{
-			femaleFlag = false;
+			femaleExists = false;
 			positionMenuPressed = false;
 			hideCanvas = ModPrefs.GetBool("SetParent", "hideMenuAtStart", true, true);
 		}
@@ -1543,15 +1543,18 @@ namespace SetParent
 
 		public void OnUpdate()
 		{
-			if (!femaleFlag)
+			//Checks if female object exists. If not, exits the function
+			if (!femaleExists)
 			{
 				if (GameObject.Find("chaF_001") == null)
 				{
-					femaleFlag = false;
+					femaleExists = false;
 					return;
 				}
-				femaleFlag = true;
+				femaleExists = true;
 			}
+
+			//Find and assign left and right controllers variables if they are null
 			if (leftDevice == null)
 			{
 				leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
@@ -1564,10 +1567,13 @@ namespace SetParent
 				rightVVC = rightController.GetComponent<VRViveController>();
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
+
+			//Reloads config file on keypress
 			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
 			{
 				LoadFromModPref();
 			}
+
 			if (objCanvasSetParent == null)
 			{
 				InitCanvas();		
@@ -1653,8 +1659,17 @@ namespace SetParent
 					bd_cf_t_leg_L.bone = objLeftLeg.transform;
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown()))
+			//////////////
+			//Activate/deactivate SetParent functionality by
+			//* Pressing backslash key or 
+			//* Pressing menu button and trigger at the same time
+			//////////////
+			bool setParentToggle = Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
+			if (setParentToggle)
 			{
+				//Toggle parenting based on current parenting status
+				//* Set parent to the opposite controller of the one pressing the buttons, since the controller that's parenting the female would become invisible and unable to receive input
+				//* Set parent to the left controller if activated by keypress
 				if (!setFlag)
 				{
 					if (RightMenuPressing() && RightTriggerPressDown())
@@ -2128,7 +2143,7 @@ namespace SetParent
 
 		internal bool setFlag;
 
-		private bool femaleFlag;
+		static internal bool femaleExists;
 
 		private HFlag hFlag;
 
