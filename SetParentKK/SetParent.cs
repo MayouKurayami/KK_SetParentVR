@@ -68,23 +68,28 @@ namespace SetParent
 
 		private void InitCanvas()
 		{
-			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
 			hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas").Find("MainCanvas").GetComponent<HSprite>();
-			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
-			if (cameraEye == null)
-			{
-				return;
-			}
-			if (femaleAim == null)
-			{
-				return;
-			}
 			if (hSprite == null)
 			{
 				return;
 			}
+			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
+			if (femaleAim == null)
+			{
+				return;
+			}
+			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
+			if (cameraEye == null)
+			{
+				return;
+			}
+			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
+			if (chaMale == null)
+			{
+				return;
+			}
+			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
+
 			obj_cf_t_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R");
 			bd_cf_t_hand_R = obj_cf_t_hand_R.GetComponent<BaseData>();
 			obj_cf_pv_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
@@ -1565,15 +1570,15 @@ namespace SetParent
 			}
 			if (objCanvasSetParent == null)
 			{
-				InitCanvas();
+				InitCanvas();		
+			}
+			else
+			{
 				if (hideCanvas)
 				{
 					objCanvasSetParent.SetActive(false);
 					objCanvasMotion.SetActive(false);
 				}
-			}
-			else
-			{
 				if (RightMenuPressing() || LeftMenuPressing())
 				{
 					hideCount += Time.deltaTime;
