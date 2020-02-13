@@ -186,6 +186,7 @@ namespace SetParent
 				moveFlag = false;
 				if (threshold1 <= diffSum)
 				{
+					hFlag.speedCalc = 0.1f;
 					hFlag.click = HFlag.ClickKind.speedup;
 					weakMotion = true;
 				}
