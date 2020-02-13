@@ -40,6 +40,7 @@ namespace SetParent
 			hFlag.lockGugeFemale = true;
 			hFlag.lockGugeMale = true;
 			weakMotion = true;
+			weakMotionCount = 1.5f;
 		}
 
 		private void LoadFromModPref()
@@ -134,7 +135,7 @@ namespace SetParent
 						{
 							hFlag.click = HFlag.ClickKind.motionchange;
 							weakMotion = false;
-							weakMotionCount = 2f;
+							weakMotionCount = 1.5f;
 						}
 					}
 					else if ((leftConVecNow - CalcAvgCoordinate()).magnitude <= weakMotionThreshold)
@@ -148,7 +149,7 @@ namespace SetParent
 					}
 					else
 					{
-						weakMotionCount = 2f;
+						weakMotionCount = 1.5f;
 					}
 					if (weakMotion)
 					{
