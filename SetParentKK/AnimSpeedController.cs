@@ -93,7 +93,19 @@ namespace SetParent
 			}
 			diffSum = LoadMoveDistance();
 			SaveMoveCoordinate(leftConVecNow);
-			if (hFlag.nowAnimStateName == "WLoop" || hFlag.nowAnimStateName == "SLoop" || hFlag.nowAnimStateName == "A_WLoop" || hFlag.nowAnimStateName == "A_SLoop")
+
+			bool piston = false;
+			if (hFlag.nowAnimStateName == "SLoop" || hFlag.nowAnimStateName == "A_SLoop")
+			{
+				weakMotion = false;
+				piston = true;
+			}
+			else if (hFlag.nowAnimStateName == "WLoop" || hFlag.nowAnimStateName == "A_WLoop")
+			{
+				weakMotion = true;
+				piston = true;
+			}
+			if (piston)
 			{
 				if (diffSum < threshold1)
 				{
