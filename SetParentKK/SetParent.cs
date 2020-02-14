@@ -1795,7 +1795,8 @@ namespace SetParent
 					DisableIKs(true, true);
 				}
 
-				if (chaMale != null && setParentMale && ctrlstate != CtrlStates.Following)
+
+				if (chaMale != null && setParentMale && currentCtrlstate != CtrlState.Following)
 				{
 					/////////////////////////
 					// Make the male body rotate around the crotch to keep its head align with the HMD without moving the crotch by
@@ -1943,7 +1944,7 @@ namespace SetParent
 			}
 			indexSpineRot = 0;
 			
-			if (setParentMale && chaMale != null && ctrlstate != CtrlStates.Following)
+			if (setParentMale && chaMale != null && currentCtrlstate != CtrlState.Following)
 			{
 				GameObject maleNeck = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");	
 				maleHeadPos = new GameObject("maleHeadPos");
@@ -2033,7 +2034,9 @@ namespace SetParent
 				}
 			}
 		}
-
+		/// <summary>
+		/// Change state of controller-to-characters relationship based on controller input
+		/// </summary>
 		private void ControllerActions()
 		{
 			///////////////////
@@ -2046,32 +2049,32 @@ namespace SetParent
 			///////////////////
 			if (parentIsLeft ? (RightTriggerPressing() && !RightTrackPadUp()) : (LeftTriggerPressing() && !LeftTrackPadUp()))
 			{
-				if (ctrlstate != CtrlStates.Stationary)
-					ctrlstate = ChangeControlState(ctrlstate, CtrlStates.Stationary);
+				if (currentCtrlstate != CtrlState.Stationary)
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Stationary);
 				return;
 			}
 			else if (parentIsLeft ? (RightTriggerPressing() && RightTrackPadUp()) : (LeftTriggerPressing() && LeftTrackPadUp()))
 			{
-				if (ctrlstate != CtrlStates.Following)
-					ctrlstate = ChangeControlState(ctrlstate, CtrlStates.Following);
+				if (currentCtrlstate != CtrlState.Following)
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Following);
 				return;
 			}
 			else if (parentIsLeft ? (RightGripPressing() && RightTrackPadDown()) : (LeftGripPressing() && LeftTrackPadDown()))
 			{
-				if (ctrlstate != CtrlStates.MaleControl)
-					ctrlstate = ChangeControlState(ctrlstate, CtrlStates.MaleControl);
+				if (currentCtrlstate != CtrlState.MaleControl)
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.MaleControl);
 				return;
 			}
 			else if (parentIsLeft ? (RightGripPressing() && RightTrackPadUp()) : (LeftGripPressing() && LeftTrackPadUp()))
 			{
-				if (ctrlstate != CtrlStates.FemaleControl)
-					ctrlstate = ChangeControlState(ctrlstate, CtrlStates.FemaleControl);
+				if (currentCtrlstate != CtrlState.FemaleControl)
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.FemaleControl);
 				return;
 			}
 			else
 			{
-				if (ctrlstate != CtrlStates.None)
-					ctrlstate = ChangeControlState(ctrlstate, CtrlStates.None);	
+				if (currentCtrlstate != CtrlState.None)
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.None);	
 				return;
 			}
 		}
@@ -2110,8 +2113,13 @@ namespace SetParent
 			parentDummy.transform.position = target.transform.position;
 			parentDummy.transform.rotation = target.transform.rotation;
 		}
-
-		private CtrlStates ChangeControlState (CtrlStates fromState, CtrlStates toState)
+		/// <summary>
+		/// Handles transition between controller-to-character parenting states
+		/// </summary>
+		/// <param name="fromState">initial state</param>
+		/// <param name="toState">target state</param>
+		/// <returns></returns>
+		private CtrlState ChangeControlState (CtrlState fromState, CtrlState toState)
 		{
 			if (fromState == toState)
 				return toState;
@@ -2119,21 +2127,21 @@ namespace SetParent
 			// Undo effects of the current state
 			switch (fromState)
 			{
-				case CtrlStates.None:
+				case CtrlState.None:
 					break;
 
-				case CtrlStates.MaleControl:
+				case CtrlState.MaleControl:
 					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
 					break;
 
-				case CtrlStates.FemaleControl:
+				case CtrlState.FemaleControl:
 					if (setParentMode == 2)
 						objSpinePos.transform.parent = null;
 					else
 						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
 					break;
 
-				case CtrlStates.Following:
+				case CtrlState.Following:
 					if (setParentMode != 0)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
 					if (setParentMode == 2)
@@ -2141,7 +2149,7 @@ namespace SetParent
 					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
 					break;
 
-				case CtrlStates.Stationary:
+				case CtrlState.Stationary:
 					if (setParentMode != 2)
 						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
 					if (setParentMode != 0)
@@ -2152,18 +2160,18 @@ namespace SetParent
 			//Apply effects of the target state and update current state to target state
 			switch (toState)
 			{
-				case CtrlStates.None:
-					return CtrlStates.None;
+				case CtrlState.None:
+					return CtrlState.None;
 
-				case CtrlStates.MaleControl:
+				case CtrlState.MaleControl:
 					chaMale.transform.parent = parentIsLeft ? rightController.transform : leftController.transform;
-					return CtrlStates.MaleControl;
+					return CtrlState.MaleControl;
 
-				case CtrlStates.FemaleControl:
+				case CtrlState.FemaleControl:
 					SetParentToController(!parentIsLeft, objSpinePos, objBase, false);
-					return CtrlStates.FemaleControl;
+					return CtrlState.FemaleControl;
 
-				case CtrlStates.Following:
+				case CtrlState.Following:
 					if (setParentMode == 2)
 						SetParentToController(parentIsLeft, objSpinePos, objBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
@@ -2171,19 +2179,19 @@ namespace SetParent
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 					}
 					chaMale.transform.parent = obj_p_cf_body_bone.transform;
-					return CtrlStates.Following;
+					return CtrlState.Following;
 
-				case CtrlStates.Stationary:
+				case CtrlState.Stationary:
 					if (setParentMode != 2)
 						objSpinePos.transform.parent = null;
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 					}
-					return CtrlStates.Stationary;
+					return CtrlState.Stationary;
 
 				default:
-					return CtrlStates.None;
+					return CtrlState.None;
 			}
 		}
 
@@ -2286,8 +2294,10 @@ namespace SetParent
 			trackingMode = ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
 			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
 		}
-
-		internal enum CtrlStates
+		/// <summary>
+		/// Describes the parenting relationship between the controller and the female/male character
+		/// </summary>
+		internal enum CtrlState
 		{
 			None,
 			Stationary,
@@ -2296,7 +2306,7 @@ namespace SetParent
 			FemaleControl
 		}
 
-		internal CtrlStates ctrlstate;
+		internal CtrlState currentCtrlstate;
 		
 		internal bool setFlag;
 
