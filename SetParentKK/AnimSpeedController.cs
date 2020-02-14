@@ -56,8 +56,6 @@ namespace SetParent
 			strongMotionThreshold = ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
 			weakMotionThreshold = ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
 			sMThreshold2Ratio = ModPrefs.GetFloat("SetParent", "sMThreshold2Ratio", 1.3f, true);
-			sonyuGaugeMax = ModPrefs.GetFloat("SetParent", "sonyuGaugeMax", 72f, true);
-			houshiGaugeMax = ModPrefs.GetFloat("SetParent", "houshiGaugeMax", 69f, true);
 		}
 
 		private void Update()
@@ -275,27 +273,13 @@ namespace SetParent
 				yield return new WaitForSeconds(1f);
 				if (moveFlag)
 				{
-					if (hFlag.mode == HFlag.EMode.houshi)
+					if (hFlag.gaugeFemale < 99f)
 					{
-						if (hFlag.gaugeFemale < houshiGaugeMax)
-						{
-							hFlag.gaugeFemale += 1f;
-						}
-						if (hFlag.gaugeMale < houshiGaugeMax)
-						{
-							hFlag.gaugeMale += 1f;
-						}
+						hFlag.gaugeFemale += 1f;
 					}
-					else
+					if (hFlag.gaugeMale < 99f)
 					{
-						if (hFlag.gaugeFemale < sonyuGaugeMax)
-						{
-							hFlag.gaugeFemale += 1f;
-						}
-						if (hFlag.gaugeMale < sonyuGaugeMax)
-						{
-							hFlag.gaugeMale += 1f;
-						}
+						hFlag.gaugeMale += 1f;
 					}
 				}
 				else
@@ -386,9 +370,5 @@ namespace SetParent
 		private bool guagef;
 
 		private bool guagem;
-
-		private float sonyuGaugeMax;
-
-		private float houshiGaugeMax;
 	}
 }
