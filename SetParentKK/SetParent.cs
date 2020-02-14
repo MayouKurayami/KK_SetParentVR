@@ -1576,15 +1576,15 @@ namespace SetParent
 
 			if (objCanvasSetParent == null)
 			{
-				InitCanvas();		
-			}
-			else
-			{
-				if (hideCanvas)
+				InitCanvas();
+				if (objCanvasSetParent != null && hideCanvas)
 				{
 					objCanvasSetParent.SetActive(false);
 					objCanvasMotion.SetActive(false);
 				}
+			}
+			else
+			{
 				if (RightMenuPressing() || LeftMenuPressing())
 				{
 					hideCount += Time.deltaTime;
