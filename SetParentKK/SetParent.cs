@@ -1888,7 +1888,6 @@ namespace SetParent
 			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
 			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			maleAim = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
 			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
 			leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
 			rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
@@ -2320,8 +2319,6 @@ namespace SetParent
 
 		private GameObject cameraEye;
 
-		private GameObject maleAim;
-
 		private GameObject femaleAim;
 
 		private FieldInfo f_device;
@@ -2389,8 +2386,6 @@ namespace SetParent
 		private BaseData bd_cf_t_leg_L;
 
 		public GameObject objLeftLeg;
-
-		private GameObject objParent;
 
 		private GameObject obj_chaF_001;
 
