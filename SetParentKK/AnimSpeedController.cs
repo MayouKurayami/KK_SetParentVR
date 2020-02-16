@@ -35,10 +35,6 @@ namespace SetParent
 			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 			leftConVecBefore = (leftConVecNow = leftController.transform.position);
 			rightConVecBefore = (rightConVecNow = rightController.transform.position);
-			guagef = hFlag.lockGugeFemale;
-			guagem = hFlag.lockGugeMale;
-			hFlag.lockGugeFemale = true;
-			hFlag.lockGugeMale = true;
 			weakMotion = true;
 			weakMotionCount = 1.5f;
 		}
@@ -196,8 +192,6 @@ namespace SetParent
 
 		private void OnDestroy()
 		{
-			hFlag.lockGugeFemale = guagef;
-			hFlag.lockGugeMale = guagem;
 			base.StopCoroutine("GuageControll");
 		}
 
@@ -273,28 +267,27 @@ namespace SetParent
 				yield return new WaitForSeconds(1f);
 				if (moveFlag)
 				{
-					if (hFlag.gaugeFemale < 99f)
+					if (hFlag.gaugeFemale < 99f && !hFlag.lockGugeFemale)
 					{
 						hFlag.gaugeFemale += 1f;
 					}
-					if (hFlag.gaugeMale < 99f)
+					if (hFlag.gaugeMale < 99f && !hFlag.lockGugeMale)
 					{
 						hFlag.gaugeMale += 1f;
 					}
 				}
 				else
 				{
-					if (hFlag.gaugeFemale > 5f)
+					if (hFlag.gaugeFemale > 5f && !hFlag.lockGugeFemale)
 					{
 						hFlag.gaugeFemale -= 2f;
 					}
-					if (hFlag.gaugeMale > 5f)
+					if (hFlag.gaugeMale > 5f && !hFlag.lockGugeMale)
 					{
 						hFlag.gaugeMale -= 2f;
 					}
-				}
+				}			
 			}
-			yield break;
 		}
 
 		private GameObject animObject;
@@ -366,9 +359,5 @@ namespace SetParent
 		private float sMThreshold2Ratio;
 
 		private float stopCount;
-
-		private bool guagef;
-
-		private bool guagem;
 	}
 }
