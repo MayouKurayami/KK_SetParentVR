@@ -168,7 +168,7 @@ namespace SetParent
 					{
 						fcount = 0f;
 					}
-					if (fcount >= finishCount)
+					if (finishCount > 0 && fcount >= finishCount)
 					{
 						hSprite.OnInsideClick();
 						fcount = 0f;
