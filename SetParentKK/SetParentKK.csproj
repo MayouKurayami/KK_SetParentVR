@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F561250A-A941-41DF-B90D-26B8E054EDED}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>SetParent</RootNamespace>
-    <AssemblyName>SetParentKK</AssemblyName>
+    <RootNamespace>SetParentKK</RootNamespace>
+    <AssemblyName>KK_SetParentVR</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -36,16 +36,24 @@
   <ItemGroup>
     <Compile Include="AnimSpeedController.cs" />
     <Compile Include="FixBodyParts.cs" />
+    <Compile Include="SetParentLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetParent.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\lib\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="IllusionPlugin">
-      <HintPath>..\lib\IllusionPlugin.dll</HintPath>
+    <Reference Include="BepInEx">
+      <HintPath>..\lib\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="ConfigurationManager">
+      <HintPath>..\lib\ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>..\lib\UnityEngine.dll</HintPath>
     </Reference>

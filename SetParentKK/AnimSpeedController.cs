@@ -1,8 +1,7 @@
-﻿using IllusionPlugin;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
-namespace SetParent
+namespace SetParentKK
 {
 	public class AnimSpeedController : MonoBehaviour
 	{
@@ -41,17 +40,17 @@ namespace SetParent
 
 		private void LoadFromModPref()
 		{
-			threshold1 = ModPrefs.GetFloat("SetParent", "threshold1", 0.05f, true);
-			threshold2 = ModPrefs.GetFloat("SetParent", "threshold2", 0.3f, true);
-			moveDistancePoolSize = ModPrefs.GetInt("SetParent", "moveDistancePoolSize", 100, true);
+			animMinThreshold = SetParentLoader.AnimStartThreshold.Value;
+			animMaxThreshold = SetParentLoader.AnimMaxThreshold.Value;
+			moveDistancePoolSize = SetParentLoader.MoveDistancePoolSize.Value;
 			moveDistance = new float[moveDistancePoolSize];
-			calcPattern = ModPrefs.GetInt("SetParent", "calcPattern", 0, true);
-			finishCount = ModPrefs.GetFloat("SetParent", "finishcount", 5f, true);
-			moveCoordinatePoolSize = ModPrefs.GetInt("SetParent", "moveCoordinatePoolSize", 100, true);
+			calcPattern = (int)SetParentLoader.CalcController.Value;
+			finishCount = SetParentLoader.Finishcount.Value;
+			moveCoordinatePoolSize = SetParentLoader.MoveCoordinatePoolSize.Value;
 			moveCoordinate = new Vector3[moveCoordinatePoolSize];
-			strongMotionThreshold = ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
-			weakMotionThreshold = ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
-			sMThreshold2Ratio = ModPrefs.GetFloat("SetParent", "sMThreshold2Ratio", 1.3f, true);
+			strongMotionThreshold = SetParentLoader.StrongMotionThreshold.Value;
+			weakMotionThreshold = SetParentLoader.WeakMotionThreshold.Value;
+			strongMotionMultiplier = SetParentLoader.StrongThresholdMultiplier.Value;
 		}
 
 		private void Update()
@@ -102,7 +101,7 @@ namespace SetParent
 			}
 			if (piston)
 			{
-				if (diffSum < threshold1)
+				if (diffSum < animMinThreshold)
 				{
 					if (moveFlag)
 					{
@@ -119,7 +118,7 @@ namespace SetParent
 						}
 					}
 				}
-				else if (threshold1 <= diffSum)
+				else if (animMinThreshold <= diffSum)
 				{
 					moveFlag = true;
 					stopCount = 0f;
@@ -147,11 +146,11 @@ namespace SetParent
 					}
 					if (weakMotion)
 					{
-						hFlag.speedCalc = Mathf.Clamp((diffSum - threshold1) / (threshold2 - threshold1), 0.1f, 1f);
+						hFlag.speedCalc = Mathf.Clamp((diffSum - animMinThreshold) / (animMaxThreshold - animMinThreshold), 0.1f, 1f);
 					}
 					else
 					{
-						hFlag.speedCalc = Mathf.Clamp((diffSum - threshold1) / (threshold2 * sMThreshold2Ratio - threshold1), 0.1f, 1f);
+						hFlag.speedCalc = Mathf.Clamp((diffSum - animMinThreshold) / (animMaxThreshold * strongMotionMultiplier - animMinThreshold), 0.1f, 1f);
 					}
 					if (hFlag.gaugeFemale > 70f)
 					{
@@ -179,7 +178,7 @@ namespace SetParent
 			else if (hFlag.nowAnimStateName == "InsertIdle" || hFlag.nowAnimStateName == "A_InsertIdle" || hFlag.nowAnimStateName == "IN_A" || hFlag.nowAnimStateName == "A_IN_A")
 			{
 				moveFlag = false;
-				if (threshold1 <= diffSum)
+				if (animMinThreshold <= diffSum)
 				{
 					hFlag.speedCalc = 0.1f;
 					hFlag.click = HFlag.ClickKind.speedup;
@@ -314,9 +313,9 @@ namespace SetParent
 
 		private HSprite hSprite;
 
-		private float threshold1;
+		private float animMinThreshold;
 
-		private float threshold2;
+		private float animMaxThreshold;
 
 		private float[] moveDistance;
 
@@ -356,7 +355,7 @@ namespace SetParent
 
 		private float weakMotionCount;
 
-		private float sMThreshold2Ratio;
+		private float strongMotionMultiplier;
 
 		private float stopCount;
 	}

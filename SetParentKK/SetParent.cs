@@ -1,67 +1,23 @@
 ﻿using Illusion.Component.Correct;
-using IllusionPlugin;
 using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VRTK;
+using static SetParentKK.SetParentLoader;
 
-namespace SetParent
+namespace SetParentKK
 {
-	public class SetParent : IPlugin
+	
+	public class SetParent : MonoBehaviour
 	{
-		public string Name
-		{
-			get
-			{
-				return "SetParent Plugin For Koikatu";
-			}
-		}
-
-		public string Version
-		{
-			get
-			{
-				return "0.10a";
-			}
-		}
-
-		public void OnApplicationStart()
-		{
-			setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
-			ModPrefs.GetFloat("SetParent", "threshold1", 0.05f, true);
-			ModPrefs.GetFloat("SetParent", "threshold2", 0.3f, true);
-			ModPrefs.GetInt("SetParent", "moveDistancePoolSize", 100, true);
-			ModPrefs.GetInt("SetParent", "calcPattern", 0, true);
-			ModPrefs.GetFloat("SetParent", "finishcount", 5f, true);
-			setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
-			ModPrefs.GetInt("SetParent", "moveCoordinatePoolSize", 100, true);
-			ModPrefs.GetFloat("SetParent", "strongMotionThreshold", 0.06f, true);
-			ModPrefs.GetFloat("SetParent", "weakMotionThreshold", 0.01f, true);
-			ModPrefs.GetFloat("SetParent", "sMThreshold2Ratio", 1.3f, true);
-			ModPrefs.GetBool("SetParent", "SetCollider", true, true);
-			ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
-			ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
-			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
-			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			SceneManager.sceneLoaded += OnSceneLoaded;
-		}
-
-		public void OnApplicationQuit()
-		{
-		}
-
-		public void OnLevelWasLoaded(int level)
-		{
-		}
-
-		private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
+		public void Start()
 		{
 			femaleExists = false;
 			positionMenuPressed = false;
-			hideCanvas = ModPrefs.GetBool("SetParent", "hideMenuAtStart", true, true);
+			hideCanvas = MenuHideDefault.Value;
+			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 		}
 
 		private void InitCanvas()
@@ -129,7 +85,7 @@ namespace SetParent
 			canvasScalerSetParent.referencePixelsPerUnit = 80000f;
 			canvasSetParent.renderMode = RenderMode.WorldSpace;
 			objCanvasSetParent.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			if (gazeControl)
+			if (GazeControl.Value)
 			{
 				VRTK_UIPointer vrtk_UIPointer = cameraEye.AddComponent<VRTK_UIPointer>();
 				vrtk_UIPointer.activationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
@@ -1200,7 +1156,7 @@ namespace SetParent
 			point.Normalize();
 			canvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
 			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
-			if (setCollider)
+			if (SetCollider.Value)
 			{
 				foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
 				{
@@ -1531,15 +1487,7 @@ namespace SetParent
 			}
 		}
 
-		public void OnLevelWasInitialized(int level)
-		{
-		}
-
-		public void OnFixedUpdate()
-		{
-		}
-
-		public void OnUpdate()
+		public void Update()
 		{
 			//Checks if female object exists. If not, exits the function
 			if (!femaleExists)
@@ -1566,11 +1514,6 @@ namespace SetParent
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
 
-			//Reloads config file on keypress
-			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
-			{
-				LoadFromModPref();
-			}
 
 			if (objCanvasSetParent == null)
 			{
@@ -1721,17 +1664,17 @@ namespace SetParent
 				{
 					quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
 				}
-				if (trackingMode)
+				if (TrackingMode.Value)
 				{
-					switch (parentPart)
+					switch (ParentPart.Value)
 					{
-						case 0:
+						case BodyPart.Ass:
 							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
-						case 1:
+						case BodyPart.Belly:
 							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
-						case 2:
+						case BodyPart.Head:
 							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
 						default:
@@ -1741,15 +1684,15 @@ namespace SetParent
 				}
 				else
 				{
-					switch (parentPart)
+					switch (ParentPart.Value)
 					{
-						case 0:
+						case BodyPart.Ass:
 							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
-						case 1:
+						case BodyPart.Belly:
 							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
-						case 2:
+						case BodyPart.Head:
 							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
 							break;
 						default:
@@ -1772,7 +1715,7 @@ namespace SetParent
 					a += b;
 				}
 				a /= 20f;
-				if (trackingMode)
+				if (TrackingMode.Value)
 				{
 					obj_p_cf_body_bone.transform.position += a - objBase.transform.position;
 				}
@@ -1788,13 +1731,13 @@ namespace SetParent
 				// -female is moving with controller, pr
 				// -male is rotating to HMD
 				////////////////////////////////////////////////////////////
-				if (chaMale != null && (positionMenuPressed || setParentMode == 0 || setParentMode == 1 || setParentMale))
+				if (chaMale != null && (positionMenuPressed || SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMale.Value))
 				{
 					DisableIKs(true, true);
 				}
 
 
-				if (chaMale != null && setParentMale && currentCtrlstate != CtrlState.Following)
+				if (chaMale != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
 					/////////////////////////
 					// Make the male body rotate around the crotch to keep its head align with the HMD without moving the crotch by
@@ -1901,15 +1844,15 @@ namespace SetParent
 			obj_cf_j_spine03 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03");
 			obj_cf_j_neck = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");
 
-			switch (parentPart)
+			switch (ParentPart.Value)
 			{
-				case 0:
+				case BodyPart.Ass:
 					objBase = obj_cf_j_hips;
 					break;
-				case 1:
+				case BodyPart.Belly:
 					objBase = obj_cf_j_spine02;
 					break;
-				case 2:
+				case BodyPart.Head:
 					objBase = obj_cf_j_neck;
 					break;
 				default:
@@ -1920,7 +1863,7 @@ namespace SetParent
 			{
 				objSpinePos = new GameObject("objSpinePos");
 			}
-			if (setParentMode == 0 || setParentMode == 1)
+			if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
 			{
 				SetParentToController(_parentIsLeft, objSpinePos, objBase, true);
 			}	
@@ -1941,7 +1884,7 @@ namespace SetParent
 			}
 			indexSpineRot = 0;
 			
-			if (setParentMale && chaMale != null && currentCtrlstate != CtrlState.Following)
+			if (SetParentMale.Value && chaMale != null && currentCtrlstate != CtrlState.Following)
 			{
 				GameObject maleNeck = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");	
 				maleHeadPos = new GameObject("maleHeadPos");
@@ -1956,7 +1899,7 @@ namespace SetParent
 				maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
 				maleCrotchPos.transform.parent = chaMale.transform;
 			}
-			if (setParentMode == 1 || setParentMode == 2)
+			if (SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMode.Value == ParentMode.AnimationOnly)
 			{
 				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, leftController, rightController);
 			}
@@ -2132,24 +2075,24 @@ namespace SetParent
 					break;
 
 				case CtrlState.FemaleControl:
-					if (setParentMode == 2)
+					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						objSpinePos.transform.parent = null;
 					else
 						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
 					break;
 
 				case CtrlState.Following:
-					if (setParentMode != 0)
+					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
-					if (setParentMode == 2)
+					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						objSpinePos.transform.parent = null;
 					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
 					break;
 
 				case CtrlState.Stationary:
-					if (setParentMode != 2)
+					if (SetParentMode.Value != ParentMode.AnimationOnly)
 						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
-					if (setParentMode != 0)
+					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
 					break;
 			}
@@ -2169,7 +2112,7 @@ namespace SetParent
 					return CtrlState.FemaleControl;
 
 				case CtrlState.Following:
-					if (setParentMode == 2)
+					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						SetParentToController(parentIsLeft, objSpinePos, objBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
@@ -2179,7 +2122,7 @@ namespace SetParent
 					return CtrlState.Following;
 
 				case CtrlState.Stationary:
-					if (setParentMode != 2)
+					if (SetParentMode.Value != ParentMode.AnimationOnly)
 						objSpinePos.transform.parent = null;
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
@@ -2282,15 +2225,7 @@ namespace SetParent
 			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPressDown(4UL);
 		}
 
-		private void LoadFromModPref()
-		{
-			setParentMode = ModPrefs.GetInt("SetParent", "setParentMode", 1, true);
-			setParentMale = ModPrefs.GetBool("SetParent", "setParentMale", false, true);
-			setCollider = ModPrefs.GetBool("SetParent", "SetCollider", true, true);
-			parentPart = ModPrefs.GetInt("SetParent", "ParentPart", 1, true);
-			trackingMode = ModPrefs.GetBool("SetParent", "TrackingMode", true, true);
-			gazeControl = ModPrefs.GetBool("SetParent", "gazeControl", false, true);
-		}
+		
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character
 		/// </summary>
@@ -2303,11 +2238,12 @@ namespace SetParent
 			FemaleControl
 		}
 
+
 		internal CtrlState currentCtrlstate;
 		
 		internal bool setFlag;
 
-		static internal bool femaleExists;
+		internal bool femaleExists;
 
 		private HFlag hFlag;
 
@@ -2330,10 +2266,6 @@ namespace SetParent
 		private SteamVR_Controller.Device leftDevice;
 
 		private SteamVR_Controller.Device rightDevice;
-
-		private bool setParentMale;
-
-		private int setParentMode;
 
 		private Canvas canvasSetParent;
 
@@ -2431,10 +2363,6 @@ namespace SetParent
 
 		private bool bFixBody;
 
-		public bool setCollider = true;
-
-		private int parentPart;
-
 		private Vector3[] vecSpinePos = new Vector3[20];
 
 		private int indexSpinePos;
@@ -2443,14 +2371,10 @@ namespace SetParent
 
 		private int indexSpineRot;
 
-		private bool trackingMode = true;
-
-		private bool hideCanvas;
+		internal bool hideCanvas;
 
 		private bool parentIsLeft;
 
-		private bool gazeControl;
-
-		private bool positionMenuPressed;
+		internal bool positionMenuPressed;
 	}
 }

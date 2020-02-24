@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SetParent
+namespace SetParentKK
 {
 	public class FixBodyParts : MonoBehaviour
 	{
@@ -21,7 +21,7 @@ namespace SetParent
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!setParent.setCollider || !setParent.setFlag)
+			if (!SetParentLoader.SetCollider.Value || !setParent.setFlag)
 			{
 				return;
 			}
