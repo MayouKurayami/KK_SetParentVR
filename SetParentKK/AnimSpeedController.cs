@@ -8,8 +8,8 @@ namespace SetParent
 	{
 		public void SetController(GameObject leftcon, GameObject rightcon)
 		{
-			leftController = leftcon;
-			rightController = rightcon;
+			parentController = leftcon;
+			subController = rightcon;
 		}
 
 		private void Start()
@@ -33,8 +33,8 @@ namespace SetParent
 			female = GameObject.Find("chaF_001");
 			spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
 			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
-			leftConVecBefore = (leftConVecNow = leftController.transform.position);
-			rightConVecBefore = (rightConVecNow = rightController.transform.position);
+			parentConVecBefore = (parentConVecNow = parentController.transform.position);
+			subConVecBefore = (subConVecNow = subController.transform.position);
 			weakMotion = true;
 			weakMotionCount = 1.5f;
 		}
@@ -69,25 +69,25 @@ namespace SetParent
 			{
 				LoadFromModPref();
 			}
-			leftConVecNow = leftController.transform.position;
-			rightConVecNow = rightController.transform.position;
+			parentConVecNow = parentController.transform.position;
+			subConVecNow = subController.transform.position;
 			switch (calcPattern)
 			{
 				case 0:
-					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude, 0f, 0.005f));
+					SaveMoveDistance(Mathf.Clamp((parentConVecNow - parentConVecBefore).magnitude, 0f, 0.005f));
 					break;
 				case 1:
-					SaveMoveDistance(Mathf.Clamp((rightConVecNow - rightConVecBefore).magnitude, 0f, 0.005f));
+					SaveMoveDistance(Mathf.Clamp((subConVecNow - subConVecBefore).magnitude, 0f, 0.005f));
 					break;
 				case 2:
-					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude + (rightConVecNow - rightConVecBefore).magnitude, 0f, 0.005f));
+					SaveMoveDistance(Mathf.Clamp((parentConVecNow - parentConVecBefore).magnitude + (subConVecNow - subConVecBefore).magnitude, 0f, 0.005f));
 					break;
 				default:
-					SaveMoveDistance(Mathf.Clamp((leftConVecNow - leftConVecBefore).magnitude, 0f, 0.005f));
+					SaveMoveDistance(Mathf.Clamp((parentConVecNow - parentConVecBefore).magnitude, 0f, 0.005f));
 					break;
 			}
 			diffSum = LoadMoveDistance();
-			SaveMoveCoordinate(leftConVecNow);
+			SaveMoveCoordinate(parentConVecNow);
 
 			bool piston = false;
 			if (hFlag.nowAnimStateName == "SLoop" || hFlag.nowAnimStateName == "A_SLoop")
@@ -125,14 +125,14 @@ namespace SetParent
 					stopCount = 0f;
 					if (weakMotion)
 					{
-						if ((leftConVecNow - CalcAvgCoordinate()).magnitude >= strongMotionThreshold)
+						if ((parentConVecNow - CalcAvgCoordinate()).magnitude >= strongMotionThreshold)
 						{
 							hFlag.click = HFlag.ClickKind.motionchange;
 							weakMotion = false;
 							weakMotionCount = 1.5f;
 						}
 					}
-					else if ((leftConVecNow - CalcAvgCoordinate()).magnitude <= weakMotionThreshold)
+					else if ((parentConVecNow - CalcAvgCoordinate()).magnitude <= weakMotionThreshold)
 					{
 						weakMotionCount -= Time.deltaTime;
 						if (weakMotionCount < 0f)
@@ -186,8 +186,8 @@ namespace SetParent
 					weakMotion = true;
 				}
 			}
-			leftConVecBefore = leftConVecNow;
-			rightConVecBefore = rightConVecNow;
+			parentConVecBefore = parentConVecNow;
+			subConVecBefore = subConVecNow;
 		}
 
 		private void OnDestroy()
@@ -296,17 +296,17 @@ namespace SetParent
 
 		private float orgSpeed;
 
-		private GameObject leftController;
+		private GameObject parentController;
 
-		private GameObject rightController;
+		private GameObject subController;
 
-		private Vector3 leftConVecBefore;
+		private Vector3 parentConVecBefore;
 
-		private Vector3 leftConVecNow;
+		private Vector3 parentConVecNow;
 
-		private Vector3 rightConVecBefore;
+		private Vector3 subConVecBefore;
 
-		private Vector3 rightConVecNow;
+		private Vector3 subConVecNow;
 
 		private HFlag hFlag;
 
