@@ -1,11 +1,14 @@
 ﻿using Illusion.Component.Correct;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VRTK;
 using static SetParentKK.SetParentLoader;
+using Harmony;
+using RootMotion.FinalIK;
 
 namespace SetParentKK
 {
@@ -25,56 +28,69 @@ namespace SetParentKK
 			femaleExists = false;
 			positionMenuPressed = false;
 			hideCanvas = MenuHideDefault.Value;
+
+			hFlag = hSprite.flags;
 			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			cameraEye = hSprite.managerVR.objCamera;
+			leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
+			rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
+
+			male = (ChaControl)Traverse.Create(hSprite).Field("male").GetValue();
+			female = ((List<ChaControl>)Traverse.Create(hSprite).Field("females").GetValue())[0];
+			obj_chaF_001 = female.objRoot;
+			male_p_cf_bodybone = male.objAnim;
+			female_p_cf_bodybone = female.objAnim;
+			maleFBBIK = male_p_cf_bodybone.GetComponent<FullBodyBipedIK>();
+			femaleFBBIK = female_p_cf_bodybone.GetComponent<FullBodyBipedIK>();
+
+			femaleAim = femaleFBBIK.references.head.Find("cf_s_head/aim").gameObject;
+			female_cf_t_hand_R = femaleFBBIK.solver.rightHandEffector.target.gameObject;
+			female_cf_t_hand_L = femaleFBBIK.solver.leftHandEffector.target.gameObject;
+			female_cf_t_leg_R = femaleFBBIK.solver.rightFootEffector.target.gameObject;
+			female_cf_t_leg_L = femaleFBBIK.solver.leftFootEffector.target.gameObject;
+
+			female_cf_t_hand_R_bd = female_cf_t_hand_R.GetComponent<BaseData>();
+			female_cf_t_hand_L_bd = female_cf_t_hand_L.GetComponent<BaseData>();
+			female_cf_t_leg_R_bd = female_cf_t_leg_R.GetComponent<BaseData>();
+			female_cf_t_leg_L_bd = female_cf_t_leg_L.GetComponent<BaseData>();
+
+			female_cf_j_root = femaleFBBIK.references.root.gameObject;
+			female_cf_j_hips = femaleFBBIK.references.pelvis.gameObject;
+			female_cf_n_height = femaleFBBIK.references.pelvis.parent.gameObject;
+			female_cf_j_spine01 = femaleFBBIK.references.spine[0].gameObject;
+			female_cf_j_spine02 = femaleFBBIK.references.spine[1].gameObject;
+			female_cf_j_neck = femaleFBBIK.references.spine[2].gameObject;
+			female_cf_j_spine03 = femaleFBBIK.references.spine[2].parent.gameObject;
+
+
+			female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R").gameObject;
+			female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L").gameObject;
+			female_cf_pv_leg_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_R").gameObject;
+			female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L").gameObject;	
 		}
 
 		private void InitCanvas()
 		{
-			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			if (femaleAim == null)
-			{
-				return;
-			}
-			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			if (cameraEye == null)
-			{
-				return;
-			}
-			chaMale = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
-			if (chaMale == null)
-			{
-				return;
-			}
-			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
+			GameObject rightHandCollider = new GameObject("RightHandCollider");
+			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
+			rightHandCollider.transform.parent = female_cf_t_hand_R.transform;
+			rightHandCollider.transform.localPosition = Vector3.zero;
+			
+			GameObject leftHandCollider = new GameObject("LeftHandCollider");
+			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
+			leftHandCollider.transform.parent = female_cf_t_hand_L.transform;
+			leftHandCollider.transform.localPosition = Vector3.zero;
+		
+			GameObject rightLegCollider = new GameObject("RightLegCollider");
+			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
+			rightLegCollider.transform.parent = female_cf_t_leg_R.transform;
+			rightLegCollider.transform.localPosition = Vector3.zero;
+			
+			GameObject leftLegCollider = new GameObject("LeftLegCollider");
+			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
+			leftLegCollider.transform.parent = female_cf_t_leg_L.transform;
+			leftLegCollider.transform.localPosition = Vector3.zero;
 
-			obj_cf_t_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R");
-			bd_cf_t_hand_R = obj_cf_t_hand_R.GetComponent<BaseData>();
-			obj_cf_pv_hand_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
-			GameObject gameObject = new GameObject("RightHandCollider");
-			gameObject.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
-			gameObject.transform.parent = obj_cf_t_hand_R.transform;
-			gameObject.transform.localPosition = Vector3.zero;
-			obj_cf_t_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L");
-			bd_cf_t_hand_L = obj_cf_t_hand_L.GetComponent<BaseData>();
-			obj_cf_pv_hand_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
-			GameObject gameObject2 = new GameObject("LeftHandCollider");
-			gameObject2.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
-			gameObject2.transform.parent = obj_cf_t_hand_L.transform;
-			gameObject2.transform.localPosition = Vector3.zero;
-			obj_cf_t_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_R");
-			bd_cf_t_leg_R = obj_cf_t_leg_R.GetComponent<BaseData>();
-			obj_cf_pv_leg_R = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_R");
-			GameObject gameObject3 = new GameObject("RightLegCollider");
-			gameObject3.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
-			gameObject3.transform.parent = obj_cf_t_leg_R.transform;
-			gameObject3.transform.localPosition = Vector3.zero;
-			obj_cf_t_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_leg_L");
-			bd_cf_t_leg_L = obj_cf_t_leg_L.GetComponent<BaseData>();
-			obj_cf_pv_leg_L = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_leg_L");
-			GameObject gameObject4 = new GameObject("LeftLegCollider");
-			gameObject4.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
-			gameObject4.transform.parent = obj_cf_t_leg_L.transform;
-			gameObject4.transform.localPosition = Vector3.zero;
 			objCanvasSetParent = new GameObject("CanvasSetParent", new Type[]
 			{
 				typeof(Canvas)
@@ -1221,14 +1237,14 @@ namespace SetParentKK
 			if (objRightHand == null)
 			{
 				objRightHand = new GameObject("objRightHand");
-				objRightHand.transform.position = obj_cf_pv_hand_R.transform.position;
-				objRightHand.transform.rotation = obj_cf_pv_hand_R.transform.rotation;
-				bd_cf_t_hand_R.bone = objRightHand.transform;
+				objRightHand.transform.position = female_cf_pv_hand_R.transform.position;
+				objRightHand.transform.rotation = female_cf_pv_hand_R.transform.rotation;
+				female_cf_t_hand_R_bd.bone = objRightHand.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightHand);
 			objRightHand = null;
-			bd_cf_t_hand_R.bone = obj_cf_pv_hand_R.transform;
+			female_cf_t_hand_R_bd.bone = female_cf_pv_hand_R.transform;
 		}
 
 		public void PushFixLeftHandButton()
@@ -1236,14 +1252,14 @@ namespace SetParentKK
 			if (objLeftHand == null)
 			{
 				objLeftHand = new GameObject("objLeftHand");
-				objLeftHand.transform.position = obj_cf_pv_hand_L.transform.position;
-				objLeftHand.transform.rotation = obj_cf_pv_hand_L.transform.rotation;
-				bd_cf_t_hand_L.bone = objLeftHand.transform;
+				objLeftHand.transform.position = female_cf_pv_hand_L.transform.position;
+				objLeftHand.transform.rotation = female_cf_pv_hand_L.transform.rotation;
+				female_cf_t_hand_L_bd.bone = objLeftHand.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftHand);
 			objLeftHand = null;
-			bd_cf_t_hand_L.bone = obj_cf_pv_hand_L.transform;
+			female_cf_t_hand_L_bd.bone = female_cf_pv_hand_L.transform;
 		}
 
 		public void PushFixRightLegButton()
@@ -1251,14 +1267,14 @@ namespace SetParentKK
 			if (objRightLeg == null)
 			{
 				objRightLeg = new GameObject("objRightLeg");
-				objRightLeg.transform.position = obj_cf_pv_leg_R.transform.position;
-				objRightLeg.transform.rotation = obj_cf_pv_leg_R.transform.rotation;
-				bd_cf_t_leg_R.bone = objRightLeg.transform;
+				objRightLeg.transform.position = female_cf_pv_leg_R.transform.position;
+				objRightLeg.transform.rotation = female_cf_pv_leg_R.transform.rotation;
+				female_cf_t_leg_R_bd.bone = objRightLeg.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightLeg);
 			objRightLeg = null;
-			bd_cf_t_leg_R.bone = obj_cf_pv_leg_R.transform;
+			female_cf_t_leg_R_bd.bone = female_cf_pv_leg_R.transform;
 		}
 
 		public void PushFixLeftLegButton()
@@ -1266,19 +1282,19 @@ namespace SetParentKK
 			if (objLeftLeg == null)
 			{
 				objLeftLeg = new GameObject("objLeftLeg");
-				objLeftLeg.transform.position = obj_cf_pv_leg_L.transform.position;
-				objLeftLeg.transform.rotation = obj_cf_pv_leg_L.transform.rotation;
-				bd_cf_t_leg_L.bone = objLeftLeg.transform;
+				objLeftLeg.transform.position = female_cf_pv_leg_L.transform.position;
+				objLeftLeg.transform.rotation = female_cf_pv_leg_L.transform.rotation;
+				female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftLeg);
 			objLeftLeg = null;
-			bd_cf_t_leg_L.bone = obj_cf_pv_leg_L.transform;
+			female_cf_t_leg_L_bd.bone = female_cf_pv_leg_L.transform;
 		}
 
 		private void ChangeMotion(string path, string name)
 		{
-			Animator component = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone").GetComponent<Animator>();
+			Animator component = female_p_cf_bodybone.GetComponent<Animator>();
 			RuntimeAnimatorController runtimeAnimatorController = CommonLib.LoadAsset<RuntimeAnimatorController>(path, name, false, string.Empty);
 			AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(component.runtimeAnimatorController);
 			foreach (AnimationClip animationClip in new AnimatorOverrideController(runtimeAnimatorController).animationClips)
@@ -1461,7 +1477,7 @@ namespace SetParentKK
 		private void PushMotionChangeButton()
 		{
 			hFlag.click = HFlag.ClickKind.motionchange;
-			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
+			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
 				component.weakMotion = !component.weakMotion;
@@ -1471,7 +1487,7 @@ namespace SetParentKK
 		private void PushFIButton()
 		{
 			hSprite.OnInsideClick();
-			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
+			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
 				component.fcount = 0f;
@@ -1482,7 +1498,7 @@ namespace SetParentKK
 		private void PushFOButton()
 		{
 			hSprite.OnOutsideClick();
-			AnimSpeedController component = GameObject.Find("chaF_001").GetComponent<AnimSpeedController>();
+			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
 			if (component != null)
 			{
 				component.fcount = 0f;
@@ -1495,7 +1511,7 @@ namespace SetParentKK
 			//Checks if female object exists. If not, exits the function
 			if (!femaleExists)
 			{
-				if (GameObject.Find("chaF_001") == null)
+				if (obj_chaF_001 == null)
 				{
 					femaleExists = false;
 					return;
@@ -1506,13 +1522,17 @@ namespace SetParentKK
 			//Find and assign left and right controllers variables if they are null
 			if (leftDevice == null)
 			{
-				leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
+				if (leftController == null)
+					leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
+
 				leftVVC = leftController.GetComponent<VRViveController>();
 				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
 			}
 			if (rightDevice == null)
 			{
-				rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
+				if (rightController == null)
+					rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
+
 				rightVVC = rightController.GetComponent<VRViveController>();
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
@@ -1561,46 +1581,46 @@ namespace SetParentKK
 			}
 			if (objRightHand != null && !bFixBody)
 			{
-				if ((obj_cf_t_hand_R.transform.position - obj_cf_pv_hand_R.transform.position).magnitude > 0.5f)
+				if ((female_cf_t_hand_R.transform.position - female_cf_pv_hand_R.transform.position).magnitude > 0.5f)
 				{
 					PushFixRightHandButton();
 				}
 				else
 				{
-					bd_cf_t_hand_R.bone = objRightHand.transform;
+					female_cf_t_hand_R_bd.bone = objRightHand.transform;
 				}
 			}
 			if (objLeftHand != null && !bFixBody)
 			{
-				if ((obj_cf_t_hand_L.transform.position - obj_cf_pv_hand_L.transform.position).magnitude > 0.5f)
+				if ((female_cf_t_hand_L.transform.position - female_cf_pv_hand_L.transform.position).magnitude > 0.5f)
 				{
 					PushFixLeftHandButton();
 				}
 				else
 				{
-					bd_cf_t_hand_L.bone = objLeftHand.transform;
+					female_cf_t_hand_L_bd.bone = objLeftHand.transform;
 				}
 			}
 			if (objRightLeg != null && !bFixBody)
 			{
-				if ((obj_cf_t_leg_R.transform.position - obj_cf_pv_leg_R.transform.position).magnitude > 0.5f)
+				if ((female_cf_t_leg_R.transform.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
 				{
 					PushFixRightLegButton();
 				}
 				else
 				{
-					bd_cf_t_leg_R.bone = objRightLeg.transform;
+					female_cf_t_leg_R_bd.bone = objRightLeg.transform;
 				}
 			}
 			if (objLeftLeg != null && !bFixBody)
 			{
-				if ((obj_cf_t_leg_L.transform.position - obj_cf_pv_leg_L.transform.position).magnitude > 0.5f)
+				if ((female_cf_t_leg_L.transform.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
 				{
 					PushFixLeftLegButton();
 				}
 				else
 				{
-					bd_cf_t_leg_L.bone = objLeftLeg.transform;
+					female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
 				}
 			}
 			//////////////
@@ -1642,18 +1662,12 @@ namespace SetParentKK
 				{
 					UnsetP();
 					setFlag = !setFlag;
-					GameObject.Find("chaF_001");
 					nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
-				}
-
-				if (leftController == null)
-				{
-					leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
 				}
 
 				ControllerActions();
 
-				quatSpineRot[indexSpineRot] = objSpinePos.transform.rotation;
+				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
 				if (indexSpineRot >= 19)
 				{
 					indexSpineRot = 0;
@@ -1672,16 +1686,16 @@ namespace SetParentKK
 					switch (ParentPart.Value)
 					{
 						case BodyPart.Ass:
-							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Belly:
-							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Head:
-							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						default:
-							obj_p_cf_body_bone.transform.rotation = quaternion * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 					}
 				}
@@ -1690,20 +1704,20 @@ namespace SetParentKK
 					switch (ParentPart.Value)
 					{
 						case BodyPart.Ass:
-							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Belly:
-							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Head:
-							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_neck.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						default:
-							obj_p_cf_body_bone.transform.rotation = objSpinePos.transform.rotation * Quaternion.Inverse(obj_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(obj_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(obj_cf_j_hips.transform.localRotation) * Quaternion.Inverse(obj_cf_n_height.transform.localRotation) * Quaternion.Inverse(obj_cf_j_root.transform.localRotation);
+							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 					}
 				}
-				vecSpinePos[indexSpinePos] = objSpinePos.transform.position;
+				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
 				if (indexSpinePos >= 19)
 				{
 					indexSpinePos = 0;
@@ -1720,11 +1734,11 @@ namespace SetParentKK
 				a /= 20f;
 				if (TrackingMode.Value)
 				{
-					obj_p_cf_body_bone.transform.position += a - objBase.transform.position;
+					female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
 				}
 				else
 				{
-					obj_p_cf_body_bone.transform.position += objSpinePos.transform.position - objBase.transform.position;
+					female_p_cf_bodybone.transform.position += femaleSpinePos.transform.position - femaleBase.transform.position;
 				}	
 
 				////////////////////////////////////////////////////////////
@@ -1734,13 +1748,13 @@ namespace SetParentKK
 				// -female is moving with controller, pr
 				// -male is rotating to HMD
 				////////////////////////////////////////////////////////////
-				if (chaMale != null && (positionMenuPressed || SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMale.Value))
+				if (male_p_cf_bodybone != null && (positionMenuPressed || SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMale.Value))
 				{
 					DisableIKs(true, true);
 				}
 
 
-				if (chaMale != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
+				if (male_p_cf_bodybone != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
 					/////////////////////////
 					// Make the male body rotate around the crotch to keep its head align with the HMD without moving the crotch by
@@ -1750,7 +1764,7 @@ namespace SetParentKK
 					Vector3 cameraVec = cameraEye.transform.position - maleCrotchPos.transform.position;
 					Vector3 maleSpineVec = maleHeadPos.transform.position - maleCrotchPos.transform.position;
 					Quaternion.FromToRotation(maleSpineVec, cameraVec).ToAngleAxis(out float lookRotAngle, out Vector3 lookRotAxis);
-					chaMale.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);
+					male_p_cf_bodybone.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);
 
 					/////////////////////////
 					// Update position of the spine vector, and using it as an axis to rotate the male body to "look" left or right by following the HMD's rotation
@@ -1763,7 +1777,7 @@ namespace SetParentKK
 					Vector3 malePenisProjected = Vector3.ProjectOnPlane(maleCrotchPos.transform.forward, maleSpineVec);
 					Vector3 cameraForwardProjected = Quaternion.AngleAxis(-90, maleSpineVec) * Vector3.ProjectOnPlane(cameraEye.transform.right, maleSpineVec);
 					Quaternion.FromToRotation(malePenisProjected, cameraForwardProjected).ToAngleAxis(out lookRotAngle, out lookRotAxis);
-					chaMale.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);		
+					male_p_cf_bodybone.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);		
 				}
 				if (hideCanvas)
 				{
@@ -1799,19 +1813,19 @@ namespace SetParentKK
 			{
 				if (objRightHand != null)
 				{
-					bd_cf_t_hand_R.bone = objRightHand.transform;
+					female_cf_t_hand_R_bd.bone = objRightHand.transform;
 				}
 				if (objLeftHand != null)
 				{
-					bd_cf_t_hand_L.bone = objLeftHand.transform;
+					female_cf_t_hand_L_bd.bone = objLeftHand.transform;
 				}
 				if (objRightLeg != null)
 				{
-					bd_cf_t_leg_R.bone = objRightLeg.transform;
+					female_cf_t_leg_R_bd.bone = objRightLeg.transform;
 				}
 				if (objLeftLeg != null)
 				{
-					bd_cf_t_leg_L.bone = objLeftLeg.transform;
+					female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
 				}
 				txtFixBody.text = "手足固定 On";
 				return;
@@ -1821,86 +1835,71 @@ namespace SetParentKK
 
 		private void SetP(bool _parentIsLeft)
 		{
-			obj_chaF_001 = GameObject.Find("chaF_001");
 			if (obj_chaF_001 == null)
 			{
 				return;
 			}
-			if (chaMale == null)
+			if (male_p_cf_bodybone == null)
 			{
 				GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			}
 			parentIsLeft = _parentIsLeft;
-			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
-			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
-			cameraEye = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Camera (eye)");
-			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
-			leftController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)");
-			rightController = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)");
-			
-			obj_p_cf_body_bone = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
-			obj_cf_j_root = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root");
-			obj_cf_n_height = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height");
-			obj_cf_j_hips = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips");
-			obj_cf_j_spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
-			obj_cf_j_spine02 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02");
-			obj_cf_j_spine03 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03");
-			obj_cf_j_neck = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");
+			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;		
 
 			switch (ParentPart.Value)
 			{
 				case BodyPart.Ass:
-					objBase = obj_cf_j_hips;
+					femaleBase = female_cf_j_hips;
 					break;
 				case BodyPart.Belly:
-					objBase = obj_cf_j_spine02;
+					femaleBase = female_cf_j_spine02;
 					break;
 				case BodyPart.Head:
-					objBase = obj_cf_j_neck;
+					femaleBase = female_cf_j_neck;
 					break;
 				default:
-					objBase = obj_cf_j_spine02;
+					femaleBase = female_cf_j_spine02;
 					break;
 			}
-			if (objSpinePos == null)
+			if (femaleSpinePos == null)
 			{
-				objSpinePos = new GameObject("objSpinePos");
+				femaleSpinePos = new GameObject("femaleSpinePos");
 			}
 			if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
 			{
-				SetParentToController(_parentIsLeft, objSpinePos, objBase, true);
+				SetParentToController(_parentIsLeft, femaleSpinePos, femaleBase, true);
 			}	
 			else
 			{
-				objSpinePos.transform.position = objBase.transform.position;
-				objSpinePos.transform.rotation = objBase.transform.rotation;
+				femaleSpinePos.transform.position = femaleBase.transform.position;
+				femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
 			}
 			
 			for (int i = 0; i < 20; i++)
 			{
-				vecSpinePos[i] = objSpinePos.transform.position;
+				vecSpinePos[i] = femaleSpinePos.transform.position;
 			}
 			indexSpinePos = 0;
 			for (int j = 0; j < 20; j++)
 			{
-				quatSpineRot[j] = objSpinePos.transform.rotation;
+				quatSpineRot[j] = femaleSpinePos.transform.rotation;
 			}
 			indexSpineRot = 0;
 			
-			if (SetParentMale.Value && chaMale != null && currentCtrlstate != CtrlState.Following)
+			if (SetParentMale.Value && male_p_cf_bodybone != null && currentCtrlstate != CtrlState.Following)
 			{
-				GameObject maleNeck = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck");	
+				GameObject maleNeck = maleFBBIK.references.spine[2].gameObject;	
 				maleHeadPos = new GameObject("maleHeadPos");
 				maleHeadPos.transform.position = maleNeck.transform.position;
 				maleHeadPos.transform.rotation = maleNeck.transform.rotation;
 				maleHeadPos.transform.parent = maleNeck.transform;
 				maleHeadPos.transform.localPosition = new Vector3(0, 0, 0.08f);
 
-				GameObject maleCrotch = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_waist01/cf_j_waist02/cf_d_kokan/cm_J_dan_top");
+				GameObject maleCrotch = maleFBBIK.references.leftThigh.parent.Find("cf_d_kokan/cm_J_dan_top").gameObject;
 				maleCrotchPos = new GameObject("maleCrotchPos");
 				maleCrotchPos.transform.position = maleCrotch.transform.position;
 				maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
-				maleCrotchPos.transform.parent = chaMale.transform;
+				maleCrotchPos.transform.parent = male_p_cf_bodybone.transform;
 			}
 			if (SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMode.Value == ParentMode.AnimationOnly)
 			{
@@ -1910,26 +1909,25 @@ namespace SetParentKK
 
 		public void UnsetP()
 		{
-			GameObject gameObject = GameObject.Find("chaF_001");
-			if (gameObject == null)
+			if (obj_chaF_001 == null)
 			{
 				return;
 			}
-			gameObject.transform.parent = GameObject.Find("Component").transform;
+			obj_chaF_001.transform.parent = GameObject.Find("Component").transform;
 
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
-			UnityEngine.Object.Destroy(objSpinePos);
-			GameObject gameObject2 = GameObject.Find("chaM_001");
-			if (gameObject2 != null)
+			UnityEngine.Object.Destroy(femaleSpinePos);
+			GameObject obj_chaM_001 = male.objRoot;
+			if (obj_chaM_001 != null)
 			{
-				gameObject2.transform.parent = GameObject.Find("Component").transform;
+				obj_chaM_001.transform.parent = GameObject.Find("Component").transform;
 			}
-			GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model").SetActive(true);
-			GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)/Model").SetActive(true);
-			if (gameObject.GetComponent<AnimSpeedController>() != null)
+			leftController.transform.Find("Model").gameObject.SetActive(true);
+			rightController.transform.Find("Model").gameObject.SetActive(true);
+			if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 			{
-				UnityEngine.Object.Destroy(gameObject.GetComponent<AnimSpeedController>());
+				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
 		}
 
@@ -1961,19 +1959,19 @@ namespace SetParentKK
 			{
 				if (objRightHand == null)
 				{
-					bd_cf_t_hand_R.bone = obj_cf_pv_hand_R.transform;
+					female_cf_t_hand_R_bd.bone = female_cf_pv_hand_R.transform;
 				}
 				if (objLeftHand == null)
 				{
-					bd_cf_t_hand_L.bone = obj_cf_pv_hand_L.transform;
+					female_cf_t_hand_L_bd.bone = female_cf_pv_hand_L.transform;
 				}
 				if (objRightLeg == null)
 				{
-					bd_cf_t_leg_R.bone = obj_cf_pv_leg_R.transform;
+					female_cf_t_leg_R_bd.bone = female_cf_pv_leg_R.transform;
 				}
 				if (objLeftLeg == null)
 				{
-					bd_cf_t_leg_L.bone = obj_cf_pv_leg_L.transform;
+					female_cf_t_leg_L_bd.bone = female_cf_pv_leg_L.transform;
 				}
 			}
 		}
@@ -2045,13 +2043,13 @@ namespace SetParentKK
 			{
 				parentDummy.transform.parent = leftController.transform;
 				if (hideModel)
-					GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model").SetActive(false);
+					leftController.transform.Find("Model").gameObject.SetActive(false);
 			}
 			else
 			{
 				parentDummy.transform.parent = rightController.transform;
 				if (hideModel)
-					GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (right)/Model").SetActive(false);
+					rightController.transform.Find("Model").gameObject.SetActive(false);
 			}
 			parentDummy.transform.position = target.transform.position;
 			parentDummy.transform.rotation = target.transform.rotation;
@@ -2074,27 +2072,27 @@ namespace SetParentKK
 					break;
 
 				case CtrlState.MaleControl:
-					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
+					male_p_cf_bodybone.transform.parent = male.objTop.transform;
 					break;
 
 				case CtrlState.FemaleControl:
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						objSpinePos.transform.parent = null;
+						femaleSpinePos.transform.parent = null;
 					else
-						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 					break;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						objSpinePos.transform.parent = null;
-					chaMale.transform.parent = GameObject.Find("chaM_001/BodyTop").transform;
+						femaleSpinePos.transform.parent = null;
+					male_p_cf_bodybone.transform.parent = male.objTop.transform;
 					break;
 
 				case CtrlState.Stationary:
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, objSpinePos, objBase, true);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
 					break;
@@ -2107,26 +2105,26 @@ namespace SetParentKK
 					return CtrlState.None;
 
 				case CtrlState.MaleControl:
-					chaMale.transform.parent = parentIsLeft ? rightController.transform : leftController.transform;
+					male_p_cf_bodybone.transform.parent = parentIsLeft ? rightController.transform : leftController.transform;
 					return CtrlState.MaleControl;
 
 				case CtrlState.FemaleControl:
-					SetParentToController(!parentIsLeft, objSpinePos, objBase, false);
+					SetParentToController(!parentIsLeft, femaleSpinePos, femaleBase, false);
 					return CtrlState.FemaleControl;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, objSpinePos, objBase, false);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 					}
-					chaMale.transform.parent = obj_p_cf_body_bone.transform;
+					male_p_cf_bodybone.transform.parent = female_p_cf_bodybone.transform;
 					return CtrlState.Following;
 
 				case CtrlState.Stationary:
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
-						objSpinePos.transform.parent = null;
+						femaleSpinePos.transform.parent = null;
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
@@ -2250,6 +2248,14 @@ namespace SetParentKK
 
 		private HFlag hFlag;
 
+		private ChaControl male;
+
+		private ChaControl female;
+
+		private FullBodyBipedIK maleFBBIK;
+
+		private FullBodyBipedIK femaleFBBIK;
+
 		private string nameAnimation = "";
 
 		private GameObject leftController;
@@ -2288,63 +2294,63 @@ namespace SetParentKK
 
 		private float hideCount;
 
-		private HSprite hSprite;
+		internal HSprite hSprite;
 
-		private GameObject obj_cf_t_hand_R;
+		private GameObject female_cf_t_hand_R;
 
-		private GameObject obj_cf_pv_hand_R;
+		private GameObject female_cf_pv_hand_R;
 
-		private BaseData bd_cf_t_hand_R;
+		private BaseData female_cf_t_hand_R_bd;
 
 		public GameObject objRightHand;
 
-		private GameObject obj_cf_t_hand_L;
+		private GameObject female_cf_t_hand_L;
 
-		private GameObject obj_cf_pv_hand_L;
+		private GameObject female_cf_pv_hand_L;
 
-		private BaseData bd_cf_t_hand_L;
+		private BaseData female_cf_t_hand_L_bd;
 
 		public GameObject objLeftHand;
 
-		private GameObject obj_cf_t_leg_R;
+		private GameObject female_cf_t_leg_R;
 
-		private GameObject obj_cf_pv_leg_R;
+		private GameObject female_cf_pv_leg_R;
 
-		private BaseData bd_cf_t_leg_R;
+		private BaseData female_cf_t_leg_R_bd;
 
 		public GameObject objRightLeg;
 
-		private GameObject obj_cf_t_leg_L;
+		private GameObject female_cf_t_leg_L;
 
-		private GameObject obj_cf_pv_leg_L;
+		private GameObject female_cf_pv_leg_L;
 
-		private BaseData bd_cf_t_leg_L;
+		private BaseData female_cf_t_leg_L_bd;
 
 		public GameObject objLeftLeg;
 
 		private GameObject obj_chaF_001;
 
-		private GameObject obj_p_cf_body_bone;
+		private GameObject female_p_cf_bodybone;
 
-		private GameObject obj_cf_j_root;
+		private GameObject female_cf_j_root;
 
-		private GameObject obj_cf_n_height;
+		private GameObject female_cf_n_height;
 
-		private GameObject obj_cf_j_hips;
+		private GameObject female_cf_j_hips;
 
-		private GameObject obj_cf_j_spine01;
+		private GameObject female_cf_j_spine01;
 
-		private GameObject obj_cf_j_spine02;
+		private GameObject female_cf_j_spine02;
 
-		private GameObject obj_cf_j_spine03;
+		private GameObject female_cf_j_spine03;
 
-		private GameObject obj_cf_j_neck;
+		private GameObject female_cf_j_neck;
 
-		private GameObject objBase;
+		private GameObject femaleBase;
 
-		private GameObject objSpinePos;
+		private GameObject femaleSpinePos;
 
-		private GameObject chaMale;
+		private GameObject male_p_cf_bodybone;
 
 		private GameObject maleHeadPos;
 
