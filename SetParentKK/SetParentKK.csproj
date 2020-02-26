@@ -39,6 +39,7 @@
     <Compile Include="SetParentLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetParent.cs" />
+    <Compile Include="VRHScene_Load_Patch.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using BepInEx;
 using Harmony;
 
@@ -99,7 +97,7 @@ namespace SetParentKK
 			if (!(dataPathVR = Application.dataPath.EndsWith("KoikatuVR_Data")))
 				return;
 
-			SceneManager.sceneLoaded += OnSceneLoaded;
+			HarmonyInstance.Create(GUID).PatchAll(typeof(VRHScene_Load_Patch));
 		}
 
 		private void Update()
@@ -112,18 +110,6 @@ namespace SetParentKK
 			{
 				LoadFromModPref();
 			}
-		}
-		private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
-		{
-			VRHScene hScene = FindObjectOfType<VRHScene>();
-			if (hScene == null)
-				return;
-
-			SetParent setParent = hScene.GetComponent<SetParent>();
-			if (setParent != null)
-				Destroy(setParent);
-
-			hScene.gameObject.AddComponent<SetParent>();
 		}
 
 		private void LoadFromModPref()

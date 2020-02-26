@@ -14,6 +14,14 @@ namespace SetParentKK
 	{
 		public void Start()
 		{
+			if (hSprite == null)
+			{
+				if (!(hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL/HSceneMainCanvas/MainCanvas").GetComponent<HSprite>()))
+				{
+					BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, "HSprite not found. SetParent will exit");
+					Destroy(this);
+				}
+			}
 			femaleExists = false;
 			positionMenuPressed = false;
 			hideCanvas = MenuHideDefault.Value;
@@ -22,11 +30,6 @@ namespace SetParentKK
 
 		private void InitCanvas()
 		{
-			hSprite = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas").Find("MainCanvas").GetComponent<HSprite>();
-			if (hSprite == null)
-			{
-				return;
-			}
 			femaleAim = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head/aim");
 			if (femaleAim == null)
 			{
