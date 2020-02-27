@@ -56,10 +56,7 @@ namespace SetParentKK
 				UnityEngine.Object.DestroyImmediate(this);
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
-			{
-				LoadFromLoader();
-			}
+
 			parentConVecNow = parentController.transform.position;
 			subConVecNow = subController.transform.position;
 			switch (calcPattern)

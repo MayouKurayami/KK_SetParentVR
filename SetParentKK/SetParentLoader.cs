@@ -100,18 +100,6 @@ namespace SetParentKK
 			HarmonyInstance.Create(GUID).PatchAll(typeof(VRHScene_Load_Patch));
 		}
 
-		private void Update()
-		{
-			if (dataPathVR)
-				return;
-
-			//Reloads config file on keypress
-			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
-			{
-				LoadFromModPref();
-			}
-		}
-
 		private void LoadFromModPref()
 		{
 			SetParentMode = new ConfigWrapper<ParentMode>("SetParentMode", this, ParentMode.PositionAndAnimation);
