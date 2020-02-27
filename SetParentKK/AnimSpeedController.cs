@@ -5,32 +5,24 @@ namespace SetParentKK
 {
 	public class AnimSpeedController : MonoBehaviour
 	{
-		public void SetController(GameObject leftcon, GameObject rightcon)
+		public void SetController(GameObject leftcon, GameObject rightcon, SetParent setParent)
 		{
 			parentController = leftcon;
 			subController = rightcon;
+			setParentObj = setParent;
 		}
 
 		private void Start()
 		{
-			animObject = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone");
+			animObject = setParentObj.female_p_cf_bodybone;
 			if (animObject == null)
 			{
 				return;
 			}
-			anim = animObject.GetComponent<Animator>();
-			orgSpeed = anim.speed;
-			hFlag = GameObject.Find("VRHScene").GetComponent<HFlag>();
-			Transform transform = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase/[CameraRig]/Controller (left)/Model/p_handL").transform.Find("HSceneMainCanvas");
-			if (transform == null)
-			{
-				transform = GameObject.Find("VRTK/[VRTK_SDKManager]/SDKSetups/SteamVR/VRCameraBase").transform.Find("[CameraRig]").Find("HSceneMainCanvas");
-			}
-			hSprite = transform.Find("MainCanvas").GetComponent<HSprite>();
-			base.StartCoroutine("GuageControll");
-			LoadFromModPref();
-			female = GameObject.Find("chaF_001");
-			spine01 = GameObject.Find("chaF_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01");
+			hFlag = setParentObj.hSprite.flags;
+			hSprite = setParentObj.hSprite;
+			base.StartCoroutine("GaugeControl");
+			LoadFromLoader();
 			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 			parentConVecBefore = (parentConVecNow = parentController.transform.position);
 			subConVecBefore = (subConVecNow = subController.transform.position);
@@ -38,7 +30,7 @@ namespace SetParentKK
 			weakMotionCount = 1.5f;
 		}
 
-		private void LoadFromModPref()
+		private void LoadFromLoader()
 		{
 			animMinThreshold = SetParentLoader.AnimStartThreshold.Value;
 			animMaxThreshold = SetParentLoader.AnimMaxThreshold.Value;
@@ -66,7 +58,7 @@ namespace SetParentKK
 			}
 			if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
 			{
-				LoadFromModPref();
+				LoadFromLoader();
 			}
 			parentConVecNow = parentController.transform.position;
 			subConVecNow = subController.transform.position;
@@ -191,7 +183,7 @@ namespace SetParentKK
 
 		private void OnDestroy()
 		{
-			base.StopCoroutine("GuageControll");
+			base.StopCoroutine("GaugeControl");
 		}
 
 		private void SaveMoveDistance(float dis)
@@ -259,7 +251,7 @@ namespace SetParentKK
 			return num2;
 		}
 
-		private IEnumerator GuageControll()
+		private IEnumerator GaugeControl()
 		{
 			for (; ; )
 			{
@@ -289,11 +281,9 @@ namespace SetParentKK
 			}
 		}
 
+		private SetParent setParentObj;
+		
 		private GameObject animObject;
-
-		private Animator anim;
-
-		private float orgSpeed;
 
 		private GameObject parentController;
 
@@ -324,14 +314,6 @@ namespace SetParentKK
 		private int moveDistancePoolSize;
 
 		public bool moveFlag;
-
-		private Vector3 before = Vector3.zero;
-
-		private Vector3 now = Vector3.zero;
-
-		private GameObject female;
-
-		private GameObject spine01;
 
 		private string nameAnimation = "";
 

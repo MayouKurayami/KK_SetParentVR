@@ -2030,11 +2030,11 @@ namespace SetParentKK
 			AnimSpeedController animSpeedController = character.AddComponent<AnimSpeedController>();
 			if (_parentIsLeft)
 			{
-				animSpeedController.SetController(_leftController, _rightController);
+				animSpeedController.SetController(_leftController, _rightController, this);
 				return;
 			}
 			else
-				animSpeedController.SetController(_rightController, _leftController);
+				animSpeedController.SetController(_rightController, _leftController, this);
 		}
 
 		private void SetParentToController (bool _parentIsLeft, GameObject parentDummy, GameObject target, bool hideModel)
@@ -2330,7 +2330,7 @@ namespace SetParentKK
 
 		private GameObject obj_chaF_001;
 
-		private GameObject female_p_cf_bodybone;
+		internal GameObject female_p_cf_bodybone;
 
 		private GameObject female_cf_j_root;
 
