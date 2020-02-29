@@ -1213,15 +1213,15 @@ namespace SetParentKK
 						}
 					}
 				}
-				GameObject gameObject8 = new GameObject("SPCollider");
-				gameObject8.transform.parent = cameraEye.transform;
-				gameObject8.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
-				gameObject8.transform.localRotation = Quaternion.identity;
-				BoxCollider boxCollider2 = gameObject8.AddComponent<BoxCollider>();
+				shoulderCollider = new GameObject("SPCollider");
+				shoulderCollider.transform.parent = cameraEye.transform;
+				shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
+				shoulderCollider.transform.localRotation = Quaternion.identity;
+				BoxCollider boxCollider2 = shoulderCollider.AddComponent<BoxCollider>();
 				boxCollider2.isTrigger = true;
 				boxCollider2.center = Vector3.zero;
 				boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
-				gameObject8.AddComponent<Rigidbody>().isKinematic = true;
+				shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
 			}
 		}
 
@@ -1715,7 +1715,6 @@ namespace SetParentKK
 					female_p_cf_bodybone.transform.position += femaleSpinePos.transform.position - femaleBase.transform.position;
 				}	
 
-
 				if (male_p_cf_bodybone != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
 					/////////////////////////
@@ -1741,6 +1740,10 @@ namespace SetParentKK
 					Quaternion.FromToRotation(malePenisProjected, cameraForwardProjected).ToAngleAxis(out lookRotAngle, out lookRotAxis);
 					male_p_cf_bodybone.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);		
 				}
+
+				//Update player's shoulder collider's rotation
+				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
+
 				if (hideCanvas)
 				{
 					Vector3 vector;
@@ -2245,6 +2248,8 @@ namespace SetParentKK
 		private GameObject rightController;
 
 		private GameObject cameraEye;
+
+		private GameObject shoulderCollider;
 
 		private GameObject femaleAim;
 
