@@ -1,5 +1,4 @@
-﻿using Illusion.Component.Correct;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -49,11 +48,6 @@ namespace SetParentKK
 			female_cf_t_leg_R = femaleFBBIK.solver.rightFootEffector.target.gameObject;
 			female_cf_t_leg_L = femaleFBBIK.solver.leftFootEffector.target.gameObject;
 
-			female_cf_t_hand_R_bd = female_cf_t_hand_R.GetComponent<BaseData>();
-			female_cf_t_hand_L_bd = female_cf_t_hand_L.GetComponent<BaseData>();
-			female_cf_t_leg_R_bd = female_cf_t_leg_R.GetComponent<BaseData>();
-			female_cf_t_leg_L_bd = female_cf_t_leg_L.GetComponent<BaseData>();
-
 			female_cf_j_root = femaleFBBIK.references.root.gameObject;
 			female_cf_j_hips = femaleFBBIK.references.pelvis.gameObject;
 			female_cf_n_height = femaleFBBIK.references.pelvis.parent.gameObject;
@@ -66,29 +60,33 @@ namespace SetParentKK
 			female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R").gameObject;
 			female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L").gameObject;
 			female_cf_pv_leg_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_R").gameObject;
-			female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L").gameObject;	
+			female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L").gameObject;
+
+			Transform male_cf_n_height = maleFBBIK.references.pelvis.parent;
+			male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R").gameObject;
+			male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L").gameObject;
 		}
 
 		private void InitCanvas()
 		{
 			GameObject rightHandCollider = new GameObject("RightHandCollider");
 			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
-			rightHandCollider.transform.parent = female_cf_t_hand_R.transform;
+			rightHandCollider.transform.parent = femaleFBBIK.solver.rightHandEffector.bone;
 			rightHandCollider.transform.localPosition = Vector3.zero;
 			
 			GameObject leftHandCollider = new GameObject("LeftHandCollider");
 			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
-			leftHandCollider.transform.parent = female_cf_t_hand_L.transform;
+			leftHandCollider.transform.parent = femaleFBBIK.solver.leftHandEffector.bone;
 			leftHandCollider.transform.localPosition = Vector3.zero;
 		
 			GameObject rightLegCollider = new GameObject("RightLegCollider");
 			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
-			rightLegCollider.transform.parent = female_cf_t_leg_R.transform;
+			rightLegCollider.transform.parent = femaleFBBIK.solver.rightFootEffector.bone;
 			rightLegCollider.transform.localPosition = Vector3.zero;
 			
 			GameObject leftLegCollider = new GameObject("LeftLegCollider");
 			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
-			leftLegCollider.transform.parent = female_cf_t_leg_L.transform;
+			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
 			leftLegCollider.transform.localPosition = Vector3.zero;
 
 			objCanvasSetParent = new GameObject("CanvasSetParent", new Type[]
@@ -1229,6 +1227,15 @@ namespace SetParentKK
 
 		private void PushFixBodyButton()
 		{
+			if (objRightHand == bFixBody)
+				PushFixRightHandButton();
+			if (objLeftHand == bFixBody)
+				PushFixLeftHandButton();
+			if (objRightLeg == bFixBody)
+				PushFixRightLegButton();
+			if (objLeftLeg == bFixBody)
+				PushFixLeftLegButton();
+
 			bFixBody = !bFixBody;
 		}
 
@@ -1239,12 +1246,12 @@ namespace SetParentKK
 				objRightHand = new GameObject("objRightHand");
 				objRightHand.transform.position = female_cf_pv_hand_R.transform.position;
 				objRightHand.transform.rotation = female_cf_pv_hand_R.transform.rotation;
-				female_cf_t_hand_R_bd.bone = objRightHand.transform;
+				femaleFBBIK.solver.rightHandEffector.target = objRightHand.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightHand);
 			objRightHand = null;
-			female_cf_t_hand_R_bd.bone = female_cf_pv_hand_R.transform;
+			femaleFBBIK.solver.rightHandEffector.target = female_cf_t_hand_R.transform;
 		}
 
 		public void PushFixLeftHandButton()
@@ -1254,12 +1261,12 @@ namespace SetParentKK
 				objLeftHand = new GameObject("objLeftHand");
 				objLeftHand.transform.position = female_cf_pv_hand_L.transform.position;
 				objLeftHand.transform.rotation = female_cf_pv_hand_L.transform.rotation;
-				female_cf_t_hand_L_bd.bone = objLeftHand.transform;
+				femaleFBBIK.solver.leftHandEffector.target = objLeftHand.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftHand);
 			objLeftHand = null;
-			female_cf_t_hand_L_bd.bone = female_cf_pv_hand_L.transform;
+			femaleFBBIK.solver.leftHandEffector.target = female_cf_t_hand_L.transform;
 		}
 
 		public void PushFixRightLegButton()
@@ -1269,12 +1276,12 @@ namespace SetParentKK
 				objRightLeg = new GameObject("objRightLeg");
 				objRightLeg.transform.position = female_cf_pv_leg_R.transform.position;
 				objRightLeg.transform.rotation = female_cf_pv_leg_R.transform.rotation;
-				female_cf_t_leg_R_bd.bone = objRightLeg.transform;
+				femaleFBBIK.solver.rightFootEffector.target = objRightLeg.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightLeg);
 			objRightLeg = null;
-			female_cf_t_leg_R_bd.bone = female_cf_pv_leg_R.transform;
+			femaleFBBIK.solver.rightFootEffector.target = female_cf_t_leg_R.transform;
 		}
 
 		public void PushFixLeftLegButton()
@@ -1284,12 +1291,12 @@ namespace SetParentKK
 				objLeftLeg = new GameObject("objLeftLeg");
 				objLeftLeg.transform.position = female_cf_pv_leg_L.transform.position;
 				objLeftLeg.transform.rotation = female_cf_pv_leg_L.transform.rotation;
-				female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
+				femaleFBBIK.solver.leftFootEffector.target = objLeftLeg.transform;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftLeg);
 			objLeftLeg = null;
-			female_cf_t_leg_L_bd.bone = female_cf_pv_leg_L.transform;
+			femaleFBBIK.solver.leftFootEffector.target = female_cf_t_leg_L.transform;
 		}
 
 		private void ChangeMotion(string path, string name)
@@ -1579,50 +1586,13 @@ namespace SetParentKK
 				objCanvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
 				objCanvasMotion.transform.forward = (objCanvasMotion.transform.position - cameraEye.transform.position).normalized;
 			}
-			if (objRightHand != null && !bFixBody)
-			{
-				if ((female_cf_t_hand_R.transform.position - female_cf_pv_hand_R.transform.position).magnitude > 0.5f)
-				{
-					PushFixRightHandButton();
-				}
-				else
-				{
-					female_cf_t_hand_R_bd.bone = objRightHand.transform;
-				}
-			}
-			if (objLeftHand != null && !bFixBody)
-			{
-				if ((female_cf_t_hand_L.transform.position - female_cf_pv_hand_L.transform.position).magnitude > 0.5f)
-				{
-					PushFixLeftHandButton();
-				}
-				else
-				{
-					female_cf_t_hand_L_bd.bone = objLeftHand.transform;
-				}
-			}
-			if (objRightLeg != null && !bFixBody)
-			{
-				if ((female_cf_t_leg_R.transform.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
-				{
-					PushFixRightLegButton();
-				}
-				else
-				{
-					female_cf_t_leg_R_bd.bone = objRightLeg.transform;
-				}
-			}
-			if (objLeftLeg != null && !bFixBody)
-			{
-				if ((female_cf_t_leg_L.transform.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
-				{
-					PushFixLeftLegButton();
-				}
-				else
-				{
-					female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
-				}
-			}
+
+			////////////////////////////////////////////////////////////
+			//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
+			////////////////////////////////////////////////////////////
+			MaleIKs();
+			FemaleIKs();		
+			
 			//////////////
 			//Activate/deactivate SetParent functionality by
 			//* Pressing backslash key or 
@@ -1741,18 +1711,6 @@ namespace SetParentKK
 					female_p_cf_bodybone.transform.position += femaleSpinePos.transform.position - femaleBase.transform.position;
 				}	
 
-				////////////////////////////////////////////////////////////
-				//Disable male and female IK's if 
-				// -male body is found
-				// -position has changed via floating menu, or
-				// -female is moving with controller, pr
-				// -male is rotating to HMD
-				////////////////////////////////////////////////////////////
-				if (male_p_cf_bodybone != null && (positionMenuPressed || SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMale.Value))
-				{
-					DisableIKs(true, true);
-				}
-
 
 				if (male_p_cf_bodybone != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
@@ -1811,22 +1769,6 @@ namespace SetParentKK
 			}
 			if (bFixBody)
 			{
-				if (objRightHand != null)
-				{
-					female_cf_t_hand_R_bd.bone = objRightHand.transform;
-				}
-				if (objLeftHand != null)
-				{
-					female_cf_t_hand_L_bd.bone = objLeftHand.transform;
-				}
-				if (objRightLeg != null)
-				{
-					female_cf_t_leg_R_bd.bone = objRightLeg.transform;
-				}
-				if (objLeftLeg != null)
-				{
-					female_cf_t_leg_L_bd.bone = objLeftLeg.transform;
-				}
 				txtFixBody.text = "手足固定 On";
 				return;
 			}
@@ -1931,50 +1873,92 @@ namespace SetParentKK
 			}
 		}
 
-		private void DisableIKs(bool male, bool female)
+		/// <summary>
+		/// Release and attach male limbs based on the distance between the attaching target position and the default animation position
+		/// </summary>
+		private void MaleIKs()
 		{
-			if (male)
+			if ((maleFBBIK.solver.rightHandEffector.target.position - male_cf_pv_hand_R.transform.position).magnitude > 0.2f)
 			{
-				if (male_bd_cf_t_hand_R == null)
-				{
-					male_bd_cf_t_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_R").GetComponent<BaseData>();
-				}
-				if (male_bd_cf_t_hand_L == null)
-				{
-					male_bd_cf_t_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_t_root/cf_t_hand_L").GetComponent<BaseData>();
-				}
-				if (male_cf_pv_hand_R == null)
-				{
-					male_cf_pv_hand_R = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_R");
-				}
-				if (male_cf_pv_hand_L == null)
-				{
-					male_cf_pv_hand_L = GameObject.Find("chaM_001/BodyTop/p_cf_body_bone/cf_j_root/cf_n_height/cf_pv_root/cf_pv_hand_L");
-				}
-				male_bd_cf_t_hand_R.bone = male_cf_pv_hand_R.transform;
-				male_bd_cf_t_hand_L.bone = male_cf_pv_hand_L.transform;
+				maleFBBIK.solver.rightHandEffector.positionWeight = 0f;
+				maleFBBIK.solver.rightHandEffector.rotationWeight = 0f;
 			}
-			
-			if (female)
+			else
 			{
-				if (objRightHand == null)
-				{
-					female_cf_t_hand_R_bd.bone = female_cf_pv_hand_R.transform;
-				}
-				if (objLeftHand == null)
-				{
-					female_cf_t_hand_L_bd.bone = female_cf_pv_hand_L.transform;
-				}
-				if (objRightLeg == null)
-				{
-					female_cf_t_leg_R_bd.bone = female_cf_pv_leg_R.transform;
-				}
-				if (objLeftLeg == null)
-				{
-					female_cf_t_leg_L_bd.bone = female_cf_pv_leg_L.transform;
-				}
+				maleFBBIK.solver.rightHandEffector.positionWeight = 1f;
+				maleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
+			}
+
+			if((maleFBBIK.solver.leftHandEffector.target.position - male_cf_pv_hand_L.transform.position).magnitude > 0.2f)
+			{
+				maleFBBIK.solver.leftHandEffector.positionWeight = 0f;
+				maleFBBIK.solver.leftHandEffector.rotationWeight = 0f;
+			}
+			else
+			{
+				maleFBBIK.solver.leftHandEffector.positionWeight = 1f;
+				maleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
 			}
 		}
+
+		/// <summary>
+		/// Release and attach female limbs based on the distance between the attaching target position and the default animation position
+		/// </summary>
+		/// Attachment onto anchor points created by SetParent will enjoy a larger degree of freedom before being released
+		private void FemaleIKs()
+		{
+			if (objRightHand != null && !bFixBody && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.35f)
+			{
+				PushFixRightHandButton();
+			}
+			else if (objRightHand == null && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.2f)
+			{
+				femaleFBBIK.solver.rightHandEffector.positionWeight = 0f;
+				femaleFBBIK.solver.rightHandEffector.rotationWeight = 0f;
+
+			}
+			else
+			{
+				femaleFBBIK.solver.rightHandEffector.positionWeight = 1f;
+				femaleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
+			}
+
+			if (objLeftHand != null && !bFixBody && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.35f)
+			{
+				PushFixLeftHandButton();
+			}
+			else if (objLeftHand == null && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.2f)
+			{
+				femaleFBBIK.solver.leftHandEffector.positionWeight = 0f;
+				femaleFBBIK.solver.leftHandEffector.rotationWeight = 0f;
+			}
+			else
+			{
+				femaleFBBIK.solver.leftHandEffector.positionWeight = 1f;
+				femaleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
+			}
+
+			if (objRightLeg != null && !bFixBody && (femaleFBBIK.solver.rightFootEffector.target.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
+			{
+				PushFixRightLegButton();
+			}
+			else
+			{
+				femaleFBBIK.solver.rightFootEffector.positionWeight = 1f;
+				femaleFBBIK.solver.rightFootEffector.rotationWeight = 1f;
+			}
+
+			if (objLeftLeg != null && !bFixBody && (femaleFBBIK.solver.leftFootEffector.target.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
+			{
+				PushFixLeftLegButton();
+			}
+			else
+			{
+				femaleFBBIK.solver.leftFootEffector.positionWeight = 1f;
+				femaleFBBIK.solver.leftFootEffector.rotationWeight = 1f;
+			}
+		}
+
 		/// <summary>
 		/// Change state of controller-to-characters relationship based on controller input
 		/// </summary>
@@ -2300,15 +2284,11 @@ namespace SetParentKK
 
 		private GameObject female_cf_pv_hand_R;
 
-		private BaseData female_cf_t_hand_R_bd;
-
 		public GameObject objRightHand;
 
 		private GameObject female_cf_t_hand_L;
 
 		private GameObject female_cf_pv_hand_L;
-
-		private BaseData female_cf_t_hand_L_bd;
 
 		public GameObject objLeftHand;
 
@@ -2316,15 +2296,11 @@ namespace SetParentKK
 
 		private GameObject female_cf_pv_leg_R;
 
-		private BaseData female_cf_t_leg_R_bd;
-
 		public GameObject objRightLeg;
 
 		private GameObject female_cf_t_leg_L;
 
 		private GameObject female_cf_pv_leg_L;
-
-		private BaseData female_cf_t_leg_L_bd;
 
 		public GameObject objLeftLeg;
 
@@ -2355,10 +2331,6 @@ namespace SetParentKK
 		private GameObject maleHeadPos;
 
 		private GameObject maleCrotchPos;
-
-		private BaseData male_bd_cf_t_hand_R;
-
-		private BaseData male_bd_cf_t_hand_L;
 
 		private GameObject male_cf_pv_hand_R;
 
