@@ -1973,7 +1973,7 @@ namespace SetParentKK
 			//	4. Female body parented to non parent controller 
 			//	5. If no matching controller input is present, return to default state of parenting
 			///////////////////
-			if (parentIsLeft ? (RightTriggerPressing() && !RightTrackPadUp()) : (LeftTriggerPressing() && !LeftTrackPadUp()))
+			if (hFlag.timeNoClickItem == 0 && (parentIsLeft ? (RightTriggerPressing() && !RightTrackPadUp()) : (LeftTriggerPressing() && !LeftTrackPadUp())))
 			{
 				if (currentCtrlstate != CtrlState.Stationary)
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Stationary);
