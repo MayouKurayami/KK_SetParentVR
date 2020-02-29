@@ -35,6 +35,7 @@ namespace SetParentKK
 					if (setParent.objLeftHand == null)
 					{
 						setParent.PushFixLeftHandButton();
+						setParent.objLeftHand.transform.parent = other.transform;
 						return;
 					}
 					break;
@@ -42,6 +43,7 @@ namespace SetParentKK
 					if (setParent.objRightHand == null)
 					{
 						setParent.PushFixRightHandButton();
+						setParent.objRightHand.transform.parent = other.transform;
 						return;
 					}
 					break;
@@ -49,6 +51,7 @@ namespace SetParentKK
 					if (setParent.objLeftLeg == null)
 					{
 						setParent.PushFixLeftLegButton();
+						setParent.objLeftLeg.transform.parent = other.transform;
 						return;
 					}
 					break;
@@ -56,6 +59,7 @@ namespace SetParentKK
 					if (setParent.objRightLeg == null)
 					{
 						setParent.PushFixRightLegButton();
+						setParent.objRightLeg.transform.parent = other.transform;
 					}
 					break;
 				default:
