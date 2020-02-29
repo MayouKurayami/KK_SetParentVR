@@ -244,7 +244,7 @@ namespace SetParentKK
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "手足固定 On";
+			text.text = "手足固定IS OFF";
 			gameObject5.transform.SetParent(objCanvasSetParent.transform);
 			gameObject5.transform.localPosition = new Vector3(-28f, -8f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
@@ -1237,6 +1237,10 @@ namespace SetParentKK
 				PushFixLeftLegButton();
 
 			bFixBody = !bFixBody;
+			if (bFixBody)
+				txtFixBody.text = "手足固定IS ON";
+			else
+				txtFixBody.text = "手足固定IS OFF";
 		}
 
 		public void PushFixRightHandButton()
@@ -1767,12 +1771,6 @@ namespace SetParentKK
 				txtSetParentL.text = "左 親子付け On";
 				txtSetParentR.text = "右 親子付け On";
 			}
-			if (bFixBody)
-			{
-				txtFixBody.text = "手足固定 On";
-				return;
-			}
-			txtFixBody.text = "手足固定 Off";
 		}
 
 		private void SetP(bool _parentIsLeft)
