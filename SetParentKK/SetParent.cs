@@ -138,7 +138,7 @@ namespace SetParentKK
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "右手固定";
 			gameObject5.transform.SetParent(objCanvasSetParent.transform);
-			gameObject5.transform.localPosition = new Vector3(-28f, -48f, 0f);
+			gameObject5.transform.localPosition = new Vector3(28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
 			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
@@ -165,7 +165,7 @@ namespace SetParentKK
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "左手固定";
 			gameObject5.transform.SetParent(objCanvasSetParent.transform);
-			gameObject5.transform.localPosition = new Vector3(28f, -48f, 0f);
+			gameObject5.transform.localPosition = new Vector3(-28f, -28f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
 			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
@@ -192,7 +192,7 @@ namespace SetParentKK
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "右足固定";
 			gameObject5.transform.SetParent(objCanvasSetParent.transform);
-			gameObject5.transform.localPosition = new Vector3(-28f, -28f, 0f);
+			gameObject5.transform.localPosition = new Vector3(28f, -48f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
 			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
@@ -219,7 +219,7 @@ namespace SetParentKK
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "左足固定";
 			gameObject5.transform.SetParent(objCanvasSetParent.transform);
-			gameObject5.transform.localPosition = new Vector3(28f, -28f, 0f);
+			gameObject5.transform.localPosition = new Vector3(-28f, -48f, 0f);
 			gameObject6.transform.SetParent(gameObject5.transform);
 			gameObject6.transform.localPosition = Vector3.zero;
 			gameObject5.GetComponent<Button>().onClick.AddListener(delegate ()
