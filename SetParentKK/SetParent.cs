@@ -1506,7 +1506,7 @@ namespace SetParentKK
 			}
 		}
 
-		public void Update()
+		public void LateUpdate()
 		{
 			//Checks if female object exists. If not, exits the function
 			if (!femaleExists)
