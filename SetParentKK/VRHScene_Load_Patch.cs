@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Harmony;
+using static SetParentKK.SetParentLoader;
 
 namespace SetParentKK
 {
@@ -13,11 +14,11 @@ namespace SetParentKK
 		[HarmonyPatch(typeof(VRHScene), "MapSameObjectDisable")]
 		public static void VRHSceneLoadPostfix(VRHScene __instance)
 		{
-			SetParent setParent = __instance.gameObject.GetComponent<SetParent>();
-			if (setParent != null)
-				UnityEngine.Object.Destroy(setParent);
+			if (setParentObj != null)
+				UnityEngine.Object.DestroyImmediate(setParentObj);
 
-			__instance.gameObject.AddComponent<SetParent>().hSprite = __instance.sprites[0];
+			setParentObj = __instance.gameObject.AddComponent<SetParent>();
+			setParentObj.hSprite = __instance.sprites[0];
 		}
 	}
 }

@@ -14,6 +14,7 @@ namespace SetParentKK
 		public const string Version = "2.0.0";
 		public const string PluginName = "SetParentVR";
 		public const string AssembName = "KK_SetParentVR";
+		internal static SetParent setParentObj;
 
 		[DisplayName("Control Mode")]
 		[Description("Use the controller to control the girl's position, animation, or both")]
