@@ -362,7 +362,6 @@ namespace SetParentKK
 			{
 				UnsetP();
 			}
-			setFlag = !setFlag;
 		}
 
 		private void PushPRButton()
@@ -375,7 +374,6 @@ namespace SetParentKK
 			{
 				UnsetP();
 			}
-			setFlag = !setFlag;
 		}
 
 		private void PushModeChangeButton()
@@ -525,7 +523,6 @@ namespace SetParentKK
 				{
 					UnsetP();
 				}
-				setFlag = !setFlag;
 			}
 			
 			if (setFlag)
@@ -533,7 +530,6 @@ namespace SetParentKK
 				if (nameAnimation != hFlag.nowAnimationInfo.nameAnimation)
 				{
 					UnsetP();
-					setFlag = !setFlag;
 					nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 				}
 
@@ -747,6 +743,8 @@ namespace SetParentKK
 			{
 				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, leftController, rightController);
 			}
+
+			setFlag = true;
 		}
 
 		public void UnsetP()
@@ -761,6 +759,8 @@ namespace SetParentKK
 			{
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
+
+			setFlag = false;
 		}
 
 		private Text CreateButton(string buttonText, Vector3 localPosition, UnityAction action, GameObject parentObject)
