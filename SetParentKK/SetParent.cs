@@ -753,20 +753,10 @@ namespace SetParentKK
 
 		public void UnsetP()
 		{
-			if (obj_chaF_001 == null)
-			{
-				return;
-			}
-			obj_chaF_001.transform.parent = GameObject.Find("Component").transform;
-
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			UnityEngine.Object.Destroy(femaleSpinePos);
-			GameObject obj_chaM_001 = male.objRoot;
-			if (obj_chaM_001 != null)
-			{
-				obj_chaM_001.transform.parent = GameObject.Find("Component").transform;
-			}
+			
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
 			if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
