@@ -752,7 +752,16 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			UnityEngine.Object.Destroy(femaleSpinePos);
-			
+
+			if (objLeftHand != null)
+				PushFixLeftHandButton();
+			if (objRightHand != null)
+				PushFixRightHandButton();
+			if (objLeftLeg != null)
+				PushFixLeftLegButton();
+			if (objRightLeg != null)
+				PushFixRightLegButton();
+
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
 			if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
