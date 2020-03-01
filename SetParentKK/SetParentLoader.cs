@@ -14,7 +14,6 @@ namespace SetParentKK
 		public const string Version = "2.0.0";
 		public const string PluginName = "SetParentVR";
 		public const string AssembName = "KK_SetParentVR";
-		private bool dataPathVR;
 
 		[DisplayName("Control Mode")]
 		[Description("Use the controller to control the girl's position, animation, or both")]
@@ -94,7 +93,7 @@ namespace SetParentKK
 		{
 			LoadFromModPref();
 
-			if (!(dataPathVR = Application.dataPath.EndsWith("KoikatuVR_Data")))
+			if (!Application.dataPath.EndsWith("KoikatuVR_Data"))
 				return;
 
 			HarmonyInstance.Create(GUID).PatchAll(typeof(VRHScene_Load_Patch));

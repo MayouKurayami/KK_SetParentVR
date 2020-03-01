@@ -26,7 +26,6 @@ namespace SetParentKK
 				}
 			}
 			femaleExists = false;
-			positionMenuPressed = false;
 			hideCanvas = MenuHideDefault.Value;
 
 			hFlag = hSprite.flags;
@@ -351,8 +350,6 @@ namespace SetParentKK
 			animatorOverrideController.name = runtimeAnimatorController.name;
 			component.runtimeAnimatorController = animatorOverrideController;
 			AssetBundleManager.UnloadAssetBundle(path, true, null, false);
-
-			positionMenuPressed = true;
 		}
 
 		private void PushPLButton()
@@ -1150,7 +1147,7 @@ namespace SetParentKK
 		
 		internal bool setFlag;
 
-		internal bool femaleExists;
+		private bool femaleExists;
 
 		private HFlag hFlag;
 
@@ -1276,10 +1273,8 @@ namespace SetParentKK
 
 		private int indexSpineRot;
 
-		internal bool hideCanvas;
+		private bool hideCanvas;
 
 		private bool parentIsLeft;
-
-		internal bool positionMenuPressed;
 	}
 }
