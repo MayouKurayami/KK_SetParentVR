@@ -640,7 +640,8 @@ namespace SetParentKK
 				}
 
 				//Update player's shoulder collider's rotation
-				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
+				if (SetCollider.Value)
+					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
 				if (hideCanvas)
 				{
