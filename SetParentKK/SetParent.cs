@@ -89,19 +89,19 @@ namespace SetParentKK
 			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
 			leftLegCollider.transform.localPosition = Vector3.zero;
 
-			objCanvasSetParent = new GameObject("CanvasSetParent", new Type[]
+			objRightMenuCanvas = new GameObject("CanvasSetParent", new Type[]
 			{
 				typeof(Canvas)
 			});
-			canvasSetParent = objCanvasSetParent.GetComponent<Canvas>();
-			objCanvasSetParent.AddComponent<GraphicRaycaster>();
-			objCanvasSetParent.AddComponent<VRTK_UICanvas>();
-			objCanvasSetParent.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasScalerSetParent = objCanvasSetParent.AddComponent<CanvasScaler>();
+			canvasSetParent = objRightMenuCanvas.GetComponent<Canvas>();
+			objRightMenuCanvas.AddComponent<GraphicRaycaster>();
+			objRightMenuCanvas.AddComponent<VRTK_UICanvas>();
+			objRightMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
+			canvasScalerSetParent = objRightMenuCanvas.AddComponent<CanvasScaler>();
 			canvasScalerSetParent.dynamicPixelsPerUnit = 20000f;
 			canvasScalerSetParent.referencePixelsPerUnit = 80000f;
 			canvasSetParent.renderMode = RenderMode.WorldSpace;
-			objCanvasSetParent.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+			objRightMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
 			if (GazeControl.Value)
 			{
 				VRTK_UIPointer vrtk_UIPointer = cameraEye.AddComponent<VRTK_UIPointer>();
@@ -117,27 +117,27 @@ namespace SetParentKK
 				typeof(EventSystem)
 			});
 			eventSystemSetParent.AddComponent<StandaloneInputModule>();
-			eventSystemSetParent.transform.SetParent(objCanvasSetParent.transform);
+			eventSystemSetParent.transform.SetParent(objRightMenuCanvas.transform);
 
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => PushFixRightLegButton(), objCanvasSetParent);
-			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(), objCanvasSetParent);
-			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(), objCanvasSetParent);
-			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(), objCanvasSetParent);
-			txtFixBody = CreateButton("手足固定IS OFF", new Vector3(-28f, -8f, 0f), () => PushFixBodyButton(), objCanvasSetParent);
-			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objCanvasSetParent);
-			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objCanvasSetParent);
-			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objCanvasSetParent);
-			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objCanvasSetParent);
-			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objCanvasSetParent);
-			CreateButton("外に出すよ", new Vector3(28f, 60f, 0f), () => PushFOButton(), objCanvasSetParent);
-			CreateButton("入れるよ", new Vector3(-28f, 80f, 0f), () => hSprite.OnInsertClick(), objCanvasSetParent);
-			CreateButton("イレル", new Vector3(28f, 80f, 0f), () => hSprite.OnInsertNoVoiceClick(), objCanvasSetParent);
-			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objCanvasSetParent);
-			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objCanvasSetParent);
-			CreateButton("ヌク", new Vector3(-28f, 120f, 0f), () => hSprite.OnPullClick(), objCanvasSetParent);
+			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => PushFixRightLegButton(), objRightMenuCanvas);
+			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(), objRightMenuCanvas);
+			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(), objRightMenuCanvas);
+			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(), objRightMenuCanvas);
+			txtFixBody = CreateButton("手足固定IS OFF", new Vector3(-28f, -8f, 0f), () => PushFixBodyButton(), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
+			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);
+			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objRightMenuCanvas);
+			CreateButton("外に出すよ", new Vector3(28f, 60f, 0f), () => PushFOButton(), objRightMenuCanvas);
+			CreateButton("入れるよ", new Vector3(-28f, 80f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
+			CreateButton("イレル", new Vector3(28f, 80f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
+			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
+			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
+			CreateButton("ヌク", new Vector3(-28f, 120f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
 		
 			
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
@@ -145,62 +145,62 @@ namespace SetParentKK
 			point.Normalize();
 			canvasSetParent.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
 			canvasSetParent.transform.forward = (canvasSetParent.transform.position - cameraEye.transform.position).normalized;
-			objCanvasMotion = new GameObject("CanvasMotion", new Type[]
+			objLeftMenuCanvas = new GameObject("CanvasMotion", new Type[]
 			{
 				typeof(Canvas)
 			});
-			canvasMotion = objCanvasMotion.GetComponent<Canvas>();
-			objCanvasMotion.AddComponent<GraphicRaycaster>();
-			objCanvasMotion.AddComponent<VRTK_UICanvas>();
-			objCanvasMotion.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasScalerMotion = objCanvasMotion.AddComponent<CanvasScaler>();
+			canvasMotion = objLeftMenuCanvas.GetComponent<Canvas>();
+			objLeftMenuCanvas.AddComponent<GraphicRaycaster>();
+			objLeftMenuCanvas.AddComponent<VRTK_UICanvas>();
+			objLeftMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
+			canvasScalerMotion = objLeftMenuCanvas.AddComponent<CanvasScaler>();
 			canvasScalerMotion.dynamicPixelsPerUnit = 20000f;
 			canvasScalerMotion.referencePixelsPerUnit = 80000f;
 			canvasMotion.renderMode = RenderMode.WorldSpace;
-			objCanvasMotion.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+			objLeftMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
 			eventSystemMotion = new GameObject("CanvasEventSystemMotion", new Type[]
 			{
 				typeof(EventSystem)
 			});
 			eventSystemMotion.AddComponent<StandaloneInputModule>();
-			eventSystemMotion.transform.SetParent(objCanvasMotion.transform);
+			eventSystemMotion.transform.SetParent(objLeftMenuCanvas.transform);
 
 
 			////////////////
 			//Populate left side floating menu with buttons
 			////////////////
-			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00"), objCanvasMotion);
-			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00"), objCanvasMotion);
-			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24"), objCanvasMotion);
-			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23"), objCanvasMotion);
+			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00"), objLeftMenuCanvas);
+			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00"), objLeftMenuCanvas);
+			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24"), objLeftMenuCanvas);
+			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23"), objLeftMenuCanvas);
 
-			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06"), objCanvasMotion);
-			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16"), objCanvasMotion);
+			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06"), objLeftMenuCanvas);
+			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16"), objLeftMenuCanvas);
 
-			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22"), objCanvasMotion);
-			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08"), objCanvasMotion);
+			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22"), objLeftMenuCanvas);
+			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08"), objLeftMenuCanvas);
 
-			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07"), objCanvasMotion);
-			CreateButton("プール", new Vector3(28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20"), objCanvasMotion);
+			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07"), objLeftMenuCanvas);
+			CreateButton("プール", new Vector3(28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20"), objLeftMenuCanvas);
 			
-			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02"), objCanvasMotion);
-			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02"), objCanvasMotion);
-			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11"), objCanvasMotion);
-			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11"), objCanvasMotion);
-			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18"), objCanvasMotion);
-			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18"), objCanvasMotion);
+			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02"), objLeftMenuCanvas);
+			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02"), objLeftMenuCanvas);
+			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11"), objLeftMenuCanvas);
+			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11"), objLeftMenuCanvas);
+			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18"), objLeftMenuCanvas);
+			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18"), objLeftMenuCanvas);
 
-			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21"), objCanvasMotion);
-			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28"), objCanvasMotion);
+			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21"), objLeftMenuCanvas);
+			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28"), objLeftMenuCanvas);
 
-			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26"), objCanvasMotion);
-			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25"), objCanvasMotion);
+			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26"), objLeftMenuCanvas);
+			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25"), objLeftMenuCanvas);
 
-			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27"), objCanvasMotion);
-			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04"), objCanvasMotion);	
+			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27"), objLeftMenuCanvas);
+			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04"), objLeftMenuCanvas);	
 
-			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09"), objCanvasMotion);
-			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10"), objCanvasMotion);
+			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09"), objLeftMenuCanvas);
+			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10"), objLeftMenuCanvas);
 			
 
 			point = femaleAim.transform.position - cameraEye.transform.position;
@@ -445,13 +445,13 @@ namespace SetParentKK
 			}
 
 
-			if (objCanvasSetParent == null)
+			if (objRightMenuCanvas == null)
 			{
 				InitCanvas();
-				if (objCanvasSetParent != null && hideCanvas)
+				if (objRightMenuCanvas != null && hideCanvas)
 				{
-					objCanvasSetParent.SetActive(false);
-					objCanvasMotion.SetActive(false);
+					objRightMenuCanvas.SetActive(false);
+					objLeftMenuCanvas.SetActive(false);
 				}
 			}
 			else
@@ -461,10 +461,10 @@ namespace SetParentKK
 					hideCount += Time.deltaTime;
 					if (hideCount >= 1f)
 					{
-						objCanvasSetParent.SetActive(!objCanvasSetParent.activeSelf);
-						objCanvasMotion.SetActive(!objCanvasMotion.activeSelf);
+						objRightMenuCanvas.SetActive(!objRightMenuCanvas.activeSelf);
+						objLeftMenuCanvas.SetActive(!objLeftMenuCanvas.activeSelf);
 						hideCount = 0f;
-						if (objCanvasSetParent.activeSelf)
+						if (objRightMenuCanvas.activeSelf)
 						{
 							hideCanvas = false;
 						}
@@ -481,10 +481,10 @@ namespace SetParentKK
 				Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 				point.y = 0f;
 				point.Normalize();
-				objCanvasSetParent.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 0.4f;
-				objCanvasSetParent.transform.forward = (objCanvasSetParent.transform.position - cameraEye.transform.position).normalized;
-				objCanvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
-				objCanvasMotion.transform.forward = (objCanvasMotion.transform.position - cameraEye.transform.position).normalized;
+				objRightMenuCanvas.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 0.4f;
+				objRightMenuCanvas.transform.forward = (objRightMenuCanvas.transform.position - cameraEye.transform.position).normalized;
+				objLeftMenuCanvas.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
+				objLeftMenuCanvas.transform.forward = (objLeftMenuCanvas.transform.position - cameraEye.transform.position).normalized;
 			}
 
 			////////////////////////////////////////////////////////////
@@ -652,13 +652,13 @@ namespace SetParentKK
 					}
 					if (vector.magnitude <= 0.3f)
 					{
-						objCanvasSetParent.SetActive(true);
-						objCanvasMotion.SetActive(true);
+						objRightMenuCanvas.SetActive(true);
+						objLeftMenuCanvas.SetActive(true);
 					}
 					else
 					{
-						objCanvasSetParent.SetActive(false);
-						objCanvasMotion.SetActive(false);
+						objRightMenuCanvas.SetActive(false);
+						objLeftMenuCanvas.SetActive(false);
 					}
 				}
 				txtSetParentL.text = "親子付け Off";
@@ -1193,7 +1193,7 @@ namespace SetParentKK
 
 		private Canvas canvasSetParent;
 
-		private GameObject objCanvasSetParent;
+		private GameObject objRightMenuCanvas;
 
 		private CanvasScaler canvasScalerSetParent;
 
@@ -1201,7 +1201,7 @@ namespace SetParentKK
 
 		private Canvas canvasMotion;
 
-		private GameObject objCanvasMotion;
+		private GameObject objLeftMenuCanvas;
 
 		private CanvasScaler canvasScalerMotion;
 
