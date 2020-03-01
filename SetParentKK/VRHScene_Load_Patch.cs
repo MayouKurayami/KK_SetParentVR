@@ -24,8 +24,9 @@ namespace SetParentKK
 
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(VRHScene), "ChangeAnimator")]
-		public static void ChangeAnimatorPrefix()
+		public static void ChangeAnimatorPrefix(ref bool _isForceCameraReset)
 		{
+			_isForceCameraReset = true;
 			if (setParentObj != null)
 			{
 				setParentObj.UnsetP();
