@@ -170,29 +170,39 @@ namespace SetParentKK
 			////////////////
 			//Populate left side floating menu with buttons
 			////////////////
-			CreateButton("正常位", new Vector3(-28f, -28f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00"), objCanvasMotion);
-			CreateButton("開脚正常位", new Vector3(28f, -28f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00"), objCanvasMotion);
-			CreateButton("後背位", new Vector3(-28f, -12f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02"), objCanvasMotion);
-			CreateButton("腕引っ張り後背位", new Vector3(28f, -12f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02"), objCanvasMotion);
-			CreateButton("騎乗位(二体位)", new Vector3(-28f, 4f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04"), objCanvasMotion);
-			CreateButton("片足上げ側位", new Vector3(28f, 4f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06"), objCanvasMotion);
-			CreateButton("立位", new Vector3(-28f, 20f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07"), objCanvasMotion);
-			CreateButton("駅弁", new Vector3(28f, 20f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08"), objCanvasMotion);
-			CreateButton("椅子対面", new Vector3(-28f, 36f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09"), objCanvasMotion);
-			CreateButton("椅子背面", new Vector3(28f, 36f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10"), objCanvasMotion);
-			CreateButton("足閉じ立バック", new Vector3(-28f, 52f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11"), objCanvasMotion);
-			CreateButton("腕引っ張り立バック", new Vector3(28f, 52f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11"), objCanvasMotion);
-			CreateButton("騎乗位(単一体位)", new Vector3(-28f, 68f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27"), objCanvasMotion);
-			CreateButton("机側位", new Vector3(28f, 68f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16"), objCanvasMotion);
-			CreateButton("跳び箱バック", new Vector3(-28f, 84f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25"), objCanvasMotion);
-			CreateButton("脚持つ正常位", new Vector3(28f, 84f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24"), objCanvasMotion);
-			CreateButton("壁対面片足上げ", new Vector3(-28f, 100f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n17"), objCanvasMotion);
-			CreateButton("立バック", new Vector3(28f, 100f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18"), objCanvasMotion);
-			CreateButton("片足上げ立バック", new Vector3(-28f, 116f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18"), objCanvasMotion);
-			CreateButton("水中バック", new Vector3(28f, 116f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20"), objCanvasMotion);
-			CreateButton("うっ伏せ後背位", new Vector3(-28f, 132f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26"), objCanvasMotion);
-			CreateButton("駅弁(単一体位)", new Vector3(28f, 132f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22"), objCanvasMotion);
+			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00"), objCanvasMotion);
+			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00"), objCanvasMotion);
+			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24"), objCanvasMotion);
+			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23"), objCanvasMotion);
 
+			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06"), objCanvasMotion);
+			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16"), objCanvasMotion);
+
+			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22"), objCanvasMotion);
+			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08"), objCanvasMotion);
+
+			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07"), objCanvasMotion);
+			CreateButton("プール", new Vector3(28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20"), objCanvasMotion);
+			
+			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02"), objCanvasMotion);
+			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02"), objCanvasMotion);
+			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11"), objCanvasMotion);
+			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11"), objCanvasMotion);
+			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18"), objCanvasMotion);
+			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18"), objCanvasMotion);
+
+			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21"), objCanvasMotion);
+			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28"), objCanvasMotion);
+
+			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26"), objCanvasMotion);
+			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25"), objCanvasMotion);
+
+			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27"), objCanvasMotion);
+			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04"), objCanvasMotion);	
+
+			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09"), objCanvasMotion);
+			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10"), objCanvasMotion);
+			
 
 			point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
