@@ -1248,7 +1248,7 @@ namespace SetParentKK
 
 		private GameObject femaleSpinePos;
 
-		private GameObject male_p_cf_bodybone;
+		internal GameObject male_p_cf_bodybone;
 
 		private GameObject maleHeadPos;
 

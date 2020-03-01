@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Harmony;
+using UnityEngine;
 using static SetParentKK.SetParentLoader;
 
 namespace SetParentKK
@@ -19,6 +20,21 @@ namespace SetParentKK
 
 			setParentObj = __instance.gameObject.AddComponent<SetParent>();
 			setParentObj.hSprite = __instance.sprites[0];
+		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(VRHScene), "ChangeAnimator")]
+		public static void ChangeAnimatorPrefix()
+		{
+			if (setParentObj != null)
+			{
+				setParentObj.UnsetP();
+				setParentObj.male_p_cf_bodybone.transform.localPosition = Vector3.zero;
+				setParentObj.male_p_cf_bodybone.transform.localRotation = Quaternion.identity;
+				setParentObj.female_p_cf_bodybone.transform.localPosition = Vector3.zero;
+				setParentObj.female_p_cf_bodybone.transform.localRotation = Quaternion.identity;
+			}
+			
 		}
 	}
 }
