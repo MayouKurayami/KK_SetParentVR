@@ -807,7 +807,9 @@ namespace SetParentKK
 		/// </summary>
 		private void MaleIKs()
 		{
-			if ((maleFBBIK.solver.rightHandEffector.target.position - male_cf_pv_hand_R.transform.position).magnitude > 0.2f)
+			float rightHandDistance = (maleFBBIK.solver.rightHandEffector.target.position - male_cf_pv_hand_R.transform.position).magnitude;
+			float rightHandTwist = Quaternion.Angle(maleFBBIK.solver.rightHandEffector.target.rotation, male_cf_pv_hand_R.transform.rotation);
+			if (rightHandDistance > 0.2f || rightHandTwist > 45f)
 			{
 				maleFBBIK.solver.rightHandEffector.positionWeight = 0f;
 				maleFBBIK.solver.rightHandEffector.rotationWeight = 0f;
@@ -818,7 +820,9 @@ namespace SetParentKK
 				maleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
 			}
 
-			if((maleFBBIK.solver.leftHandEffector.target.position - male_cf_pv_hand_L.transform.position).magnitude > 0.2f)
+			float leftHandDistance = (maleFBBIK.solver.leftHandEffector.target.position - male_cf_pv_hand_L.transform.position).magnitude;
+			float leftHandTwist = Quaternion.Angle(maleFBBIK.solver.leftHandEffector.target.rotation, male_cf_pv_hand_L.transform.rotation);
+			if (leftHandDistance > 0.2f || leftHandTwist > 45f)
 			{
 				maleFBBIK.solver.leftHandEffector.positionWeight = 0f;
 				maleFBBIK.solver.leftHandEffector.rotationWeight = 0f;
