@@ -65,30 +65,16 @@ namespace SetParentKK
 			Transform male_cf_n_height = maleFBBIK.references.pelvis.parent;
 			male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R").gameObject;
 			male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L").gameObject;
+
+			if (SetCollider.Value)
+			{
+				SetBodyColliders();
+				SetMapObjectsColliders();
+			}
 		}
 
 		private void InitCanvas()
 		{
-			GameObject rightHandCollider = new GameObject("RightHandCollider");
-			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
-			rightHandCollider.transform.parent = femaleFBBIK.solver.rightHandEffector.bone;
-			rightHandCollider.transform.localPosition = Vector3.zero;
-			
-			GameObject leftHandCollider = new GameObject("LeftHandCollider");
-			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
-			leftHandCollider.transform.parent = femaleFBBIK.solver.leftHandEffector.bone;
-			leftHandCollider.transform.localPosition = Vector3.zero;
-		
-			GameObject rightLegCollider = new GameObject("RightLegCollider");
-			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
-			rightLegCollider.transform.parent = femaleFBBIK.solver.rightFootEffector.bone;
-			rightLegCollider.transform.localPosition = Vector3.zero;
-			
-			GameObject leftLegCollider = new GameObject("LeftLegCollider");
-			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
-			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
-			leftLegCollider.transform.localPosition = Vector3.zero;
-
 			objRightMenuCanvas = new GameObject("CanvasSetParent", new Type[]
 			{
 				typeof(Canvas)
@@ -165,7 +151,6 @@ namespace SetParentKK
 			eventSystemMotion.AddComponent<StandaloneInputModule>();
 			eventSystemMotion.transform.SetParent(objLeftMenuCanvas.transform);
 
-
 			////////////////
 			//Populate left side floating menu with buttons
 			////////////////
@@ -208,55 +193,81 @@ namespace SetParentKK
 			point.Normalize();
 			canvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
 			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
-			if (SetCollider.Value)
+		}
+
+		private void SetBodyColliders()
+		{
+			GameObject rightHandCollider = new GameObject("RightHandCollider");
+			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
+			rightHandCollider.transform.parent = femaleFBBIK.solver.rightHandEffector.bone;
+			rightHandCollider.transform.localPosition = Vector3.zero;
+
+			GameObject leftHandCollider = new GameObject("LeftHandCollider");
+			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
+			leftHandCollider.transform.parent = femaleFBBIK.solver.leftHandEffector.bone;
+			leftHandCollider.transform.localPosition = Vector3.zero;
+
+			GameObject rightLegCollider = new GameObject("RightLegCollider");
+			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
+			rightLegCollider.transform.parent = femaleFBBIK.solver.rightFootEffector.bone;
+			rightLegCollider.transform.localPosition = Vector3.zero;
+
+			GameObject leftLegCollider = new GameObject("LeftLegCollider");
+			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
+			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
+			leftLegCollider.transform.localPosition = Vector3.zero;
+
+		
+			shoulderCollider = new GameObject("SPCollider");
+			shoulderCollider.transform.parent = cameraEye.transform;
+			shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
+			shoulderCollider.transform.localRotation = Quaternion.identity;
+			BoxCollider boxCollider2 = shoulderCollider.AddComponent<BoxCollider>();
+			boxCollider2.isTrigger = true;
+			boxCollider2.center = Vector3.zero;
+			boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
+			shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
+		}
+
+		private void SetMapObjectsColliders()
+		{
+			foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
 			{
-				foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
+				MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
+				if (!(meshFilter == null))
 				{
-					MeshFilter component = transform.GetComponent<MeshFilter>();
-					if (!(component == null))
+					GameObject mapObjCollider = new GameObject("SPCollider");
+					mapObjCollider.transform.parent = transform.transform;
+					mapObjCollider.transform.localPosition = Vector3.zero;
+					mapObjCollider.transform.localRotation = Quaternion.identity;
+					mapObjCollider.AddComponent<Rigidbody>().isKinematic = true;
+					if (meshFilter.mesh.bounds.size.x < 0.03f || meshFilter.mesh.bounds.size.y < 0.03f || meshFilter.mesh.bounds.size.z < 0.03f)
 					{
-						GameObject gameObject7 = new GameObject("SPCollider");
-						gameObject7.transform.parent = transform.transform;
-						gameObject7.transform.localPosition = Vector3.zero;
-						gameObject7.transform.localRotation = Quaternion.identity;
-						gameObject7.AddComponent<Rigidbody>().isKinematic = true;
-						if (component.mesh.bounds.size.x < 0.03f || component.mesh.bounds.size.y < 0.03f || component.mesh.bounds.size.z < 0.03f)
+						BoxCollider boxCollider = mapObjCollider.AddComponent<BoxCollider>();
+						boxCollider.isTrigger = true;
+						boxCollider.center = meshFilter.mesh.bounds.center;
+						boxCollider.size = meshFilter.mesh.bounds.size;
+						if (boxCollider.size.x < 0.03f)
 						{
-							BoxCollider boxCollider = gameObject7.AddComponent<BoxCollider>();
-							boxCollider.isTrigger = true;
-							boxCollider.center = component.mesh.bounds.center;
-							boxCollider.size = component.mesh.bounds.size;
-							if (boxCollider.size.x < 0.03f)
-							{
-								boxCollider.size += new Vector3(0.04f, 0f, 0f);
-							}
-							if (boxCollider.size.y < 0.03f)
-							{
-								boxCollider.size += new Vector3(0f, 0.04f, 0f);
-							}
-							if (boxCollider.size.z < 0.03f)
-							{
-								boxCollider.size += new Vector3(0f, 0f, 0.04f);
-							}
+							boxCollider.size += new Vector3(0.04f, 0f, 0f);
 						}
-						else
+						if (boxCollider.size.y < 0.03f)
 						{
-							MeshCollider meshCollider = gameObject7.AddComponent<MeshCollider>();
-							meshCollider.isTrigger = true;
-							meshCollider.convex = false;
-							meshCollider.sharedMesh = component.mesh;
+							boxCollider.size += new Vector3(0f, 0.04f, 0f);
+						}
+						if (boxCollider.size.z < 0.03f)
+						{
+							boxCollider.size += new Vector3(0f, 0f, 0.04f);
 						}
 					}
+					else
+					{
+						MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
+						meshCollider.isTrigger = true;
+						meshCollider.convex = false;
+						meshCollider.sharedMesh = meshFilter.mesh;
+					}
 				}
-				shoulderCollider = new GameObject("SPCollider");
-				shoulderCollider.transform.parent = cameraEye.transform;
-				shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
-				shoulderCollider.transform.localRotation = Quaternion.identity;
-				BoxCollider boxCollider2 = shoulderCollider.AddComponent<BoxCollider>();
-				boxCollider2.isTrigger = true;
-				boxCollider2.center = Vector3.zero;
-				boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
-				shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
 			}
 		}
 
