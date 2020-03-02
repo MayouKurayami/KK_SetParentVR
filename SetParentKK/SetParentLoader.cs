@@ -34,7 +34,11 @@ namespace SetParentKK
 
 		[DisplayName("Make Girl's Hands and Feet Grab onto Objects")]
 		[Description("If enabled, girl's hands and feet will automatically grab onto objects when in contact")]
-		public static ConfigWrapper<bool> SetCollider { get; private set; }
+		public static ConfigWrapper<bool> SetFemaleCollider { get; private set; }
+
+		[DisplayName("Make Man's Feet Grab onto Objects")]
+		[Description("If enabled, man's feet will automatically grab onto objects when in contact. \nThis is useful to prevent man's feet from clipping into the ground")]
+		public static ConfigWrapper<bool> SetMaleCollider { get; private set; }
 
 		[DisplayName("Part of Girl's Body to Parent with The Controller")]
 		[Description("Use this body to act as the center/origin that will correspond to the movement and rotation of the controller")]
@@ -106,7 +110,8 @@ namespace SetParentKK
 			CalcController = new ConfigWrapper<ControllerAnimMode>("CalcPattern", this, ControllerAnimMode.SetParentController);
 			Finishcount = new ConfigWrapper<float>("Finishcount", this, 0f);
 			SetParentMale = new ConfigWrapper<bool>("SetParentMale", this, true);
-			SetCollider = new ConfigWrapper<bool>("SetCollider", this, true);
+			SetFemaleCollider = new ConfigWrapper<bool>("SetFemaleCollider", this, true);
+			SetMaleCollider = new ConfigWrapper<bool>("SetMaleCollider", this, true);
 			ParentPart = new ConfigWrapper<BodyPart>("ParentPart", this, BodyPart.Belly);
 			TrackingMode = new ConfigWrapper<bool>("TrackingMode", this, true);
 			GazeControl = new ConfigWrapper<bool>("GazeControl", this, false);

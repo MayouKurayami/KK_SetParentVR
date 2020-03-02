@@ -21,7 +21,7 @@ namespace SetParentKK
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!SetParentLoader.SetCollider.Value || !setParent.setFlag)
+			if ((!SetParentLoader.SetFemaleCollider.Value && !SetParentLoader.SetMaleCollider.Value) || !setParent.setFlag)
 			{
 				return;
 			}
@@ -62,6 +62,20 @@ namespace SetParentKK
 						setParent.objRightLeg.transform.parent = other.transform;
 					}
 					break;
+				case BodyParts.male_ft_L:
+					if (setParent.objLeftMaleFoot == null)
+					{
+						setParent.MaleFixLeftLegToggle();
+						setParent.objRightMaleFoot.transform.parent = other.transform;
+					}
+					break;
+				case BodyParts.male_ft_R:
+					if (setParent.objRightMaleFoot == null)
+					{
+						setParent.MaleFixRightLegToggle();
+						setParent.objRightMaleFoot.transform.parent = other.transform;
+					}
+					break;
 				default:
 					return;
 			}
@@ -80,7 +94,9 @@ namespace SetParentKK
 			hand_L,
 			hand_R,
 			leg_L,
-			leg_R
+			leg_R,
+			male_ft_L,
+			male_ft_R
 		}
 	}
 }

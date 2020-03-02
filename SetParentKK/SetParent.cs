@@ -48,6 +48,9 @@ namespace SetParentKK
 			female_cf_t_leg_R = femaleFBBIK.solver.rightFootEffector.target.gameObject;
 			female_cf_t_leg_L = femaleFBBIK.solver.leftFootEffector.target.gameObject;
 
+			male_cf_t_leg_L = maleFBBIK.solver.leftFootEffector.target.gameObject;
+			male_cf_t_leg_R = maleFBBIK.solver.rightFootEffector.target.gameObject;
+
 			female_cf_j_root = femaleFBBIK.references.root.gameObject;
 			female_cf_j_hips = femaleFBBIK.references.pelvis.gameObject;
 			female_cf_n_height = femaleFBBIK.references.pelvis.parent.gameObject;
@@ -65,10 +68,19 @@ namespace SetParentKK
 			Transform male_cf_n_height = maleFBBIK.references.pelvis.parent;
 			male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R").gameObject;
 			male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L").gameObject;
+			male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R").gameObject;
+			male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L").gameObject;
 
-			if (SetCollider.Value)
+			if (SetFemaleCollider.Value)
 			{
-				SetBodyColliders();
+				SetFemaleColliders();
+			}
+			if (SetMaleCollider.Value)
+			{
+				SetMaleFeetColliders();
+			}
+			if (SetFemaleCollider.Value || SetMaleCollider.Value)
+			{
 				SetMapObjectsColliders();
 			}
 		}
@@ -112,7 +124,8 @@ namespace SetParentKK
 			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(), objRightMenuCanvas);
 			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(), objRightMenuCanvas);
 			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(), objRightMenuCanvas);
-			txtFixBody = CreateButton("手足固定IS OFF", new Vector3(-28f, -8f, 0f), () => PushFixBodyButton(), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => MaleFixRightLegToggle(), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => MaleFixLeftLegToggle(), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
 			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
@@ -124,8 +137,9 @@ namespace SetParentKK
 			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
 			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
 			CreateButton("ヌク", new Vector3(-28f, 120f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
-		
-			
+			txtFixBody = CreateButton("手足固定IS OFF", new Vector3(28f, 120f, 0f), () => PushFixBodyButton(), objRightMenuCanvas);
+
+
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
 			point.Normalize();
@@ -195,7 +209,7 @@ namespace SetParentKK
 			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
 		}
 
-		private void SetBodyColliders()
+		private void SetFemaleColliders()
 		{
 			GameObject rightHandCollider = new GameObject("RightHandCollider");
 			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.hand_R);
@@ -217,7 +231,7 @@ namespace SetParentKK
 			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
 			leftLegCollider.transform.localPosition = Vector3.zero;
 
-		
+
 			shoulderCollider = new GameObject("SPCollider");
 			shoulderCollider.transform.parent = cameraEye.transform;
 			shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
@@ -227,6 +241,19 @@ namespace SetParentKK
 			boxCollider2.center = Vector3.zero;
 			boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
 			shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
+		}
+
+		private void SetMaleFeetColliders()
+		{
+			GameObject rightMaleFootCollider = new GameObject("RightFootCollider");
+			rightMaleFootCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.male_ft_R);
+			rightMaleFootCollider.transform.parent = maleFBBIK.solver.rightFootEffector.bone;
+			rightMaleFootCollider.transform.localPosition = Vector3.zero;
+
+			GameObject leftMaleFootCollider = new GameObject("LeftFootCollider");
+			leftMaleFootCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.male_ft_L);
+			leftMaleFootCollider.transform.parent = maleFBBIK.solver.leftFootEffector.bone;
+			leftMaleFootCollider.transform.localPosition = Vector3.zero;
 		}
 
 		private void SetMapObjectsColliders()
@@ -347,6 +374,36 @@ namespace SetParentKK
 			UnityEngine.Object.DestroyImmediate(objLeftLeg);
 			objLeftLeg = null;
 			femaleFBBIK.solver.leftFootEffector.target = female_cf_t_leg_L.transform;
+		}
+
+		public void MaleFixLeftLegToggle()
+		{
+			if (objLeftMaleFoot == null)
+			{
+				objLeftMaleFoot = new GameObject("objLeftMaleFoot");
+				objLeftMaleFoot.transform.position = male_cf_pv_leg_L.transform.position;
+				objLeftMaleFoot.transform.rotation = male_cf_pv_leg_L.transform.rotation;
+				maleFBBIK.solver.leftFootEffector.target = objLeftMaleFoot.transform;
+				return;
+			}
+			UnityEngine.Object.DestroyImmediate(objLeftMaleFoot);
+			objLeftMaleFoot = null;
+			maleFBBIK.solver.leftFootEffector.target = male_cf_t_leg_L.transform;
+		}
+
+		public void MaleFixRightLegToggle()
+		{
+			if (objRightMaleFoot == null)
+			{
+				objRightMaleFoot = new GameObject("objRightMaleFoot");
+				objRightMaleFoot.transform.position = male_cf_pv_leg_R.transform.position;
+				objRightMaleFoot.transform.rotation = male_cf_pv_leg_R.transform.rotation;
+				maleFBBIK.solver.rightFootEffector.target = objRightMaleFoot.transform;
+				return;
+			}
+			UnityEngine.Object.DestroyImmediate(objRightMaleFoot);
+			objRightMaleFoot = null;
+			maleFBBIK.solver.rightFootEffector.target = male_cf_t_leg_R.transform;
 		}
 
 		private void ChangeMotion(string path, string name)
@@ -657,7 +714,7 @@ namespace SetParentKK
 				}
 
 				//Update player's shoulder collider's rotation
-				if (SetCollider.Value)
+				if (SetFemaleCollider.Value)
 					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
 				
@@ -761,6 +818,10 @@ namespace SetParentKK
 				PushFixLeftLegButton();
 			if (objRightLeg != null)
 				PushFixRightLegButton();
+			if (objLeftMaleFoot != null)
+				MaleFixLeftLegToggle();
+			if (objRightMaleFoot != null)
+				MaleFixRightLegToggle();
 
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
@@ -831,6 +892,24 @@ namespace SetParentKK
 			{
 				maleFBBIK.solver.leftHandEffector.positionWeight = 1f;
 				maleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
+			}
+
+
+			if (objRightMaleFoot != null && (maleFBBIK.solver.rightFootEffector.target.position - male_cf_pv_leg_R.transform.position).magnitude > 0.2f)
+			{
+				MaleFixRightLegToggle();
+			}
+			else
+			{
+				maleFBBIK.solver.rightFootEffector.positionWeight = 1f;
+			}
+			if (objLeftMaleFoot != null && (maleFBBIK.solver.leftFootEffector.target.position - male_cf_pv_leg_L.transform.position).magnitude > 0.2f)
+			{
+				MaleFixLeftLegToggle();
+			}
+			else
+			{
+				maleFBBIK.solver.leftFootEffector.positionWeight = 1f;
 			}
 		}
 
@@ -1270,6 +1349,18 @@ namespace SetParentKK
 		private GameObject male_cf_pv_hand_R;
 
 		private GameObject male_cf_pv_hand_L;
+
+		private GameObject male_cf_pv_leg_L;
+
+		private GameObject male_cf_pv_leg_R;
+
+		private GameObject male_cf_t_leg_L;
+
+		private GameObject male_cf_t_leg_R;
+
+		internal GameObject objLeftMaleFoot;
+
+		internal GameObject objRightMaleFoot;
 
 		private Text txtSetParentL;
 
