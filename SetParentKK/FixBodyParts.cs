@@ -4,7 +4,7 @@ namespace SetParentKK
 {
 	public class FixBodyParts : MonoBehaviour
 	{
-		public void Init(SetParent sp, FixBodyParts.bodyParts p)
+		public void Init(SetParent sp, BodyParts p)
 		{
 			setParent = sp;
 			parts = p;
@@ -31,7 +31,7 @@ namespace SetParentKK
 			}
 			switch (parts)
 			{
-				case FixBodyParts.bodyParts.hand_L:
+				case BodyParts.hand_L:
 					if (setParent.objLeftHand == null)
 					{
 						setParent.PushFixLeftHandButton();
@@ -39,7 +39,7 @@ namespace SetParentKK
 						return;
 					}
 					break;
-				case FixBodyParts.bodyParts.hand_R:
+				case BodyParts.hand_R:
 					if (setParent.objRightHand == null)
 					{
 						setParent.PushFixRightHandButton();
@@ -47,7 +47,7 @@ namespace SetParentKK
 						return;
 					}
 					break;
-				case FixBodyParts.bodyParts.leg_L:
+				case BodyParts.leg_L:
 					if (setParent.objLeftLeg == null)
 					{
 						setParent.PushFixLeftLegButton();
@@ -55,7 +55,7 @@ namespace SetParentKK
 						return;
 					}
 					break;
-				case FixBodyParts.bodyParts.leg_R:
+				case BodyParts.leg_R:
 					if (setParent.objRightLeg == null)
 					{
 						setParent.PushFixRightLegButton();
@@ -69,13 +69,13 @@ namespace SetParentKK
 
 		private SetParent setParent;
 
-		private FixBodyParts.bodyParts parts;
+		private BodyParts parts;
 
 		private Rigidbody rg;
 
 		private SphereCollider sc;
 
-		public enum bodyParts
+		public enum BodyParts
 		{
 			hand_L,
 			hand_R,

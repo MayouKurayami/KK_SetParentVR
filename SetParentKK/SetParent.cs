@@ -198,22 +198,22 @@ namespace SetParentKK
 		private void SetBodyColliders()
 		{
 			GameObject rightHandCollider = new GameObject("RightHandCollider");
-			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_R);
+			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.hand_R);
 			rightHandCollider.transform.parent = femaleFBBIK.solver.rightHandEffector.bone;
 			rightHandCollider.transform.localPosition = Vector3.zero;
 
 			GameObject leftHandCollider = new GameObject("LeftHandCollider");
-			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.hand_L);
+			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.hand_L);
 			leftHandCollider.transform.parent = femaleFBBIK.solver.leftHandEffector.bone;
 			leftHandCollider.transform.localPosition = Vector3.zero;
 
 			GameObject rightLegCollider = new GameObject("RightLegCollider");
-			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_R);
+			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.leg_R);
 			rightLegCollider.transform.parent = femaleFBBIK.solver.rightFootEffector.bone;
 			rightLegCollider.transform.localPosition = Vector3.zero;
 
 			GameObject leftLegCollider = new GameObject("LeftLegCollider");
-			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.bodyParts.leg_L);
+			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.leg_L);
 			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
 			leftLegCollider.transform.localPosition = Vector3.zero;
 
