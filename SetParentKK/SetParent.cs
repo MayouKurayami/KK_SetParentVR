@@ -120,10 +120,10 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => PushFixRightLegButton(), objRightMenuCanvas);
-			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(), objRightMenuCanvas);
-			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(), objRightMenuCanvas);
-			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(), objRightMenuCanvas);
+			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => PushFixRightLegButton(true), objRightMenuCanvas);
+			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(true), objRightMenuCanvas);
+			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(true), objRightMenuCanvas);
+			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(true), objRightMenuCanvas);
 			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => MaleFixRightLegToggle(), objRightMenuCanvas);
 			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => MaleFixLeftLegToggle(), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
@@ -137,7 +137,6 @@ namespace SetParentKK
 			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
 			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
 			CreateButton("ヌク", new Vector3(-28f, 120f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
-			txtFixBody = CreateButton("手足固定IS OFF", new Vector3(28f, 120f, 0f), () => PushFixBodyButton(), objRightMenuCanvas);
 
 
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
@@ -298,25 +297,7 @@ namespace SetParentKK
 			}
 		}
 
-		private void PushFixBodyButton()
-		{
-			if (objRightHand == bFixBody)
-				PushFixRightHandButton();
-			if (objLeftHand == bFixBody)
-				PushFixLeftHandButton();
-			if (objRightLeg == bFixBody)
-				PushFixRightLegButton();
-			if (objLeftLeg == bFixBody)
-				PushFixLeftLegButton();
-
-			bFixBody = !bFixBody;
-			if (bFixBody)
-				txtFixBody.text = "手足固定IS ON";
-			else
-				txtFixBody.text = "手足固定IS OFF";
-		}
-
-		public void PushFixRightHandButton()
+		public void PushFixRightHandButton(bool force = false)
 		{
 			if (objRightHand == null)
 			{
@@ -324,6 +305,7 @@ namespace SetParentKK
 				objRightHand.transform.position = female_cf_pv_hand_R.transform.position;
 				objRightHand.transform.rotation = female_cf_pv_hand_R.transform.rotation;
 				femaleFBBIK.solver.rightHandEffector.target = objRightHand.transform;
+				fixRightHand = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightHand);
@@ -331,7 +313,7 @@ namespace SetParentKK
 			femaleFBBIK.solver.rightHandEffector.target = female_cf_t_hand_R.transform;
 		}
 
-		public void PushFixLeftHandButton()
+		public void PushFixLeftHandButton(bool force = false)
 		{
 			if (objLeftHand == null)
 			{
@@ -339,6 +321,7 @@ namespace SetParentKK
 				objLeftHand.transform.position = female_cf_pv_hand_L.transform.position;
 				objLeftHand.transform.rotation = female_cf_pv_hand_L.transform.rotation;
 				femaleFBBIK.solver.leftHandEffector.target = objLeftHand.transform;
+				fixLefttHand = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftHand);
@@ -346,7 +329,7 @@ namespace SetParentKK
 			femaleFBBIK.solver.leftHandEffector.target = female_cf_t_hand_L.transform;
 		}
 
-		public void PushFixRightLegButton()
+		public void PushFixRightLegButton(bool force = false)
 		{
 			if (objRightLeg == null)
 			{
@@ -354,6 +337,7 @@ namespace SetParentKK
 				objRightLeg.transform.position = female_cf_pv_leg_R.transform.position;
 				objRightLeg.transform.rotation = female_cf_pv_leg_R.transform.rotation;
 				femaleFBBIK.solver.rightFootEffector.target = objRightLeg.transform;
+				fixRightLeg = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightLeg);
@@ -361,7 +345,7 @@ namespace SetParentKK
 			femaleFBBIK.solver.rightFootEffector.target = female_cf_t_leg_R.transform;
 		}
 
-		public void PushFixLeftLegButton()
+		public void PushFixLeftLegButton(bool force = false)
 		{
 			if (objLeftLeg == null)
 			{
@@ -369,6 +353,7 @@ namespace SetParentKK
 				objLeftLeg.transform.position = female_cf_pv_leg_L.transform.position;
 				objLeftLeg.transform.rotation = female_cf_pv_leg_L.transform.rotation;
 				femaleFBBIK.solver.leftFootEffector.target = objLeftLeg.transform;
+				fixLeftLeg = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftLeg);
@@ -919,7 +904,7 @@ namespace SetParentKK
 		/// Attachment onto anchor points created by SetParent will enjoy a larger degree of freedom before being released
 		private void FemaleIKs()
 		{
-			if (objRightHand != null && !bFixBody && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.35f)
+			if (objRightHand != null && !fixRightHand && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.35f)
 			{
 				PushFixRightHandButton();
 			}
@@ -935,7 +920,7 @@ namespace SetParentKK
 				femaleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
 			}
 
-			if (objLeftHand != null && !bFixBody && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.35f)
+			if (objLeftHand != null && !fixLefttHand && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.35f)
 			{
 				PushFixLeftHandButton();
 			}
@@ -950,7 +935,7 @@ namespace SetParentKK
 				femaleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
 			}
 
-			if (objRightLeg != null && !bFixBody && (femaleFBBIK.solver.rightFootEffector.target.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
+			if (objRightLeg != null && !fixRightLeg && (femaleFBBIK.solver.rightFootEffector.target.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
 			{
 				PushFixRightLegButton();
 			}
@@ -960,7 +945,7 @@ namespace SetParentKK
 				femaleFBBIK.solver.rightFootEffector.rotationWeight = 1f;
 			}
 
-			if (objLeftLeg != null && !bFixBody && (femaleFBBIK.solver.leftFootEffector.target.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
+			if (objLeftLeg != null && !fixLeftLeg && (femaleFBBIK.solver.leftFootEffector.target.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
 			{
 				PushFixLeftLegButton();
 			}
@@ -1366,9 +1351,13 @@ namespace SetParentKK
 
 		private Text txtSetParentR;
 
-		private Text txtFixBody;
+		private bool fixRightHand;
 
-		private bool bFixBody;
+		private bool fixLefttHand;
+
+		private bool fixRightLeg;
+
+		private bool fixLeftLeg;
 
 		private Vector3[] vecSpinePos = new Vector3[20];
 
