@@ -457,14 +457,7 @@ namespace SetParentKK
 
 
 			if (objRightMenuCanvas == null)
-			{
 				InitCanvas();
-				if (objRightMenuCanvas != null && hideCanvas)
-				{
-					objRightMenuCanvas.SetActive(false);
-					objLeftMenuCanvas.SetActive(false);
-				}
-			}
 			else
 			{
 				if (RightMenuPressing() || LeftMenuPressing())
@@ -472,17 +465,8 @@ namespace SetParentKK
 					hideCount += Time.deltaTime;
 					if (hideCount >= 1f)
 					{
-						objRightMenuCanvas.SetActive(!objRightMenuCanvas.activeSelf);
-						objLeftMenuCanvas.SetActive(!objLeftMenuCanvas.activeSelf);
+						hideCanvas = !hideCanvas;
 						hideCount = 0f;
-						if (objRightMenuCanvas.activeSelf)
-						{
-							hideCanvas = false;
-						}
-						else
-						{
-							hideCanvas = true;
-						}
 					}
 				}
 				else
@@ -496,7 +480,33 @@ namespace SetParentKK
 				objRightMenuCanvas.transform.forward = (objRightMenuCanvas.transform.position - cameraEye.transform.position).normalized;
 				objLeftMenuCanvas.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
 				objLeftMenuCanvas.transform.forward = (objLeftMenuCanvas.transform.position - cameraEye.transform.position).normalized;
-			}
+
+			
+				if (setFlag)
+				{
+					Vector3 vector;
+					if (parentIsLeft)
+						vector = cameraEye.transform.position - rightController.transform.position;
+					else
+						vector = cameraEye.transform.position - leftController.transform.position;
+
+					if (vector.magnitude <= 0.3f)
+					{
+						objRightMenuCanvas.SetActive(true);
+						objLeftMenuCanvas.SetActive(true);
+					}
+					else
+					{
+						objRightMenuCanvas.SetActive(!hideCanvas);
+						objLeftMenuCanvas.SetActive(!hideCanvas);
+					}
+				}
+				else 
+				{
+					objRightMenuCanvas.SetActive(!hideCanvas);
+					objLeftMenuCanvas.SetActive(!hideCanvas);
+				}
+			}	
 
 			////////////////////////////////////////////////////////////
 			//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
@@ -650,28 +660,7 @@ namespace SetParentKK
 				if (SetCollider.Value)
 					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
-				if (hideCanvas)
-				{
-					Vector3 vector;
-					if (parentIsLeft)
-					{
-						vector = cameraEye.transform.position - rightController.transform.position;
-					}
-					else
-					{
-						vector = cameraEye.transform.position - leftController.transform.position;
-					}
-					if (vector.magnitude <= 0.3f)
-					{
-						objRightMenuCanvas.SetActive(true);
-						objLeftMenuCanvas.SetActive(true);
-					}
-					else
-					{
-						objRightMenuCanvas.SetActive(false);
-						objLeftMenuCanvas.SetActive(false);
-					}
-				}
+				
 				txtSetParentL.text = "親子付け Off";
 				txtSetParentR.text = "親子付け Off";
 			}
