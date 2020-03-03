@@ -32,12 +32,12 @@ namespace SetParentKK
 		[Description("If enabled, the male body will rotate to align his head with the headset")]
 		public static ConfigWrapper<bool> SetParentMale { get; private set; }
 
-		[DisplayName("Make Girl's Hands and Feet Grab onto Objects")]
+		[DisplayName("Make Girl's Hands and Feet Stick to Objects")]
 		[Description("If enabled, girl's hands and feet will automatically grab onto objects when in contact")]
 		public static ConfigWrapper<bool> SetFemaleCollider { get; private set; }
 
-		[DisplayName("Make Man's Feet Grab onto Objects")]
-		[Description("If enabled, man's feet will automatically grab onto objects when in contact. \nThis is useful to prevent man's feet from clipping into the ground")]
+		[DisplayName("Make Male's Feet Stick to Objects")]
+		[Description("If enabled, male's feet will automatically grab onto objects when in contact. \nThis is useful to prevent male's feet from clipping into the ground")]
 		public static ConfigWrapper<bool> SetMaleCollider { get; private set; }
 
 		[DisplayName("Part of Girl's Body to Parent with The Controller")]
