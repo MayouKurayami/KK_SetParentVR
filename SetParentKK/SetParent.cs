@@ -590,13 +590,16 @@ namespace SetParentKK
 			
 			if (setFlag)
 			{
-				if (nameAnimation != hFlag.nowAnimationInfo.nameAnimation)
+				if (nowAnimState != hFlag.nowAnimStateName)
 				{
-					UnsetP();
-					nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
+					if (SetParentMale.Value)
+						InitMaleFollow();
+					nowAnimState = hFlag.nowAnimStateName;
 				}
 
+
 				ControllerActions();
+
 
 				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
 				if (indexSpineRot >= 19)
@@ -724,7 +727,7 @@ namespace SetParentKK
 				GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			}
 			parentIsLeft = _parentIsLeft;
-			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;		
+			nowAnimState = hFlag.nowAnimStateName;		
 
 			switch (ParentPart.Value)
 			{
@@ -768,18 +771,7 @@ namespace SetParentKK
 			
 			if (SetParentMale.Value && male_p_cf_bodybone != null && currentCtrlstate != CtrlState.Following)
 			{
-				GameObject maleNeck = maleFBBIK.references.spine[2].gameObject;	
-				maleHeadPos = new GameObject("maleHeadPos");
-				maleHeadPos.transform.position = maleNeck.transform.position;
-				maleHeadPos.transform.rotation = maleNeck.transform.rotation;
-				maleHeadPos.transform.parent = maleNeck.transform;
-				maleHeadPos.transform.localPosition = new Vector3(0, 0, 0.08f);
-
-				GameObject maleCrotch = maleFBBIK.references.leftThigh.parent.Find("cf_d_kokan/cm_J_dan_top").gameObject;
-				maleCrotchPos = new GameObject("maleCrotchPos");
-				maleCrotchPos.transform.position = maleCrotch.transform.position;
-				maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
-				maleCrotchPos.transform.parent = male_p_cf_bodybone.transform;
+				InitMaleFollow();
 			}
 			if (SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMode.Value == ParentMode.AnimationOnly)
 			{
@@ -816,6 +808,24 @@ namespace SetParentKK
 			}
 
 			setFlag = false;
+		}
+
+		public void InitMaleFollow()
+		{
+			GameObject maleNeck = maleFBBIK.references.spine[2].gameObject;
+			if (maleHeadPos == null)
+				maleHeadPos = new GameObject("maleHeadPos");
+			maleHeadPos.transform.position = maleNeck.transform.position;
+			maleHeadPos.transform.rotation = maleNeck.transform.rotation;
+			maleHeadPos.transform.parent = maleNeck.transform;
+			maleHeadPos.transform.localPosition = new Vector3(0, 0, 0.08f);
+			
+			GameObject maleCrotch = maleFBBIK.references.leftThigh.parent.Find("cf_d_kokan/cm_J_dan_top").gameObject;
+			if (maleCrotchPos == null)
+				maleCrotchPos = new GameObject("maleCrotchPos");
+			maleCrotchPos.transform.position = maleCrotch.transform.position;
+			maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
+			maleCrotchPos.transform.parent = male_p_cf_bodybone.transform;
 		}
 
 		private Text CreateButton(string buttonText, Vector3 localPosition, UnityAction action, GameObject parentObject)
@@ -1237,7 +1247,7 @@ namespace SetParentKK
 
 		private FullBodyBipedIK femaleFBBIK;
 
-		private string nameAnimation = "";
+		private string nowAnimState = "";
 
 		private GameObject leftController;
 
