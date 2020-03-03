@@ -124,8 +124,8 @@ namespace SetParentKK
 			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(true), objRightMenuCanvas);
 			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(true), objRightMenuCanvas);
 			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => MaleFixRightLegToggle(), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => MaleFixLeftLegToggle(), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => MaleFixRightLegToggle(true), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => MaleFixLeftLegToggle(true), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
 			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
@@ -361,7 +361,7 @@ namespace SetParentKK
 			femaleFBBIK.solver.leftFootEffector.target = female_cf_t_leg_L.transform;
 		}
 
-		public void MaleFixLeftLegToggle()
+		public void MaleFixLeftLegToggle(bool force = false)
 		{
 			if (objLeftMaleFoot == null)
 			{
@@ -369,6 +369,7 @@ namespace SetParentKK
 				objLeftMaleFoot.transform.position = male_cf_pv_leg_L.transform.position;
 				objLeftMaleFoot.transform.rotation = male_cf_pv_leg_L.transform.rotation;
 				maleFBBIK.solver.leftFootEffector.target = objLeftMaleFoot.transform;
+				fixMaleLeftLeg = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objLeftMaleFoot);
@@ -376,7 +377,7 @@ namespace SetParentKK
 			maleFBBIK.solver.leftFootEffector.target = male_cf_t_leg_L.transform;
 		}
 
-		public void MaleFixRightLegToggle()
+		public void MaleFixRightLegToggle(bool force = false)
 		{
 			if (objRightMaleFoot == null)
 			{
@@ -384,6 +385,7 @@ namespace SetParentKK
 				objRightMaleFoot.transform.position = male_cf_pv_leg_R.transform.position;
 				objRightMaleFoot.transform.rotation = male_cf_pv_leg_R.transform.rotation;
 				maleFBBIK.solver.rightFootEffector.target = objRightMaleFoot.transform;
+				fixMaleRightLeg = force;
 				return;
 			}
 			UnityEngine.Object.DestroyImmediate(objRightMaleFoot);
@@ -893,7 +895,7 @@ namespace SetParentKK
 			}
 
 
-			if (objRightMaleFoot != null && (maleFBBIK.solver.rightFootEffector.target.position - male_cf_pv_leg_R.transform.position).magnitude > 0.2f)
+			if (objRightMaleFoot != null && !fixMaleRightLeg && (maleFBBIK.solver.rightFootEffector.target.position - male_cf_pv_leg_R.transform.position).magnitude > 0.2f)
 			{
 				MaleFixRightLegToggle();
 			}
@@ -901,7 +903,7 @@ namespace SetParentKK
 			{
 				maleFBBIK.solver.rightFootEffector.positionWeight = 1f;
 			}
-			if (objLeftMaleFoot != null && (maleFBBIK.solver.leftFootEffector.target.position - male_cf_pv_leg_L.transform.position).magnitude > 0.2f)
+			if (objLeftMaleFoot != null && !fixMaleLeftLeg && (maleFBBIK.solver.leftFootEffector.target.position - male_cf_pv_leg_L.transform.position).magnitude > 0.2f)
 			{
 				MaleFixLeftLegToggle();
 			}
@@ -1371,6 +1373,10 @@ namespace SetParentKK
 		private bool fixRightLeg;
 
 		private bool fixLeftLeg;
+
+		private bool fixMaleRightLeg;
+
+		private bool fixMaleLeftLeg;
 
 		private Vector3[] vecSpinePos = new Vector3[20];
 
