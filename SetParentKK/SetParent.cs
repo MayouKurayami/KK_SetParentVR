@@ -694,11 +694,14 @@ namespace SetParentKK
 					//   and align it with the direction of the penis by rotating it to the left by 90 degress,  
 					//   then calculate the rotation between the two vectors projected on the plane normal to the spine before applying it the male body
 					/////////////////////////
-					maleSpineVec = maleHeadPos.transform.position - maleCrotchPos.transform.position;
-					Vector3 malePenisProjected = Vector3.ProjectOnPlane(maleCrotchPos.transform.forward, maleSpineVec);
-					Vector3 cameraForwardProjected = Quaternion.AngleAxis(-90, maleSpineVec) * Vector3.ProjectOnPlane(cameraEye.transform.right, maleSpineVec);
-					Quaternion.FromToRotation(malePenisProjected, cameraForwardProjected).ToAngleAxis(out lookRotAngle, out lookRotAxis);
-					male_p_cf_bodybone.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);		
+					if (MaleYaw.Value)
+					{
+						maleSpineVec = maleHeadPos.transform.position - maleCrotchPos.transform.position;
+						Vector3 malePenisProjected = Vector3.ProjectOnPlane(maleCrotchPos.transform.forward, maleSpineVec);
+						Vector3 cameraForwardProjected = Quaternion.AngleAxis(-90, maleSpineVec) * Vector3.ProjectOnPlane(cameraEye.transform.right, maleSpineVec);
+						Quaternion.FromToRotation(malePenisProjected, cameraForwardProjected).ToAngleAxis(out lookRotAngle, out lookRotAxis);
+						male_p_cf_bodybone.transform.RotateAround(maleCrotchPos.transform.position, lookRotAxis, lookRotAngle);
+					}
 				}
 
 				//Update player's shoulder collider's rotation

@@ -94,6 +94,11 @@ namespace SetParentKK
 		[Description("In strong motion, multiply the animation speed max threshold by this number to avoid reaching the maximum speed too easily due to the wide range of motion")]
 		public static ConfigWrapper<float> StrongThresholdMultiplier { get; private set; }
 
+		[Category("Advanced Settings")]
+		[DisplayName("Male Yaw Rotation")]
+		[Description("Enable/disable male body's yaw (left/right) rotation when synchronization is enabled")]
+		public static ConfigWrapper<bool> MaleYaw { get; private set; }
+
 		private void Start()
 		{
 			LoadFromModPref();
@@ -124,6 +129,7 @@ namespace SetParentKK
 			StrongMotionThreshold = new ConfigWrapper<float>("StrongMotionThreshold", this, 0.03f);
 			WeakMotionThreshold = new ConfigWrapper<float>("WeakMotionThreshold", this, 0.01f);
 			StrongThresholdMultiplier = new ConfigWrapper<float>("StrongThresholdMultiplier", this, 1.7f);
+			MaleYaw = new ConfigWrapper<bool>("MaleYaw", this, true);
 		}
 		public enum ParentMode
 		{
