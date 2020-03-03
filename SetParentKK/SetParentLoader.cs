@@ -101,7 +101,7 @@ namespace SetParentKK
 			if (!Application.dataPath.EndsWith("KoikatuVR_Data"))
 				return;
 
-			HarmonyInstance.Create(GUID).PatchAll(typeof(VRHScene_Load_Patch));
+			HarmonyInstance.Create(GUID).PatchAll(typeof(SetParentHooks));
 		}
 
 		private void LoadFromModPref()
