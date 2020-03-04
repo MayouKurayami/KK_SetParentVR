@@ -41,15 +41,7 @@ namespace SetParentKK
 			female_p_cf_bodybone = female.objAnim;
 			maleFBBIK = male_p_cf_bodybone.GetComponent<FullBodyBipedIK>();
 			femaleFBBIK = female_p_cf_bodybone.GetComponent<FullBodyBipedIK>();
-
 			femaleAim = femaleFBBIK.references.head.Find("cf_s_head/aim").gameObject;
-			female_cf_t_hand_R = femaleFBBIK.solver.rightHandEffector.target.gameObject;
-			female_cf_t_hand_L = femaleFBBIK.solver.leftHandEffector.target.gameObject;
-			female_cf_t_leg_R = femaleFBBIK.solver.rightFootEffector.target.gameObject;
-			female_cf_t_leg_L = femaleFBBIK.solver.leftFootEffector.target.gameObject;
-
-			male_cf_t_leg_L = maleFBBIK.solver.leftFootEffector.target.gameObject;
-			male_cf_t_leg_R = maleFBBIK.solver.rightFootEffector.target.gameObject;
 
 			female_cf_j_root = femaleFBBIK.references.root.gameObject;
 			female_cf_j_hips = femaleFBBIK.references.pelvis.gameObject;
@@ -59,17 +51,25 @@ namespace SetParentKK
 			female_cf_j_neck = femaleFBBIK.references.spine[2].gameObject;
 			female_cf_j_spine03 = femaleFBBIK.references.spine[2].parent.gameObject;
 
-
-			female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R").gameObject;
-			female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L").gameObject;
-			female_cf_pv_leg_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_R").gameObject;
-			female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L").gameObject;
+			Transform female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R");
+			Transform female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L");
+			Transform female_cf_pv_leg_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_R");
+			Transform female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L");
 
 			Transform male_cf_n_height = maleFBBIK.references.pelvis.parent;
-			male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R").gameObject;
-			male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L").gameObject;
-			male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R").gameObject;
-			male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L").gameObject;
+			Transform male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R");
+			Transform male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L");
+			Transform male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R");
+			Transform male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L");
+
+			limbs[(int)LimbName.FemaleLeftHand] = new Limb(LimbName.FemaleLeftHand, null, female_cf_pv_hand_L, femaleFBBIK.solver.leftHandEffector, femaleFBBIK.solver.leftHandEffector.target, false);
+			limbs[(int)LimbName.FemaleRightHand] = new Limb(LimbName.FemaleRightHand, null, female_cf_pv_hand_R, femaleFBBIK.solver.rightHandEffector, femaleFBBIK.solver.rightHandEffector.target, false);
+			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(LimbName.FemaleLeftFoot, null, female_cf_pv_leg_L, femaleFBBIK.solver.leftFootEffector, femaleFBBIK.solver.leftFootEffector.target, false);
+			limbs[(int)LimbName.FemaleRightFoot] = new Limb(LimbName.FemaleRightFoot, null, female_cf_pv_leg_R, femaleFBBIK.solver.rightFootEffector, femaleFBBIK.solver.rightFootEffector.target, false);
+			limbs[(int)LimbName.MaleLeftHand] = new Limb(LimbName.MaleLeftHand, null, male_cf_pv_hand_L, maleFBBIK.solver.leftHandEffector, maleFBBIK.solver.leftHandEffector.target, false);
+			limbs[(int)LimbName.MaleRightHand] = new Limb(LimbName.MaleRightHand, null, male_cf_pv_hand_R, maleFBBIK.solver.rightHandEffector, maleFBBIK.solver.rightHandEffector.target, false);
+			limbs[(int)LimbName.MaleLeftFoot] = new Limb(LimbName.MaleLeftFoot, null, male_cf_pv_leg_L, maleFBBIK.solver.leftFootEffector, maleFBBIK.solver.leftFootEffector.target, false);
+			limbs[(int)LimbName.MaleRightFoot] = new Limb(LimbName.MaleRightFoot, null, male_cf_pv_leg_R, maleFBBIK.solver.rightFootEffector, maleFBBIK.solver.rightFootEffector.target, false);
 
 			if (SetFemaleCollider.Value)
 			{
@@ -120,12 +120,12 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => PushFixRightLegButton(true), objRightMenuCanvas);
-			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => PushFixLeftLegButton(true), objRightMenuCanvas);
-			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => PushFixRightHandButton(true), objRightMenuCanvas);
-			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => PushFixLeftHandButton(true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => MaleFixRightLegToggle(true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => MaleFixLeftLegToggle(true), objRightMenuCanvas);
+			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
+			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
+			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
 			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
@@ -210,26 +210,13 @@ namespace SetParentKK
 
 		private void SetFemaleColliders()
 		{
-			GameObject rightHandCollider = new GameObject("RightHandCollider");
-			rightHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.hand_R);
-			rightHandCollider.transform.parent = femaleFBBIK.solver.rightHandEffector.bone;
-			rightHandCollider.transform.localPosition = Vector3.zero;
-
-			GameObject leftHandCollider = new GameObject("LeftHandCollider");
-			leftHandCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.hand_L);
-			leftHandCollider.transform.parent = femaleFBBIK.solver.leftHandEffector.bone;
-			leftHandCollider.transform.localPosition = Vector3.zero;
-
-			GameObject rightLegCollider = new GameObject("RightLegCollider");
-			rightLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.leg_R);
-			rightLegCollider.transform.parent = femaleFBBIK.solver.rightFootEffector.bone;
-			rightLegCollider.transform.localPosition = Vector3.zero;
-
-			GameObject leftLegCollider = new GameObject("LeftLegCollider");
-			leftLegCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.leg_L);
-			leftLegCollider.transform.parent = femaleFBBIK.solver.leftFootEffector.bone;
-			leftLegCollider.transform.localPosition = Vector3.zero;
-
+			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+			{
+				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
+				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
+				collider.transform.parent = limbs[i].Effector.bone;
+				collider.transform.localPosition = Vector3.zero;
+			}
 
 			shoulderCollider = new GameObject("SPCollider");
 			shoulderCollider.transform.parent = cameraEye.transform;
@@ -244,15 +231,13 @@ namespace SetParentKK
 
 		private void SetMaleFeetColliders()
 		{
-			GameObject rightMaleFootCollider = new GameObject("RightFootCollider");
-			rightMaleFootCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.male_ft_R);
-			rightMaleFootCollider.transform.parent = maleFBBIK.solver.rightFootEffector.bone;
-			rightMaleFootCollider.transform.localPosition = Vector3.zero;
-
-			GameObject leftMaleFootCollider = new GameObject("LeftFootCollider");
-			leftMaleFootCollider.AddComponent<FixBodyParts>().Init(this, FixBodyParts.BodyParts.male_ft_L);
-			leftMaleFootCollider.transform.parent = maleFBBIK.solver.leftFootEffector.bone;
-			leftMaleFootCollider.transform.localPosition = Vector3.zero;
+			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+			{
+				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
+				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
+				collider.transform.parent = limbs[i].Effector.bone;
+				collider.transform.localPosition = Vector3.zero;
+			}
 		}
 
 		private void SetMapObjectsColliders()
@@ -297,100 +282,21 @@ namespace SetParentKK
 			}
 		}
 
-		public void PushFixRightHandButton(bool force = false)
-		{
-			if (objRightHand == null)
-			{
-				objRightHand = new GameObject("objRightHand");
-				objRightHand.transform.position = female_cf_pv_hand_R.transform.position;
-				objRightHand.transform.rotation = female_cf_pv_hand_R.transform.rotation;
-				femaleFBBIK.solver.rightHandEffector.target = objRightHand.transform;
-				fixRightHand = force;
-				return;
-			}
-			UnityEngine.Object.DestroyImmediate(objRightHand);
-			objRightHand = null;
-			femaleFBBIK.solver.rightHandEffector.target = female_cf_t_hand_R.transform;
-		}
 
-		public void PushFixLeftHandButton(bool force = false)
+		internal void FixLimbToggle(Limb limb, bool force = false)
 		{
-			if (objLeftHand == null)
+			if (limb.AnchorObj == null)
 			{
-				objLeftHand = new GameObject("objLeftHand");
-				objLeftHand.transform.position = female_cf_pv_hand_L.transform.position;
-				objLeftHand.transform.rotation = female_cf_pv_hand_L.transform.rotation;
-				femaleFBBIK.solver.leftHandEffector.target = objLeftHand.transform;
-				fixLefttHand = force;
+				limb.AnchorObj = new GameObject(limb.LimbPart.ToString() + "Anchor");
+				limb.AnchorObj.transform.position = limb.AnimPos.position;
+				limb.AnchorObj.transform.rotation = limb.AnimPos.rotation;
+				limb.Effector.target = limb.AnchorObj.transform;
+				limb.Fixed = force;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(objLeftHand);
-			objLeftHand = null;
-			femaleFBBIK.solver.leftHandEffector.target = female_cf_t_hand_L.transform;
-		}
-
-		public void PushFixRightLegButton(bool force = false)
-		{
-			if (objRightLeg == null)
-			{
-				objRightLeg = new GameObject("objRightLeg");
-				objRightLeg.transform.position = female_cf_pv_leg_R.transform.position;
-				objRightLeg.transform.rotation = female_cf_pv_leg_R.transform.rotation;
-				femaleFBBIK.solver.rightFootEffector.target = objRightLeg.transform;
-				fixRightLeg = force;
-				return;
-			}
-			UnityEngine.Object.DestroyImmediate(objRightLeg);
-			objRightLeg = null;
-			femaleFBBIK.solver.rightFootEffector.target = female_cf_t_leg_R.transform;
-		}
-
-		public void PushFixLeftLegButton(bool force = false)
-		{
-			if (objLeftLeg == null)
-			{
-				objLeftLeg = new GameObject("objLeftLeg");
-				objLeftLeg.transform.position = female_cf_pv_leg_L.transform.position;
-				objLeftLeg.transform.rotation = female_cf_pv_leg_L.transform.rotation;
-				femaleFBBIK.solver.leftFootEffector.target = objLeftLeg.transform;
-				fixLeftLeg = force;
-				return;
-			}
-			UnityEngine.Object.DestroyImmediate(objLeftLeg);
-			objLeftLeg = null;
-			femaleFBBIK.solver.leftFootEffector.target = female_cf_t_leg_L.transform;
-		}
-
-		public void MaleFixLeftLegToggle(bool force = false)
-		{
-			if (objLeftMaleFoot == null)
-			{
-				objLeftMaleFoot = new GameObject("objLeftMaleFoot");
-				objLeftMaleFoot.transform.position = male_cf_pv_leg_L.transform.position;
-				objLeftMaleFoot.transform.rotation = male_cf_pv_leg_L.transform.rotation;
-				maleFBBIK.solver.leftFootEffector.target = objLeftMaleFoot.transform;
-				fixMaleLeftLeg = force;
-				return;
-			}
-			UnityEngine.Object.DestroyImmediate(objLeftMaleFoot);
-			objLeftMaleFoot = null;
-			maleFBBIK.solver.leftFootEffector.target = male_cf_t_leg_L.transform;
-		}
-
-		public void MaleFixRightLegToggle(bool force = false)
-		{
-			if (objRightMaleFoot == null)
-			{
-				objRightMaleFoot = new GameObject("objRightMaleFoot");
-				objRightMaleFoot.transform.position = male_cf_pv_leg_R.transform.position;
-				objRightMaleFoot.transform.rotation = male_cf_pv_leg_R.transform.rotation;
-				maleFBBIK.solver.rightFootEffector.target = objRightMaleFoot.transform;
-				fixMaleRightLeg = force;
-				return;
-			}
-			UnityEngine.Object.DestroyImmediate(objRightMaleFoot);
-			objRightMaleFoot = null;
-			maleFBBIK.solver.rightFootEffector.target = male_cf_t_leg_R.transform;
+			UnityEngine.Object.DestroyImmediate(limb.AnchorObj);
+			limb.AnchorObj = null;
+			limb.Effector.target = limb.OrigTarget;
 		}
 
 		private void ChangeMotion(string path, string name)
@@ -556,6 +462,7 @@ namespace SetParentKK
 			//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
 			////////////////////////////////////////////////////////////
 			MaleIKs();
+
 			FemaleIKs();		
 			
 			//////////////
@@ -792,18 +699,11 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			UnityEngine.Object.Destroy(femaleSpinePos);
 
-			if (objLeftHand != null)
-				PushFixLeftHandButton();
-			if (objRightHand != null)
-				PushFixRightHandButton();
-			if (objLeftLeg != null)
-				PushFixLeftLegButton();
-			if (objRightLeg != null)
-				PushFixRightLegButton();
-			if (objLeftMaleFoot != null)
-				MaleFixLeftLegToggle();
-			if (objRightMaleFoot != null)
-				MaleFixRightLegToggle();
+			foreach (Limb limb in limbs)
+			{
+				if (limb.AnchorObj != null)
+					FixLimbToggle(limb);
+			}
 
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
@@ -868,48 +768,32 @@ namespace SetParentKK
 		/// </summary>
 		private void MaleIKs()
 		{
-			float rightHandDistance = (maleFBBIK.solver.rightHandEffector.target.position - male_cf_pv_hand_R.transform.position).magnitude;
-			float rightHandTwist = Quaternion.Angle(maleFBBIK.solver.rightHandEffector.target.rotation, male_cf_pv_hand_R.transform.rotation);
-			if (rightHandDistance > 0.2f || rightHandTwist > 45f)
+			for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
 			{
-				maleFBBIK.solver.rightHandEffector.positionWeight = 0f;
-				maleFBBIK.solver.rightHandEffector.rotationWeight = 0f;
-			}
-			else
-			{
-				maleFBBIK.solver.rightHandEffector.positionWeight = 1f;
-				maleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
-			}
-
-			float leftHandDistance = (maleFBBIK.solver.leftHandEffector.target.position - male_cf_pv_hand_L.transform.position).magnitude;
-			float leftHandTwist = Quaternion.Angle(maleFBBIK.solver.leftHandEffector.target.rotation, male_cf_pv_hand_L.transform.rotation);
-			if (leftHandDistance > 0.2f || leftHandTwist > 45f)
-			{
-				maleFBBIK.solver.leftHandEffector.positionWeight = 0f;
-				maleFBBIK.solver.leftHandEffector.rotationWeight = 0f;
-			}
-			else
-			{
-				maleFBBIK.solver.leftHandEffector.positionWeight = 1f;
-				maleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
+				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
+				float twist = Quaternion.Angle(limbs[i].Effector.target.rotation, limbs[i].AnimPos.rotation);
+				if (distance > 0.2f || twist > 45f)
+				{
+					limbs[i].Effector.positionWeight = 0f;
+					limbs[i].Effector.rotationWeight = 0f;
+				}
+				else
+				{
+					limbs[i].Effector.positionWeight = 1f;
+					limbs[i].Effector.rotationWeight = 1f;
+				}
 			}
 
-
-			if (objRightMaleFoot != null && !fixMaleRightLeg && (maleFBBIK.solver.rightFootEffector.target.position - male_cf_pv_leg_R.transform.position).magnitude > 0.2f)
+			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
 			{
-				MaleFixRightLegToggle();
-			}
-			else
-			{
-				maleFBBIK.solver.rightFootEffector.positionWeight = 1f;
-			}
-			if (objLeftMaleFoot != null && !fixMaleLeftLeg && (maleFBBIK.solver.leftFootEffector.target.position - male_cf_pv_leg_L.transform.position).magnitude > 0.2f)
-			{
-				MaleFixLeftLegToggle();
-			}
-			else
-			{
-				maleFBBIK.solver.leftFootEffector.positionWeight = 1f;
+				if(limbs[i].AnchorObj != null && !limbs[i].Fixed && (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude > 0.2f)
+				{
+					FixLimbToggle(limbs[i]);
+				}
+				else
+				{
+					limbs[i].Effector.positionWeight = 1f;
+				}
 			}
 		}
 
@@ -919,55 +803,37 @@ namespace SetParentKK
 		/// Attachment onto anchor points created by SetParent will enjoy a larger degree of freedom before being released
 		private void FemaleIKs()
 		{
-			if (objRightHand != null && !fixRightHand && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.35f)
+			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
-				PushFixRightHandButton();
-			}
-			else if (objRightHand == null && (femaleFBBIK.solver.rightHandEffector.target.position - female_cf_pv_hand_R.transform.position).magnitude > 0.2f)
-			{
-				femaleFBBIK.solver.rightHandEffector.positionWeight = 0f;
-				femaleFBBIK.solver.rightHandEffector.rotationWeight = 0f;
-
-			}
-			else
-			{
-				femaleFBBIK.solver.rightHandEffector.positionWeight = 1f;
-				femaleFBBIK.solver.rightHandEffector.rotationWeight = 1f;
-			}
-
-			if (objLeftHand != null && !fixLefttHand && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.35f)
-			{
-				PushFixLeftHandButton();
-			}
-			else if (objLeftHand == null && (femaleFBBIK.solver.leftHandEffector.target.position - female_cf_pv_hand_L.transform.position).magnitude > 0.2f)
-			{
-				femaleFBBIK.solver.leftHandEffector.positionWeight = 0f;
-				femaleFBBIK.solver.leftHandEffector.rotationWeight = 0f;
-			}
-			else
-			{
-				femaleFBBIK.solver.leftHandEffector.positionWeight = 1f;
-				femaleFBBIK.solver.leftHandEffector.rotationWeight = 1f;
+				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
+				if (limbs[i].AnchorObj != null && !limbs[i].Fixed && distance > 0.35f)
+				{
+					FixLimbToggle(limbs[i]);
+				}
+				else if (limbs[i].AnchorObj == null && distance > 0.2f)
+				{
+					limbs[i].Effector.positionWeight = 0f;
+					limbs[i].Effector.rotationWeight = 0f;
+				}
+				else
+				{
+					limbs[i].Effector.positionWeight = 1f;
+					limbs[i].Effector.rotationWeight = 1f;
+				}
 			}
 
-			if (objRightLeg != null && !fixRightLeg && (femaleFBBIK.solver.rightFootEffector.target.position - female_cf_pv_leg_R.transform.position).magnitude > 0.5f)
+			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
-				PushFixRightLegButton();
-			}
-			else
-			{
-				femaleFBBIK.solver.rightFootEffector.positionWeight = 1f;
-				femaleFBBIK.solver.rightFootEffector.rotationWeight = 1f;
-			}
-
-			if (objLeftLeg != null && !fixLeftLeg && (femaleFBBIK.solver.leftFootEffector.target.position - female_cf_pv_leg_L.transform.position).magnitude > 0.5f)
-			{
-				PushFixLeftLegButton();
-			}
-			else
-			{
-				femaleFBBIK.solver.leftFootEffector.positionWeight = 1f;
-				femaleFBBIK.solver.leftFootEffector.rotationWeight = 1f;
+				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
+				if (limbs[i].AnchorObj != null && !limbs[i].Fixed && distance > 0.5f)
+				{
+					FixLimbToggle(limbs[i]);
+				}
+				else
+				{
+					limbs[i].Effector.positionWeight = 1f;
+					limbs[i].Effector.rotationWeight = 1f;
+				}
 			}
 		}
 
@@ -1235,6 +1101,38 @@ namespace SetParentKK
 			FemaleControl
 		}
 
+		public enum LimbName
+		{
+			FemaleLeftHand,
+			FemaleRightHand,
+			FemaleLeftFoot,
+			FemaleRightFoot,
+			MaleLeftHand,
+			MaleRightHand,
+			MaleLeftFoot,
+			MaleRightFoot
+		}
+
+		internal class Limb
+		{
+			internal GameObject AnchorObj;
+			internal Transform AnimPos;
+			internal IKEffector Effector;
+			internal Transform OrigTarget;
+			internal bool Fixed;
+			internal LimbName LimbPart;
+
+			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, bool fix)
+			{
+				LimbPart = limbpart;
+				AnchorObj = anchorObj;
+				AnimPos = animPos;
+				Effector = effector;
+				OrigTarget = origTarget;
+				Fixed = fix;
+			}
+		}
+
 
 		internal CtrlState currentCtrlstate;
 		
@@ -1294,29 +1192,7 @@ namespace SetParentKK
 
 		internal HSprite hSprite;
 
-		private GameObject female_cf_t_hand_R;
-
-		private GameObject female_cf_pv_hand_R;
-
-		public GameObject objRightHand;
-
-		private GameObject female_cf_t_hand_L;
-
-		private GameObject female_cf_pv_hand_L;
-
-		public GameObject objLeftHand;
-
-		private GameObject female_cf_t_leg_R;
-
-		private GameObject female_cf_pv_leg_R;
-
-		public GameObject objRightLeg;
-
-		private GameObject female_cf_t_leg_L;
-
-		private GameObject female_cf_pv_leg_L;
-
-		public GameObject objLeftLeg;
+		internal Limb[] limbs = new Limb[8];
 
 		private GameObject obj_chaF_001;
 
@@ -1346,37 +1222,9 @@ namespace SetParentKK
 
 		private GameObject maleCrotchPos;
 
-		private GameObject male_cf_pv_hand_R;
-
-		private GameObject male_cf_pv_hand_L;
-
-		private GameObject male_cf_pv_leg_L;
-
-		private GameObject male_cf_pv_leg_R;
-
-		private GameObject male_cf_t_leg_L;
-
-		private GameObject male_cf_t_leg_R;
-
-		internal GameObject objLeftMaleFoot;
-
-		internal GameObject objRightMaleFoot;
-
 		private Text txtSetParentL;
 
 		private Text txtSetParentR;
-
-		private bool fixRightHand;
-
-		private bool fixLefttHand;
-
-		private bool fixRightLeg;
-
-		private bool fixLeftLeg;
-
-		private bool fixMaleRightLeg;
-
-		private bool fixMaleLeftLeg;
 
 		private Vector3[] vecSpinePos = new Vector3[20];
 
