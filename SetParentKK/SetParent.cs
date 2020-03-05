@@ -89,7 +89,7 @@ namespace SetParentKK
 
 			if (SetFemaleCollider.Value)
 			{
-				SetFemaleColliders();
+				SetBodyColliders();
 			}
 			if (SetMaleCollider.Value)
 			{
@@ -224,7 +224,7 @@ namespace SetParentKK
 			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
 		}
 
-		private void SetFemaleColliders()
+		private void SetBodyColliders()
 		{
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
@@ -299,7 +299,7 @@ namespace SetParentKK
 		}
 
 
-		internal void FixLimbToggle(Limb limb, bool force = false)
+		internal void FixLimbToggle(Limb limb, bool fix = false)
 		{
 			if (limb.AnchorObj == null)
 			{
@@ -307,7 +307,7 @@ namespace SetParentKK
 				limb.AnchorObj.transform.position = limb.Effector.bone.position;
 				limb.AnchorObj.transform.rotation = limb.Effector.bone.rotation;
 				limb.Effector.target = limb.AnchorObj.transform;
-				limb.Fixed = force;
+				limb.Fixed = fix;
 				return;
 			}
 			UnityEngine.Object.Destroy(limb.AnchorObj);
@@ -524,7 +524,7 @@ namespace SetParentKK
 				}
 
 
-				ControllerActions();
+				ControllerCharacterAdjustment();
 
 
 				if(currentCtrlstate == CtrlState.Following)
@@ -866,7 +866,7 @@ namespace SetParentKK
 		/// <summary>
 		/// Change state of controller-to-characters relationship based on controller input
 		/// </summary>
-		private void ControllerActions()
+		private void ControllerCharacterAdjustment()
 		{
 			///////////////////
 			//Based on controller input, set characters into one of these 4 states based on controller input:
