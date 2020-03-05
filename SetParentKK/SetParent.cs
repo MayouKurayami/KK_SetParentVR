@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Illusion.Component.Correct;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
@@ -15,6 +16,12 @@ namespace SetParentKK
 	
 	public class SetParent : MonoBehaviour
 	{
+		public void Init(HSprite _hsprite, List<MotionIK> _lstMotionIK)
+		{
+			hSprite = _hsprite;
+			lstMotionIK = _lstMotionIK;
+		}
+		
 		public void Start()
 		{
 			if (hSprite == null)
@@ -55,21 +62,30 @@ namespace SetParentKK
 			Transform female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L");
 			Transform female_cf_pv_leg_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_R");
 			Transform female_cf_pv_leg_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_leg_L");
+			BaseData female_hand_L_bd = femaleFBBIK.solver.leftHandEffector.target.GetComponent<BaseData>();
+			BaseData female_hand_R_bd = femaleFBBIK.solver.rightHandEffector.target.GetComponent<BaseData>();
+			BaseData female_leg_L_bd = femaleFBBIK.solver.leftFootEffector.target.GetComponent<BaseData>();
+			BaseData female_leg_R_bd = femaleFBBIK.solver.rightFootEffector.target.GetComponent<BaseData>();
 
 			Transform male_cf_n_height = maleFBBIK.references.pelvis.parent;
 			Transform male_cf_pv_hand_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_R");
 			Transform male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L");
 			Transform male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R");
 			Transform male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L");
+			BaseData male_hand_L_bd = maleFBBIK.solver.leftHandEffector.target.GetComponent<BaseData>();
+			BaseData male_hand_R_bd = maleFBBIK.solver.rightHandEffector.target.GetComponent<BaseData>();
+			BaseData male_leg_L_bd = maleFBBIK.solver.leftFootEffector.target.GetComponent<BaseData>();
+			BaseData male_leg_R_bd = maleFBBIK.solver.rightFootEffector.target.GetComponent<BaseData>();
 
-			limbs[(int)LimbName.FemaleLeftHand] = new Limb(LimbName.FemaleLeftHand, null, female_cf_pv_hand_L, femaleFBBIK.solver.leftHandEffector, femaleFBBIK.solver.leftHandEffector.target, false);
-			limbs[(int)LimbName.FemaleRightHand] = new Limb(LimbName.FemaleRightHand, null, female_cf_pv_hand_R, femaleFBBIK.solver.rightHandEffector, femaleFBBIK.solver.rightHandEffector.target, false);
-			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(LimbName.FemaleLeftFoot, null, female_cf_pv_leg_L, femaleFBBIK.solver.leftFootEffector, femaleFBBIK.solver.leftFootEffector.target, false);
-			limbs[(int)LimbName.FemaleRightFoot] = new Limb(LimbName.FemaleRightFoot, null, female_cf_pv_leg_R, femaleFBBIK.solver.rightFootEffector, femaleFBBIK.solver.rightFootEffector.target, false);
-			limbs[(int)LimbName.MaleLeftHand] = new Limb(LimbName.MaleLeftHand, null, male_cf_pv_hand_L, maleFBBIK.solver.leftHandEffector, maleFBBIK.solver.leftHandEffector.target, false);
-			limbs[(int)LimbName.MaleRightHand] = new Limb(LimbName.MaleRightHand, null, male_cf_pv_hand_R, maleFBBIK.solver.rightHandEffector, maleFBBIK.solver.rightHandEffector.target, false);
-			limbs[(int)LimbName.MaleLeftFoot] = new Limb(LimbName.MaleLeftFoot, null, male_cf_pv_leg_L, maleFBBIK.solver.leftFootEffector, maleFBBIK.solver.leftFootEffector.target, false);
-			limbs[(int)LimbName.MaleRightFoot] = new Limb(LimbName.MaleRightFoot, null, male_cf_pv_leg_R, maleFBBIK.solver.rightFootEffector, maleFBBIK.solver.rightFootEffector.target, false);
+
+			limbs[(int)LimbName.FemaleLeftHand] = new Limb(LimbName.FemaleLeftHand, null, female_cf_pv_hand_L, femaleFBBIK.solver.leftHandEffector, femaleFBBIK.solver.leftHandEffector.target, female_hand_L_bd, false);
+			limbs[(int)LimbName.FemaleRightHand] = new Limb(LimbName.FemaleRightHand, null, female_cf_pv_hand_R, femaleFBBIK.solver.rightHandEffector, femaleFBBIK.solver.rightHandEffector.target, female_hand_R_bd, false);
+			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(LimbName.FemaleLeftFoot, null, female_cf_pv_leg_L, femaleFBBIK.solver.leftFootEffector, femaleFBBIK.solver.leftFootEffector.target, female_leg_L_bd, false);
+			limbs[(int)LimbName.FemaleRightFoot] = new Limb(LimbName.FemaleRightFoot, null, female_cf_pv_leg_R, femaleFBBIK.solver.rightFootEffector, femaleFBBIK.solver.rightFootEffector.target, female_leg_R_bd, false);
+			limbs[(int)LimbName.MaleLeftHand] = new Limb(LimbName.MaleLeftHand, null, male_cf_pv_hand_L, maleFBBIK.solver.leftHandEffector, maleFBBIK.solver.leftHandEffector.target, male_hand_L_bd, false);
+			limbs[(int)LimbName.MaleRightHand] = new Limb(LimbName.MaleRightHand, null, male_cf_pv_hand_R, maleFBBIK.solver.rightHandEffector, maleFBBIK.solver.rightHandEffector.target, male_hand_R_bd, false);
+			limbs[(int)LimbName.MaleLeftFoot] = new Limb(LimbName.MaleLeftFoot, null, male_cf_pv_leg_L, maleFBBIK.solver.leftFootEffector, maleFBBIK.solver.leftFootEffector.target, male_leg_L_bd, false);
+			limbs[(int)LimbName.MaleRightFoot] = new Limb(LimbName.MaleRightFoot, null, male_cf_pv_leg_R, maleFBBIK.solver.rightFootEffector, maleFBBIK.solver.rightFootEffector.target, male_leg_R_bd, false);
 
 			if (SetFemaleCollider.Value)
 			{
@@ -296,6 +312,8 @@ namespace SetParentKK
 			}
 			UnityEngine.Object.Destroy(limb.AnchorObj);
 			limb.Effector.target = limb.OrigTarget;
+			if (limb.TargetBone.bone == null)
+				lstMotionIK.ForEach((MotionIK motionIK) => motionIK.Calc(hFlag.nowAnimStateName));
 		}
 
 		private void ChangeMotion(string path, string name)
@@ -1129,14 +1147,16 @@ namespace SetParentKK
 			internal Transform OrigTarget;
 			internal bool Fixed;
 			internal LimbName LimbPart;
+			internal BaseData TargetBone;
 
-			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, bool fix)
+			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, bool fix)
 			{
 				LimbPart = limbpart;
 				AnchorObj = anchorObj;
 				AnimPos = animPos;
 				Effector = effector;
 				OrigTarget = origTarget;
+				TargetBone = targetBone;
 				Fixed = fix;
 			}
 		}
@@ -1157,6 +1177,8 @@ namespace SetParentKK
 		private FullBodyBipedIK maleFBBIK;
 
 		private FullBodyBipedIK femaleFBBIK;
+
+		private List<MotionIK> lstMotionIK;
 
 		private string nowAnimState = "";
 

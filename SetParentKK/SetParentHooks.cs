@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System.Collections.Generic;
 using UnityEngine;
 using static SetParentKK.SetParentLoader;
 
@@ -17,7 +18,7 @@ namespace SetParentKK
 				UnityEngine.Object.DestroyImmediate(setParentObj);
 
 			setParentObj = __instance.gameObject.AddComponent<SetParent>();
-			setParentObj.hSprite = __instance.sprites[0];
+			setParentObj.Init(__instance.sprites[0], (List<MotionIK>)Traverse.Create(__instance).Field("lstMotionIK").GetValue());
 		}
 
 		[HarmonyPrefix]
