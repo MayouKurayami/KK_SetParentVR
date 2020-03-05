@@ -509,22 +509,26 @@ namespace SetParentKK
 				ControllerActions();
 
 
-				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
-				if (indexSpineRot >= 19)
+				if(currentCtrlstate == CtrlState.Following)
 				{
-					indexSpineRot = 0;
+					for (int j = 0; j < 20; j++)
+						quatSpineRot[j] = femaleSpinePos.transform.rotation;
 				}
 				else
-				{
+					quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
+
+				if (indexSpineRot >= 19)
+					indexSpineRot = 0;
+				else
 					indexSpineRot++;
-				}
-				Quaternion quaternion = quatSpineRot[0];
-				for (int i = 1; i < 20; i++)
+				
+				if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 				{
-					quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
-				}
-				if (TrackingMode.Value)
-				{
+					Quaternion quaternion = quatSpineRot[0];
+					for (int i = 1; i < 20; i++)
+					{
+						quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
+					}
 					switch (ParentPart.Value)
 					{
 						case BodyPart.Ass:
@@ -559,23 +563,28 @@ namespace SetParentKK
 							break;
 					}
 				}
-				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
-				if (indexSpinePos >= 19)
+
+				if (currentCtrlstate == CtrlState.Following)
 				{
-					indexSpinePos = 0;
+					for (int i = 0; i < 20; i++)
+						vecSpinePos[i] = femaleSpinePos.transform.position;
 				}
 				else
-				{
+					vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
+
+				if (indexSpinePos >= 19)
+					indexSpinePos = 0;
+				else
 					indexSpinePos++;
-				}
-				Vector3 a = Vector3.zero;
-				foreach (Vector3 b in vecSpinePos)
+				
+				if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 				{
-					a += b;
-				}
-				a /= 20f;
-				if (TrackingMode.Value)
-				{
+					Vector3 a = Vector3.zero;
+					foreach (Vector3 b in vecSpinePos)
+					{
+						a += b;
+					}
+					a /= 20f;
 					female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
 				}
 				else
