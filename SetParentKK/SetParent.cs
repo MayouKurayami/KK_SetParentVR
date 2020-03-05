@@ -288,14 +288,13 @@ namespace SetParentKK
 			if (limb.AnchorObj == null)
 			{
 				limb.AnchorObj = new GameObject(limb.LimbPart.ToString() + "Anchor");
-				limb.AnchorObj.transform.position = limb.AnimPos.position;
-				limb.AnchorObj.transform.rotation = limb.AnimPos.rotation;
+				limb.AnchorObj.transform.position = limb.Effector.bone.position;
+				limb.AnchorObj.transform.rotation = limb.Effector.bone.rotation;
 				limb.Effector.target = limb.AnchorObj.transform;
 				limb.Fixed = force;
 				return;
 			}
-			UnityEngine.Object.DestroyImmediate(limb.AnchorObj);
-			limb.AnchorObj = null;
+			UnityEngine.Object.Destroy(limb.AnchorObj);
 			limb.Effector.target = limb.OrigTarget;
 		}
 
