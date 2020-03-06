@@ -78,14 +78,14 @@ namespace SetParentKK
 			BaseData male_leg_R_bd = maleFBBIK.solver.rightFootEffector.target.GetComponent<BaseData>();
 
 
-			limbs[(int)LimbName.FemaleLeftHand] = new Limb(LimbName.FemaleLeftHand, null, female_cf_pv_hand_L, femaleFBBIK.solver.leftHandEffector, femaleFBBIK.solver.leftHandEffector.target, female_hand_L_bd, false);
-			limbs[(int)LimbName.FemaleRightHand] = new Limb(LimbName.FemaleRightHand, null, female_cf_pv_hand_R, femaleFBBIK.solver.rightHandEffector, femaleFBBIK.solver.rightHandEffector.target, female_hand_R_bd, false);
-			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(LimbName.FemaleLeftFoot, null, female_cf_pv_leg_L, femaleFBBIK.solver.leftFootEffector, femaleFBBIK.solver.leftFootEffector.target, female_leg_L_bd, false);
-			limbs[(int)LimbName.FemaleRightFoot] = new Limb(LimbName.FemaleRightFoot, null, female_cf_pv_leg_R, femaleFBBIK.solver.rightFootEffector, femaleFBBIK.solver.rightFootEffector.target, female_leg_R_bd, false);
-			limbs[(int)LimbName.MaleLeftHand] = new Limb(LimbName.MaleLeftHand, null, male_cf_pv_hand_L, maleFBBIK.solver.leftHandEffector, maleFBBIK.solver.leftHandEffector.target, male_hand_L_bd, false);
-			limbs[(int)LimbName.MaleRightHand] = new Limb(LimbName.MaleRightHand, null, male_cf_pv_hand_R, maleFBBIK.solver.rightHandEffector, maleFBBIK.solver.rightHandEffector.target, male_hand_R_bd, false);
-			limbs[(int)LimbName.MaleLeftFoot] = new Limb(LimbName.MaleLeftFoot, null, male_cf_pv_leg_L, maleFBBIK.solver.leftFootEffector, maleFBBIK.solver.leftFootEffector.target, male_leg_L_bd, false);
-			limbs[(int)LimbName.MaleRightFoot] = new Limb(LimbName.MaleRightFoot, null, male_cf_pv_leg_R, maleFBBIK.solver.rightFootEffector, maleFBBIK.solver.rightFootEffector.target, male_leg_R_bd, false);
+			limbs[(int)LimbName.FemaleLeftHand] = new Limb(LimbName.FemaleLeftHand, null, female_cf_pv_hand_L, femaleFBBIK.solver.leftHandEffector, femaleFBBIK.solver.leftHandEffector.target, female_hand_L_bd);
+			limbs[(int)LimbName.FemaleRightHand] = new Limb(LimbName.FemaleRightHand, null, female_cf_pv_hand_R, femaleFBBIK.solver.rightHandEffector, femaleFBBIK.solver.rightHandEffector.target, female_hand_R_bd);
+			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(LimbName.FemaleLeftFoot, null, female_cf_pv_leg_L, femaleFBBIK.solver.leftFootEffector, femaleFBBIK.solver.leftFootEffector.target, female_leg_L_bd);
+			limbs[(int)LimbName.FemaleRightFoot] = new Limb(LimbName.FemaleRightFoot, null, female_cf_pv_leg_R, femaleFBBIK.solver.rightFootEffector, femaleFBBIK.solver.rightFootEffector.target, female_leg_R_bd);
+			limbs[(int)LimbName.MaleLeftHand] = new Limb(LimbName.MaleLeftHand, null, male_cf_pv_hand_L, maleFBBIK.solver.leftHandEffector, maleFBBIK.solver.leftHandEffector.target, male_hand_L_bd);
+			limbs[(int)LimbName.MaleRightHand] = new Limb(LimbName.MaleRightHand, null, male_cf_pv_hand_R, maleFBBIK.solver.rightHandEffector, maleFBBIK.solver.rightHandEffector.target, male_hand_R_bd);
+			limbs[(int)LimbName.MaleLeftFoot] = new Limb(LimbName.MaleLeftFoot, null, male_cf_pv_leg_L, maleFBBIK.solver.leftFootEffector, maleFBBIK.solver.leftFootEffector.target, male_leg_L_bd);
+			limbs[(int)LimbName.MaleRightFoot] = new Limb(LimbName.MaleRightFoot, null, male_cf_pv_leg_R, maleFBBIK.solver.rightFootEffector, maleFBBIK.solver.rightFootEffector.target, male_leg_R_bd);
 
 			if (SetFemaleCollider.Value)
 			{
@@ -1149,7 +1149,7 @@ namespace SetParentKK
 			internal LimbName LimbPart;
 			internal BaseData TargetBone;
 
-			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, bool fix)
+			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, bool fix = false)
 			{
 				LimbPart = limbpart;
 				AnchorObj = anchorObj;
