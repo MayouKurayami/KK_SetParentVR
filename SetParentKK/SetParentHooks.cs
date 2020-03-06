@@ -15,7 +15,7 @@ namespace SetParentKK
 		public static void VRHSceneLoadPostfix(VRHScene __instance)
 		{
 			if (setParentObj != null)
-				UnityEngine.Object.DestroyImmediate(setParentObj);
+				UnityEngine.Object.Destroy(setParentObj);
 
 			setParentObj = __instance.gameObject.AddComponent<SetParent>();
 			setParentObj.Init(__instance.sprites[0], (List<MotionIK>)Traverse.Create(__instance).Field("lstMotionIK").GetValue());
