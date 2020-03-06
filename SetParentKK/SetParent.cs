@@ -90,6 +90,8 @@ namespace SetParentKK
 			if (SetFemaleCollider.Value)
 			{
 				SetBodyColliders();
+				SetControllerColliders(leftController);
+				SetControllerColliders(rightController);
 			}
 			if (SetMaleCollider.Value)
 			{
@@ -245,6 +247,19 @@ namespace SetParentKK
 			shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
 		}
 
+		private void SetControllerColliders(GameObject controller)
+		{
+			GameObject CtrlCollider = new GameObject("ControllerCollider");
+			CtrlCollider.transform.parent = controller.transform;
+			CtrlCollider.transform.localPosition = Vector3.zero;
+			CtrlCollider.transform.localRotation = Quaternion.identity;
+			SphereCollider sphereCollider = CtrlCollider.AddComponent<SphereCollider>();
+			sphereCollider.isTrigger = true;
+			sphereCollider.center = Vector3.zero;
+			sphereCollider.radius = 0.05f;
+			CtrlCollider.AddComponent<Rigidbody>().isKinematic = true;
+		}
+
 		private void SetMaleFeetColliders()
 		{
 			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
@@ -312,6 +327,7 @@ namespace SetParentKK
 			}
 			UnityEngine.Object.Destroy(limb.AnchorObj);
 			limb.Effector.target = limb.OrigTarget;
+			limb.Fixed = false;
 			if (limb.TargetBone.bone == null)
 				lstMotionIK.ForEach((MotionIK motionIK) => motionIK.Calc(hFlag.nowAnimStateName));
 		}
@@ -408,16 +424,22 @@ namespace SetParentKK
 			if (leftDevice == null)
 			{
 				if (leftController == null)
+				{
 					leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
-
+					if (SetFemaleCollider.Value)
+						SetControllerColliders(leftController);
+				}
 				leftVVC = leftController.GetComponent<VRViveController>();
 				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
 			}
 			if (rightDevice == null)
 			{
 				if (rightController == null)
+				{
 					rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
-
+					if (SetFemaleCollider.Value)
+						SetControllerColliders(rightController);
+				}	
 				rightVVC = rightController.GetComponent<VRViveController>();
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
@@ -522,6 +544,17 @@ namespace SetParentKK
 						InitMaleFollow();
 					nowAnimState = hFlag.nowAnimStateName;
 				}
+
+				if (LeftTriggerRelease())
+					ControllerLimbActions(leftController, ref lastTriggerRelease[0]);
+				else
+					lastTriggerRelease[0] += Time.deltaTime;
+
+
+				if (RightTriggerRelease())
+					ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
+				else
+					lastTriggerRelease[1] += Time.deltaTime;
 
 
 				ControllerCharacterAdjustment();
@@ -832,20 +865,28 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if ((limbs[i].AnchorObj) && !limbs[i].Fixed && distance > 0.35f)
+				if (limbs[i].AnchorObj && distance > 0.35f)
 				{
-					FixLimbToggle(limbs[i]);
+					if (!limbs[i].Fixed)
+					{
+						FixLimbToggle(limbs[i]);
+						continue;
+					}		
+					else
+						limbs[i].Chain.bendConstraint.weight = 0f;
 				}
 				else if (!(limbs[i].AnchorObj) && distance > 0.2f)
 				{
 					limbs[i].Effector.positionWeight = 0f;
 					limbs[i].Effector.rotationWeight = 0f;
+					continue;
 				}
-				else
-				{
-					limbs[i].Effector.positionWeight = 1f;
-					limbs[i].Effector.rotationWeight = 1f;
-				}
+
+				limbs[i].Effector.positionWeight = 1f;
+				limbs[i].Effector.rotationWeight = 1f;
+				limbs[i].Effector.maintainRelativePositionWeight = 1f;
+				limbs[i].Chain.push = 0.1f;
+				limbs[i].Chain.pushParent = 0.5f;
 			}
 
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
@@ -859,9 +900,49 @@ namespace SetParentKK
 				{
 					limbs[i].Effector.positionWeight = 1f;
 					limbs[i].Effector.rotationWeight = 1f;
+					limbs[i].Chain.push = 0.1f;
+					limbs[i].Chain.pushParent = 0.5f;
+					limbs[i].Chain.bendConstraint.weight = 0f;	
 				}
 			}
 		}
+
+
+		private void ControllerLimbActions(GameObject controller, ref float timeNoClick)
+		{
+			if (timeNoClick > 0.25f)
+			{
+				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+				{
+					if (limbs[i].AnchorObj && limbs[i].AnchorObj.transform.parent && limbs[i].AnchorObj.transform.parent.parent == controller.transform)
+						limbs[i].AnchorObj.transform.parent = null;
+				}
+			}
+			else
+			{
+				bool limbRelease = false;
+				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+				{
+					if (limbs[i].AnchorObj && (limbs[i].AnchorObj.transform.position - controller.transform.position).magnitude < 0.2f)
+					{
+						FixLimbToggle(limbs[i]);
+						limbRelease = true;
+					}
+				}
+				if (limbRelease == false)
+				{
+					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+					{
+						if (limbs[i].AnchorObj)
+							FixLimbToggle(limbs[i]);
+					}
+				}
+			}
+
+			timeNoClick = 0f;
+		}
+
+
 
 		/// <summary>
 		/// Change state of controller-to-characters relationship based on controller input
@@ -1144,17 +1225,19 @@ namespace SetParentKK
 			internal GameObject AnchorObj;
 			internal Transform AnimPos;
 			internal IKEffector Effector;
+			internal FBIKChain Chain;
 			internal Transform OrigTarget;
 			internal bool Fixed;
 			internal LimbName LimbPart;
 			internal BaseData TargetBone;
 
-			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, bool fix = false)
+			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, FBIKChain chain = null, bool fix = false)
 			{
 				LimbPart = limbpart;
 				AnchorObj = anchorObj;
 				AnimPos = animPos;
 				Effector = effector;
+				Chain = chain;
 				OrigTarget = origTarget;
 				TargetBone = targetBone;
 				Fixed = fix;
@@ -1267,5 +1350,7 @@ namespace SetParentKK
 		private bool hideCanvas;
 
 		private bool parentIsLeft;
+
+		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 	}
 }

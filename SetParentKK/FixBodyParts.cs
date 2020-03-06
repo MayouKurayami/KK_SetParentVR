@@ -23,15 +23,23 @@ namespace SetParentKK
 		private void OnTriggerEnter(Collider other)
 		{
 			if ((!SetParentLoader.SetFemaleCollider.Value && !SetParentLoader.SetMaleCollider.Value) || !setParentObj.setFlag)
-			{
 				return;
-			}
-			if (other.gameObject.name != "SPCollider")
-			{
+			if (other.gameObject.name != "SPCollider" && other.gameObject.name != "ControllerCollider")
 				return;
-			}
+			if (setParentObj.limbs[(int)limbName].AnchorObj && setParentObj.limbs[(int)limbName].AnchorObj.transform.parent == other.transform)
+				return;
 
-			if (!setParentObj.limbs[(int)limbName].AnchorObj)
+			if (other.gameObject.name == "ControllerCollider" || setParentObj.limbs[(int)limbName].Fixed)
+			{
+				if (setParentObj.limbs[(int)limbName].AnchorObj)
+				{
+					UnityEngine.Object.Destroy(setParentObj.limbs[(int)limbName].AnchorObj);
+					setParentObj.limbs[(int)limbName].AnchorObj = null;
+				}
+				setParentObj.FixLimbToggle(setParentObj.limbs[(int)limbName], true);
+				setParentObj.limbs[(int)limbName].AnchorObj.transform.parent = other.transform;
+			}
+			else if (!setParentObj.limbs[(int)limbName].AnchorObj)
 			{
 				setParentObj.FixLimbToggle(setParentObj.limbs[(int)limbName]);
 				setParentObj.limbs[(int)limbName].AnchorObj.transform.parent = other.transform;
