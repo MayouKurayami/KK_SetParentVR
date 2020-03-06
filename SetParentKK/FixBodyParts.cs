@@ -31,7 +31,7 @@ namespace SetParentKK
 				return;
 			}
 
-			if (setParentObj.limbs[(int)limbName].AnchorObj == null)
+			if (!setParentObj.limbs[(int)limbName].AnchorObj)
 			{
 				setParentObj.FixLimbToggle(setParentObj.limbs[(int)limbName]);
 				setParentObj.limbs[(int)limbName].AnchorObj.transform.parent = other.transform;

@@ -301,7 +301,7 @@ namespace SetParentKK
 
 		internal void FixLimbToggle(Limb limb, bool fix = false)
 		{
-			if (limb.AnchorObj == null)
+			if (!limb.AnchorObj)
 			{
 				limb.AnchorObj = new GameObject(limb.LimbPart.ToString() + "Anchor");
 				limb.AnchorObj.transform.position = limb.Effector.bone.position;
@@ -727,7 +727,7 @@ namespace SetParentKK
 
 			foreach (Limb limb in limbs)
 			{
-				if (limb.AnchorObj != null)
+				if (limb.AnchorObj)
 					FixLimbToggle(limb);
 			}
 
@@ -812,7 +812,7 @@ namespace SetParentKK
 
 			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
 			{
-				if(limbs[i].AnchorObj != null && !limbs[i].Fixed && (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude > 0.2f)
+				if(limbs[i].AnchorObj && !limbs[i].Fixed && (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude > 0.2f)
 				{
 					FixLimbToggle(limbs[i]);
 				}
@@ -832,11 +832,11 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj != null && !limbs[i].Fixed && distance > 0.35f)
+				if ((limbs[i].AnchorObj) && !limbs[i].Fixed && distance > 0.35f)
 				{
 					FixLimbToggle(limbs[i]);
 				}
-				else if (limbs[i].AnchorObj == null && distance > 0.2f)
+				else if (!(limbs[i].AnchorObj) && distance > 0.2f)
 				{
 					limbs[i].Effector.positionWeight = 0f;
 					limbs[i].Effector.rotationWeight = 0f;
@@ -851,7 +851,7 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj != null && !limbs[i].Fixed && distance > 0.5f)
+				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > 0.5f)
 				{
 					FixLimbToggle(limbs[i]);
 				}
