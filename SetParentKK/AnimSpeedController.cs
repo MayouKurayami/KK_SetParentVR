@@ -257,11 +257,11 @@ namespace SetParentKK
 				{
 					if (hFlag.gaugeFemale < 99f && !hFlag.lockGugeFemale)
 					{
-						hFlag.gaugeFemale += 1f;
+						hFlag.gaugeFemale += 0.1f;
 					}
 					if (hFlag.gaugeMale < 99f && !hFlag.lockGugeMale)
 					{
-						hFlag.gaugeMale += 1f;
+						hFlag.gaugeMale += 0.1f;
 					}
 				}
 				else
