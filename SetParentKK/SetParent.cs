@@ -206,6 +206,7 @@ namespace SetParentKK
 			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -4f, 0f), () => PushPLButton(), objRightMenuCanvas);
 			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -4f, 0f), () => PushPRButton(), objRightMenuCanvas);
 			CreateButton("ヌク", new Vector3(-28f, 20f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
+			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(28f, 20f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
 			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
 			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objRightMenuCanvas);
@@ -465,6 +466,13 @@ namespace SetParentKK
 				component.fcount = 0f;
 				component.moveFlag = false;
 			}
+		}
+
+
+		private void ParentModeChangeButton()
+		{
+			int index = (int)SetParentMode.Value + 1;
+			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
 		}
 
 		public void LateUpdate()
@@ -745,6 +753,8 @@ namespace SetParentKK
 				txtSetParentL.text = "左 親子付け Turn On";
 				txtSetParentR.text = "右 親子付け Turn On";
 			}
+
+			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
 
 		private void SetP(bool _parentIsLeft)
@@ -1398,6 +1408,8 @@ namespace SetParentKK
 		private Text txtSetParentL;
 
 		private Text txtSetParentR;
+
+		private Text txtSetParentMode;
 
 		private Vector3[] vecSpinePos = new Vector3[20];
 
