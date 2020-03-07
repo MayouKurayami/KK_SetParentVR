@@ -26,6 +26,7 @@ namespace SetParentKK
 
 		[DisplayName("Autofinish Timer")]
 		[Description("When the girl's excitement gauge is above the cum threshold (70), she will cum after this set number of seconds \nSet this to 0 to disable the feature")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> Finishcount { get; private set; }
 
 		[DisplayName("Synchronize Male's Head with Headset")]
@@ -64,36 +65,43 @@ namespace SetParentKK
 		[Category("Advanced Settings")]
 		[DisplayName("Controller Movement Pool Size (frames)")]
 		[Description("Movement amount of the controller will be calculated using the sum of distance moved in this number of frames")]
+		[AcceptableValueRange(0, int.MaxValue, false)]
 		public static ConfigWrapper<int> MoveDistancePoolSize { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Animation Start Threshold")]
 		[Description("Movement amount of the controller above this threshold will cause piston animation to start. Unit in meters")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> AnimStartThreshold { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Animation Max Threshold")]
 		[Description("When movement amount of the controller reaches this value, animation speed will be at max. Unit in meters")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> AnimMaxThreshold { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Controller Average Position Pool Size (frames)")]
 		[Description("Position of the controller will be calculated using the average position in this number of frames\n This value is used to calculate movement range of the controller")]
+		[AcceptableValueRange(0, int.MaxValue, false)]
 		public static ConfigWrapper<int> MoveCoordinatePoolSize { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Strong Motion Threshold")]
 		[Description("If the movement range of the controller exceeds this threshold, animation will switch to strong motion. Unit in meters")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> StrongMotionThreshold { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Weak Motion Threshold")]
 		[Description("If the movement range of the controller stays within this threshold for 1.5 seconds, animation will switch to weak motion. Unit in meters")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> WeakMotionThreshold { get; private set; }
 
 		[Category("Advanced Settings")]
 		[DisplayName("Strong Motion Speed Maximum Multiplier")]
 		[Description("In strong motion, multiply the animation speed max threshold by this number to avoid reaching the maximum speed too easily due to the wide range of motion")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> StrongThresholdMultiplier { get; private set; }
 
 		[Category("Advanced Settings")]
