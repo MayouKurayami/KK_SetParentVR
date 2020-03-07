@@ -197,23 +197,24 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
-			CreateButton("左足固定", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("右手固定", new Vector3(28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("左手固定", new Vector3(-28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -8f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -8f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け On", new Vector3(-28f, 16f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け On", new Vector3(28f, 16f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			CreateButton("右足固定/解除", new Vector3(28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
+			CreateButton("左足固定/解除", new Vector3(-28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("右手固定/解除", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
+			CreateButton("左手固定/解除", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -4f, 0f), () => PushPLButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -4f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			CreateButton("ヌク", new Vector3(-28f, 20f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
-			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);
+			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
 			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objRightMenuCanvas);
 			CreateButton("外に出すよ", new Vector3(28f, 60f, 0f), () => PushFOButton(), objRightMenuCanvas);
 			CreateButton("入れるよ", new Vector3(-28f, 80f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
 			CreateButton("イレル", new Vector3(28f, 80f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
 			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
 			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
-			CreateButton("ヌク", new Vector3(-28f, 120f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
+			
 
 
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
@@ -736,13 +737,13 @@ namespace SetParentKK
 					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
 				
-				txtSetParentL.text = "親子付け Off";
-				txtSetParentR.text = "親子付け Off";
+				txtSetParentL.text = "親子付け Turn Off";
+				txtSetParentR.text = "親子付け Turn Off";
 			}
 			else
 			{
-				txtSetParentL.text = "左 親子付け On";
-				txtSetParentR.text = "右 親子付け On";
+				txtSetParentL.text = "左 親子付け Turn On";
+				txtSetParentR.text = "右 親子付け Turn On";
 			}
 		}
 
