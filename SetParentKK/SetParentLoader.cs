@@ -117,7 +117,7 @@ namespace SetParentKK
 			SetParentMale = new ConfigWrapper<bool>("SetParentMale", this, true);
 			SetFemaleCollider = new ConfigWrapper<bool>("SetFemaleCollider", this, true);
 			SetMaleCollider = new ConfigWrapper<bool>("SetMaleCollider", this, true);
-			ParentPart = new ConfigWrapper<BodyPart>("ParentPart", this, BodyPart.Belly);
+			ParentPart = new ConfigWrapper<BodyPart>("ParentPart", this, BodyPart.Torso);
 			TrackingMode = new ConfigWrapper<bool>("TrackingMode", this, true);
 			GazeControl = new ConfigWrapper<bool>("GazeControl", this, false);
 			MenuHideDefault = new ConfigWrapper<bool>("MenuHideDefault", this, true);
@@ -148,7 +148,7 @@ namespace SetParentKK
 		public enum BodyPart
 		{
 			Ass,
-			Belly,
+			Torso,
 			Head
 		}
 	}

@@ -644,7 +644,7 @@ namespace SetParentKK
 						case BodyPart.Ass:
 							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
-						case BodyPart.Belly:
+						case BodyPart.Torso:
 							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Head:
@@ -662,7 +662,7 @@ namespace SetParentKK
 						case BodyPart.Ass:
 							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
-						case BodyPart.Belly:
+						case BodyPart.Torso:
 							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 							break;
 						case BodyPart.Head:
@@ -764,7 +764,7 @@ namespace SetParentKK
 				case BodyPart.Ass:
 					femaleBase = female_cf_j_hips;
 					break;
-				case BodyPart.Belly:
+				case BodyPart.Torso:
 					femaleBase = female_cf_j_spine02;
 					break;
 				case BodyPart.Head:
