@@ -962,7 +962,7 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > 0.5f)
+				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > 0.7f)
 				{
 					FixLimbToggle(limbs[i]);
 				}
