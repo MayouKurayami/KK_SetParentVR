@@ -10,7 +10,7 @@ namespace SetParentKK
 	[BepInPlugin(GUID, PluginName, Version)]
 	public class SetParentLoader : BaseUnityPlugin
 	{
-		public const string GUID = "uppervolta.setparentVR";
+		public const string GUID = "MK.KK_SetParentVR";
 		public const string Version = "2.0.0";
 		public const string PluginName = "SetParentVR";
 		public const string AssembName = "KK_SetParentVR";
@@ -40,14 +40,6 @@ namespace SetParentKK
 		[Description("If enabled, male's feet will automatically grab onto objects when in contact. \nThis is useful to prevent male's feet from clipping into the ground")]
 		public static ConfigWrapper<bool> SetMaleCollider { get; private set; }
 
-		[DisplayName("Part of Girl's Body to Parent with The Controller")]
-		[Description("Use this body to act as the center/origin that will correspond to the movement and rotation of the controller")]
-		public static ConfigWrapper<BodyPart> ParentPart { get; private set; }
-
-		[DisplayName("Smooth Tracking")]
-		[Description("Enables smooth following of the girl's body to the controller. \nDisable to use strict and immediate following")]
-		public static ConfigWrapper<bool> TrackingMode { get; private set; }
-
 		[DisplayName("Gaze Control")]
 		[Description("Enables selecting any menu item by looking at it for more than 1 second")]
 		public static ConfigWrapper<bool> GazeControl { get; private set; }
@@ -59,6 +51,16 @@ namespace SetParentKK
 		///
 		//////////////////// Advanced Settings /////////////////////////// 
 		///
+		[Category("Advanced Settings")]
+		[DisplayName("Part of Girl's Body to Parent with The Controller")]
+		[Description("Use this body part to act as the center/origin that will correspond to the movement and rotation of the controller")]
+		public static ConfigWrapper<BodyPart> ParentPart { get; private set; }
+
+		[Category("Advanced Settings")]
+		[DisplayName("Smooth Tracking")]
+		[Description("Enables smooth following of the girl's body to the controller. \nDisable to use strict and immediate following")]
+		public static ConfigWrapper<bool> TrackingMode { get; private set; }
+
 		[Category("Advanced Settings")]
 		[DisplayName("Controller Movement Pool Size (frames)")]
 		[Description("Movement amount of the controller will be calculated using the sum of distance moved in this number of frames")]
