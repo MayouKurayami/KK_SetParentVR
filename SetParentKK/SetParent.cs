@@ -944,7 +944,7 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj && distance > 0.35f)
+				if (limbs[i].AnchorObj && distance > StretchLimitArms.Value)
 				{
 					if (!limbs[i].Fixed)
 					{
@@ -971,7 +971,7 @@ namespace SetParentKK
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > 0.7f)
+				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > StretchLimitLegs.Value)
 				{
 					FixLimbToggle(limbs[i]);
 				}
