@@ -565,14 +565,7 @@ namespace SetParentKK
 					objRightMenuCanvas.SetActive(!hideCanvas);
 					objLeftMenuCanvas.SetActive(!hideCanvas);
 				}
-			}	
-
-			////////////////////////////////////////////////////////////
-			//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
-			////////////////////////////////////////////////////////////
-			MaleIKs();
-
-			FemaleIKs();		
+			}			
 			
 			//////////////
 			//Activate/deactivate SetParent functionality by
@@ -631,7 +624,13 @@ namespace SetParentKK
 					float _ = 0;
 					ControllerLimbActions(leftController, ref _, true);
 				}
-				
+
+				////////////////////////////////////////////////////////////
+				//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
+				MaleIKs();
+
+				FemaleIKs();
+				////////////////////////////////////////////////////////////
 
 
 				ControllerCharacterAdjustment();
