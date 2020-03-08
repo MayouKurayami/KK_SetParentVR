@@ -376,7 +376,11 @@ namespace SetParentKK
 			}
 		}
 
-
+		/// <summary>
+		/// Toggle for creating/destroying anchor objects for attaching the limbs onto
+		/// </summary>
+		/// <param name="limb">the limb to attach/detach</param>
+		/// <param name="fix">flag to indicate whether limb should be automatically detached</param>
 		internal void FixLimbToggle(Limb limb, bool fix = false)
 		{
 			if (!limb.AnchorObj)
@@ -391,10 +395,19 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(limb.AnchorObj);
 			limb.Effector.target = limb.OrigTarget;
 			limb.Fixed = false;
+
+			//When the IK target is set to the anchor object and a motion change undergoes, the Basedata bone of the original target would be set to null due to some unknown reason,
+			//causing the effector bone to not approach the target correctly.
+			//This resets motionIK using the current animation to prevent bone target Basedata being set to null
 			if (limb.TargetBone.bone == null)
 				lstMotionIK.ForEach((MotionIK motionIK) => motionIK.Calc(hFlag.nowAnimStateName));
 		}
 
+		/// <summary>
+		/// Change female animation/position
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="name"></param>
 		private void ChangeMotion(string path, string name)
 		{
 			Animator component = female_p_cf_bodybone.GetComponent<Animator>();
@@ -433,11 +446,17 @@ namespace SetParentKK
 			}
 		}
 
+		/// <summary>
+		/// Start/stop piston movement
+		/// </summary>
 		private void PushModeChangeButton()
 		{
 			hFlag.click = HFlag.ClickKind.modeChange;
 		}
 
+		/// <summary>
+		/// Toggle between strong/weak motion
+		/// </summary>
 		private void PushMotionChangeButton()
 		{
 			hFlag.click = HFlag.ClickKind.motionchange;
@@ -470,7 +489,9 @@ namespace SetParentKK
 			}
 		}
 
-
+		/// <summary>
+		/// Iterate between the three different Parenting Modes: Animation Only, Position Only, and Both
+		/// </summary>
 		private void ParentModeChangeButton()
 		{
 			int index = (int)SetParentMode.Value + 1;
@@ -479,7 +500,6 @@ namespace SetParentKK
 
 		public void LateUpdate()
 		{
-			//Checks if female object exists. If not, exits the function
 			if (!femaleExists)
 			{
 				if (obj_chaF_001 == null)
@@ -514,11 +534,12 @@ namespace SetParentKK
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
 
-
+			//Initiate canvas if it's null
 			if (objRightMenuCanvas == null)
 				InitCanvas();
 			else
 			{
+				//Hold button for 1 second to hide/unhide floating menu
 				if (RightMenuPressing() || LeftMenuPressing())
 				{
 					hideCount += Time.deltaTime;
@@ -532,6 +553,8 @@ namespace SetParentKK
 				{
 					hideCount = 0f;
 				}
+
+				//Make floating menu follow and rotate around female
 				Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 				point.y = 0f;
 				point.Normalize();
@@ -539,8 +562,8 @@ namespace SetParentKK
 				objRightMenuCanvas.transform.forward = (objRightMenuCanvas.transform.position - cameraEye.transform.position).normalized;
 				objLeftMenuCanvas.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 0.4f;
 				objLeftMenuCanvas.transform.forward = (objLeftMenuCanvas.transform.position - cameraEye.transform.position).normalized;
-
 			
+				//When SetParent is active, display the menu regardless of being hidden when user brings controller within set distance to the headset
 				if (setFlag)
 				{
 					Vector3 vector;
@@ -569,7 +592,7 @@ namespace SetParentKK
 			
 			//////////////
 			//Activate/deactivate SetParent functionality by
-			//* Pressing backslash key or 
+			//* Pressing keyboard shortcut or 
 			//* Pressing menu button and trigger at the same time
 			//////////////
 			bool setParentToggle = Input.GetKeyDown(shortcuts[(int)Key.SetParent]) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
@@ -601,6 +624,7 @@ namespace SetParentKK
 			
 			if (setFlag)
 			{
+				//Reposition male rotation axis if motion changed
 				if (nowAnimState != hFlag.nowAnimStateName)
 				{
 					if (SetParentMale.Value)
@@ -608,31 +632,28 @@ namespace SetParentKK
 					nowAnimState = hFlag.nowAnimStateName;
 				}
 
+				//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
 				if (LeftTriggerRelease())
 					ControllerLimbActions(leftController, ref lastTriggerRelease[0]);
 				else
 					lastTriggerRelease[0] += Time.deltaTime;
-
 
 				if (RightTriggerRelease())
 					ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
 				else
 					lastTriggerRelease[1] += Time.deltaTime;
 
+				//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
 				if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
 				{
 					float _ = 0;
 					ControllerLimbActions(leftController, ref _, true);
 				}
 
-				////////////////////////////////////////////////////////////
-				//Enforcing and auto releasing male and female IK's based on how the limbs are stretched
 				MaleIKs();
 
 				FemaleIKs();
-				////////////////////////////////////////////////////////////
-
-
+			
 				ControllerCharacterAdjustment();
 
 				FemalePositionUpdate();
@@ -667,7 +688,7 @@ namespace SetParentKK
 					}
 				}
 
-				//Update player's shoulder collider's rotation
+				//Update player's shoulder collider's rotation to always be facing the girl
 				if (SetFemaleCollider.Value)
 					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
@@ -684,6 +705,10 @@ namespace SetParentKK
 			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
 
+		/// <summary>
+		/// Enable SetParent functionality
+		/// </summary>
+		/// <param name="_parentIsLeft">Whether the left controller is the parenting controller</param>
 		private void SetP(bool _parentIsLeft)
 		{
 			if (obj_chaF_001 == null)
@@ -749,6 +774,9 @@ namespace SetParentKK
 			setFlag = true;
 		}
 
+		/// <summary>
+		/// Diable SetParent functionality
+		/// </summary>
 		public void UnsetP()
 		{
 			UnityEngine.Object.Destroy(maleHeadPos);
@@ -771,6 +799,9 @@ namespace SetParentKK
 			setFlag = false;
 		}
 
+		/// <summary>
+		/// Initialize and position objects representing male's neck and crotch to be used for rotation calculation
+		/// </summary>
 		public void InitMaleFollow()
 		{
 			GameObject maleNeck = maleFBBIK.references.spine[2].gameObject;
@@ -934,8 +965,10 @@ namespace SetParentKK
 				}
 			}
 
+			//Algorithm for the male feet
 			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
 			{
+				//Release the male feet from attachment if streched beyond threshold
 				if(limbs[i].AnchorObj && !limbs[i].Fixed && (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude > 0.2f)
 				{
 					FixLimbToggle(limbs[i]);
@@ -953,19 +986,26 @@ namespace SetParentKK
 		/// Attachment onto anchor points created by SetParent will enjoy a larger degree of freedom before being released
 		private void FemaleIKs()
 		{
+			//Algorithm for female hands
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
+				//Calculate distance between effector target and original animation to determine stretching
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
 				if (limbs[i].AnchorObj && distance > StretchLimitArms.Value)
 				{
+					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
 					if (!limbs[i].Fixed)
 					{
 						FixLimbToggle(limbs[i]);
 						continue;
-					}		
+					}
+					//If fixed flag is enabled but arms are stretched past set threshold, reduce bending weight to 0 
+					//to avoid arms bending towards a bending goal that is no longer in a natural position
 					else
 						limbs[i].Chain.bendConstraint.weight = 0f;
 				}
+				//If arms are not attached to objects, we still need to take care of the default IK's (e.g., hands sticking to male)
+				//If stretching is beyond a set threshold then reduce effector weights to 0
 				else if (!(limbs[i].AnchorObj) && distance > 0.2f)
 				{
 					limbs[i].Effector.positionWeight = 0f;
@@ -973,6 +1013,7 @@ namespace SetParentKK
 					continue;
 				}
 
+				//If arms are not overly stretched, set effector weights to max and set other IK parameters to improve animation naturalness
 				limbs[i].Effector.positionWeight = 1f;
 				limbs[i].Effector.rotationWeight = 1f;
 				limbs[i].Effector.maintainRelativePositionWeight = 1f;
@@ -980,13 +1021,18 @@ namespace SetParentKK
 				limbs[i].Chain.pushParent = 0.5f;
 			}
 
+			//Algorithm for female feet
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
+				//Again use distance between effecotr target and animation position to determine stretching
+				//Since feet don't have default IK's (they don't grab onto anything by default), 
+				//we only need to release them from grabbing onto objects if stretched too far
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
 				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > StretchLimitLegs.Value)
 				{
 					FixLimbToggle(limbs[i]);
 				}
+				//If feet are not overly stretched, set effector weights to max and set other IK parameters to improve animation naturalness
 				else
 				{
 					limbs[i].Effector.positionWeight = 1f;
@@ -998,9 +1044,15 @@ namespace SetParentKK
 			}
 		}
 
-
+		/// <summary>
+		/// Given the controller input, freeze or release limbs 
+		/// </summary>
+		/// <param name="controller">The controller being pressed</param>
+		/// <param name="timeNoClick">Time since the last click, for double click registration</param>
+		/// <param name="forceAll">Whether to force release all limbs</param>
 		private void ControllerLimbActions(GameObject controller, ref float timeNoClick, bool forceAll = false)
 		{
+			//If time since last click is greater than 0.25 second, register as single click and freeze the limb that is currently following this controller
 			if (timeNoClick > 0.25f)
 			{
 				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
@@ -1009,9 +1061,11 @@ namespace SetParentKK
 						limbs[i].AnchorObj.transform.parent = null;
 				}
 			}
+			//double click registered
 			else
 			{
 				bool singleLimbRelease = false;
+				//If not forcing all limbs' release, release any limb that is within proximity of the controller
 				if (!forceAll)
 				{
 					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
@@ -1023,7 +1077,7 @@ namespace SetParentKK
 						}
 					}
 				}
-				
+				// If no a single limb is close to the controller, release all limbs
 				if (singleLimbRelease == false)
 				{
 					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
