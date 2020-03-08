@@ -635,89 +635,8 @@ namespace SetParentKK
 
 				ControllerCharacterAdjustment();
 
+				FemalePositionUpdate();
 
-				if(currentCtrlstate == CtrlState.Following)
-				{
-					for (int j = 0; j < 20; j++)
-						quatSpineRot[j] = femaleSpinePos.transform.rotation;
-				}
-				else
-					quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
-
-				if (indexSpineRot >= 19)
-					indexSpineRot = 0;
-				else
-					indexSpineRot++;
-				
-				if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
-				{
-					Quaternion quaternion = quatSpineRot[0];
-					for (int i = 1; i < 20; i++)
-					{
-						quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
-					}
-					switch (ParentPart.Value)
-					{
-						case BodyPart.Ass:
-							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						case BodyPart.Torso:
-							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						case BodyPart.Head:
-							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						default:
-							female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-					}
-				}
-				else
-				{
-					switch (ParentPart.Value)
-					{
-						case BodyPart.Ass:
-							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						case BodyPart.Torso:
-							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						case BodyPart.Head:
-							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-						default:
-							female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
-							break;
-					}
-				}
-
-				if (currentCtrlstate == CtrlState.Following)
-				{
-					for (int i = 0; i < 20; i++)
-						vecSpinePos[i] = femaleSpinePos.transform.position;
-				}
-				else
-					vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
-
-				if (indexSpinePos >= 19)
-					indexSpinePos = 0;
-				else
-					indexSpinePos++;
-				
-				if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
-				{
-					Vector3 a = Vector3.zero;
-					foreach (Vector3 b in vecSpinePos)
-					{
-						a += b;
-					}
-					a /= 20f;
-					female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
-				}
-				else
-				{
-					female_p_cf_bodybone.transform.position += femaleSpinePos.transform.position - femaleBase.transform.position;
-				}	
 
 				if (male_p_cf_bodybone != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
@@ -901,12 +820,106 @@ namespace SetParentKK
 		}
 
 		/// <summary>
+		/// Update female position and rotation
+		/// </summary>
+		private void FemalePositionUpdate()
+		{
+			if (currentCtrlstate == CtrlState.Following)
+			{
+				for (int j = 0; j < 20; j++)
+					quatSpineRot[j] = femaleSpinePos.transform.rotation;
+			}
+			else
+				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
+
+			if (indexSpineRot >= 19)
+				indexSpineRot = 0;
+			else
+				indexSpineRot++;
+
+			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
+			{
+				Quaternion quaternion = quatSpineRot[0];
+				for (int i = 1; i < 20; i++)
+				{
+					quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
+				}
+				switch (ParentPart.Value)
+				{
+					case BodyPart.Ass:
+						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					case BodyPart.Torso:
+						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					case BodyPart.Head:
+						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					default:
+						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+				}
+			}
+			else
+			{
+				switch (ParentPart.Value)
+				{
+					case BodyPart.Ass:
+						female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					case BodyPart.Torso:
+						female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					case BodyPart.Head:
+						female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+					default:
+						female_p_cf_bodybone.transform.rotation = femaleSpinePos.transform.rotation * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						break;
+				}
+			}
+
+			if (currentCtrlstate == CtrlState.Following)
+			{
+				for (int i = 0; i < 20; i++)
+					vecSpinePos[i] = femaleSpinePos.transform.position;
+			}
+			else
+				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
+
+			if (indexSpinePos >= 19)
+				indexSpinePos = 0;
+			else
+				indexSpinePos++;
+
+			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
+			{
+				Vector3 a = Vector3.zero;
+				foreach (Vector3 b in vecSpinePos)
+				{
+					a += b;
+				}
+				a /= 20f;
+				female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
+			}
+			else
+			{
+				female_p_cf_bodybone.transform.position += femaleSpinePos.transform.position - femaleBase.transform.position;
+			}
+		}
+
+		/// <summary>
 		/// Release and attach male limbs based on the distance between the attaching target position and the default animation position
 		/// </summary>
 		private void MaleIKs()
 		{
+			//Algorithm for the male hands
 			for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
 			{
+				//Since the male hands don't have colliders and won't attach to objects, we only need to consider the default IKs (e.g., grabing female body parts)
+				//To prevent excessive stretching or the hands being at a weird angle, 
+				//if position and rotation difference between the IK effector and original animation is beyond threshold, set IK weights to 0. 
+				//Set IK weights to 1 if otherwise.
 				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
 				float twist = Quaternion.Angle(limbs[i].Effector.target.rotation, limbs[i].AnimPos.rotation);
 				if (distance > 0.2f || twist > 45f)
@@ -998,7 +1011,7 @@ namespace SetParentKK
 			}
 			else
 			{
-				bool limbRelease = false;
+				bool singleLimbRelease = false;
 				if (!forceAll)
 				{
 					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
@@ -1006,12 +1019,12 @@ namespace SetParentKK
 						if (limbs[i].AnchorObj && (limbs[i].AnchorObj.transform.position - controller.transform.position).magnitude < 0.2f)
 						{
 							FixLimbToggle(limbs[i]);
-							limbRelease = true;
+							singleLimbRelease = true;
 						}
 					}
 				}
 				
-				if (limbRelease == false)
+				if (singleLimbRelease == false)
 				{
 					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
 					{
