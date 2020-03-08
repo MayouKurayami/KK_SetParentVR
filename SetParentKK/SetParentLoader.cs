@@ -124,17 +124,17 @@ namespace SetParentKK
 
 		[Category("Advanced Settings")]
 		[DisplayName("Male Yaw Rotation")]
-		[Description("Enable/disable male body's yaw (left/right) rotation when synchronization is enabled")]
+		[Description("Enable/disable male body's yaw (left/right) rotation when male synchronization is enabled")]
 		public static ConfigWrapper<bool> MaleYaw { get; private set; }
 
 		[Category("Advanced Settings")]
-		[DisplayName("Distance to Auto Detach Arms")]
+		[DisplayName("Distance to Detach Female Arms")]
 		[Description("When stretched above this distance, the arms that are currently attached to objects will detach. This has no effect when the arms are attached manually via the floating menu button or by the controller")]
 		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> StretchLimitArms { get; private set; }
 
 		[Category("Advanced Settings")]
-		[DisplayName("Distance to Auto Detach Legs")]
+		[DisplayName("Distance to Detach Female Legs")]
 		[Description("When stretched above this distance, the legs that are currently attached to objects will detach. This has no effect when the legs are attached manually via the floating menu button or by the controller")]
 		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> StretchLimitLegs { get; private set; }
@@ -167,13 +167,13 @@ namespace SetParentKK
 			LimbReleaseKey = new SavedKeyboardShortcut("LimbReleaseKey", this, new KeyboardShortcut(KeyCode.None));
 			SetParentToggle = new SavedKeyboardShortcut("SetParentToggle", this, new KeyboardShortcut(KeyCode.None));
 
-			MoveDistancePoolSize = new ConfigWrapper<int>("MoveDistancePoolSize", this, 60);
+			MoveDistancePoolSize = new ConfigWrapper<int>("MoveDistancePoolSize", this, 55);
 			AnimStartThreshold = new ConfigWrapper<float>("AnimStartThreshold", this, 0.04f);
 			AnimMaxThreshold = new ConfigWrapper<float>("AnimMaxThreshold", this, 0.2f);
 			MoveCoordinatePoolSize = new ConfigWrapper<int>("MoveCoordinatePoolSize", this, 8);
 			StrongMotionThreshold = new ConfigWrapper<float>("StrongMotionThreshold", this, 0.03f);
 			WeakMotionThreshold = new ConfigWrapper<float>("WeakMotionThreshold", this, 0.01f);
-			StrongThresholdMultiplier = new ConfigWrapper<float>("StrongThresholdMultiplier", this, 1.7f);
+			StrongThresholdMultiplier = new ConfigWrapper<float>("StrongThresholdMultiplier", this, 1.2f);
 			MaleYaw = new ConfigWrapper<bool>("MaleYaw", this, true);
 			StretchLimitArms = new ConfigWrapper<float>("StretchLimitArms", this, 0.5f);
 			StretchLimitLegs = new ConfigWrapper<float>("StretchLimitLegs", this, 0.7f);
