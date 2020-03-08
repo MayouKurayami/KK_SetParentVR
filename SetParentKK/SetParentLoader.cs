@@ -54,6 +54,19 @@ namespace SetParentKK
 		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> MenuUpProximity { get; private set; }
 
+
+		///
+		//////////////////// Keyboard Shortcuts /////////////////////////// 
+		///
+		[DisplayName("Limb Release")]
+		[Description("Press this key to release all limbs from attachment")]
+		public static SavedKeyboardShortcut LimbReleaseKey { get; private set; }
+
+		[DisplayName("SetParent Toggle")]
+		[Description("Press this key to enable/disable SetParent plugin")]
+		public static SavedKeyboardShortcut SetParentToggle { get; private set; }
+
+
 		///
 		//////////////////// Advanced Settings /////////////////////////// 
 		///
@@ -137,6 +150,9 @@ namespace SetParentKK
 			GazeControl = new ConfigWrapper<bool>("GazeControl", this, false);
 			MenuHideDefault = new ConfigWrapper<bool>("MenuHideDefault", this, true);
 			MenuUpProximity = new ConfigWrapper<float>("MenuUpProximity", this, 0.25f);
+
+			LimbReleaseKey = new SavedKeyboardShortcut("LimbReleaseKey", this, new KeyboardShortcut(KeyCode.None));
+			SetParentToggle = new SavedKeyboardShortcut("SetParentToggle", this, new KeyboardShortcut(KeyCode.None));
 
 			MoveDistancePoolSize = new ConfigWrapper<int>("MoveDistancePoolSize", this, 60);
 			AnimStartThreshold = new ConfigWrapper<float>("AnimStartThreshold", this, 0.04f);

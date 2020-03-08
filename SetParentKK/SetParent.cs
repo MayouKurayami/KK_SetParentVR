@@ -20,6 +20,8 @@ namespace SetParentKK
 		{
 			hSprite = _hsprite;
 			lstMotionIK = _lstMotionIK;
+			shortcuts[(int)Key.SetParent] = (KeyCode)Enum.Parse(typeof(KeyCode), SetParentToggle.Value.ToString());
+			shortcuts[(int)Key.LimbRelease] = (KeyCode)Enum.Parse(typeof(KeyCode), LimbReleaseKey.Value.ToString());
 		}
 		
 		public void Start()
@@ -577,7 +579,7 @@ namespace SetParentKK
 			//* Pressing backslash key or 
 			//* Pressing menu button and trigger at the same time
 			//////////////
-			bool setParentToggle = Input.GetKeyDown(KeyCode.Backslash) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
+			bool setParentToggle = Input.GetKeyDown(shortcuts[(int)Key.SetParent]) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
 			if (setParentToggle)
 			{
 				//Toggle parenting based on current parenting status
@@ -623,6 +625,13 @@ namespace SetParentKK
 					ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
 				else
 					lastTriggerRelease[1] += Time.deltaTime;
+
+				if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
+				{
+					float _ = 0;
+					ControllerLimbActions(leftController, ref _, true);
+				}
+				
 
 
 				ControllerCharacterAdjustment();
@@ -978,7 +987,7 @@ namespace SetParentKK
 		}
 
 
-		private void ControllerLimbActions(GameObject controller, ref float timeNoClick)
+		private void ControllerLimbActions(GameObject controller, ref float timeNoClick, bool forceAll = false)
 		{
 			if (timeNoClick > 0.25f)
 			{
@@ -991,14 +1000,18 @@ namespace SetParentKK
 			else
 			{
 				bool limbRelease = false;
-				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+				if (!forceAll)
 				{
-					if (limbs[i].AnchorObj && (limbs[i].AnchorObj.transform.position - controller.transform.position).magnitude < 0.2f)
+					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
 					{
-						FixLimbToggle(limbs[i]);
-						limbRelease = true;
+						if (limbs[i].AnchorObj && (limbs[i].AnchorObj.transform.position - controller.transform.position).magnitude < 0.2f)
+						{
+							FixLimbToggle(limbs[i]);
+							limbRelease = true;
+						}
 					}
 				}
+				
 				if (limbRelease == false)
 				{
 					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
@@ -1290,6 +1303,12 @@ namespace SetParentKK
 			MaleRightFoot
 		}
 
+		public enum Key
+		{
+			SetParent,
+			LimbRelease
+		}
+
 		internal class Limb
 		{
 			internal GameObject AnchorObj;
@@ -1424,5 +1443,7 @@ namespace SetParentKK
 		private bool parentIsLeft;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
+
+		private KeyCode[] shortcuts = new KeyCode[2];
 	}
 }
