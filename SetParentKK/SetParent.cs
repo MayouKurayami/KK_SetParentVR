@@ -547,7 +547,7 @@ namespace SetParentKK
 					else
 						vector = cameraEye.transform.position - leftController.transform.position;
 
-					if (vector.magnitude <= 0.25f)
+					if (vector.magnitude <= MenuUpProximity.Value)
 					{
 						objRightMenuCanvas.SetActive(true);
 						objLeftMenuCanvas.SetActive(true);

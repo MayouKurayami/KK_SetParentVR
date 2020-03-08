@@ -49,6 +49,11 @@ namespace SetParentKK
 		[Description("Hides floating menu by default. \nBring it up by holding the menu/B button for more than 1 second, or bring the controller close to the headset when SetParent is active")]
 		public static ConfigWrapper<bool> MenuHideDefault { get; private set; }
 
+		[DisplayName("Distance to Display Hidden Menu")]
+		[Description("When the floating menu is hidden, bring the controller close to the headset within this distance to temporarily display the menu. Unit in meters. \nSet to 0 to disable this feature")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
+		public static ConfigWrapper<float> MenuUpProximity { get; private set; }
+
 		///
 		//////////////////// Advanced Settings /////////////////////////// 
 		///
@@ -131,6 +136,7 @@ namespace SetParentKK
 			TrackingMode = new ConfigWrapper<bool>("TrackingMode", this, true);
 			GazeControl = new ConfigWrapper<bool>("GazeControl", this, false);
 			MenuHideDefault = new ConfigWrapper<bool>("MenuHideDefault", this, true);
+			MenuUpProximity = new ConfigWrapper<float>("MenuUpProximity", this, 0.25f);
 
 			MoveDistancePoolSize = new ConfigWrapper<int>("MoveDistancePoolSize", this, 60);
 			AnimStartThreshold = new ConfigWrapper<float>("AnimStartThreshold", this, 0.04f);
