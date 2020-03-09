@@ -10,9 +10,10 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 
 ## Prerequisites  
 - Afterschool DLC  
+- [Koikatsu Official VR Patch 0531](http://www.illusion.jp/preview/koikatu/download/vr.php)
 - BepInEx 4 and above  
 - (optional, recommended): [CrossFader](https://vr-erogamer.com/wp-content/uploads/CrossFader.zip) plugin
-- (optional, recommended): [KoikatuVRAssistPlugin](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin
+- (optional, strongly recommended): [KoikatuVRAssistPlugin](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin
 
 
 ## Installation
@@ -26,12 +27,12 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 - Installation of the [**CrossFader.dll**](https://vr-erogamer.com/wp-content/uploads/CrossFader.zip) plugin found on https://vr-erogamer.com/archives/527 is recommended to ensure smooth transitions between animations and poses.
 (Install by placing in BepInEx root folder)  
 
-- Also recommended is the [**KoikatuVRAssistPlugin**](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin found on https://vr-erogamer.com/archives/322, for easier movement and better access to actions in VR. With it installed, one can rotate and move the camera by the controller while in Action (Caress) Mode by holding the trigger button. While the UI menu is visible, hold the grip button for 1 second to freeze it in place, and drag and move it by holding the grip button. Double click the grip button to return the menu to your controller.
+- Also **strongly recommended** is the [**KoikatuVRAssistPlugin**](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin found on https://vr-erogamer.com/archives/322, for easier movement and better access to actions in VR. With it installed, one can rotate and move the camera at all times by holding the trigger button. While the UI menu is visible, hold the grip button for 1 second to freeze it in place, and drag and move it by holding the grip button. Double click the grip button to return the menu to your controller.
 
 ## Usage  
-- Hide/unhide the floating helper menu by long holding the **Menu (A/B) button** for more than a second.  
+- Hide/unhide the floating helper menu by long holding the **Menu (B or Y on the Rift) button** for more than a second.  
 
-- Enable/disable SetParent plugin by either pressing the button on the floating menu or by pressing **Menu (A/B)** *and* **Trigger** at the same time. The girl will then be controlled by the other controller that wasn't pressing the button combo.  
+- Enable/disable SetParent plugin by either pressing the button on the floating menu or by pressing **Menu (B or Y on the Rift)** ***and*** **Trigger** at the same time, or by pressing the keyboard shortcut set in config. The girl will then be controlled by the other controller that wasn't pressing the button combo.  
 
 - Once SetParent is enabled, you can do the following:  
   - If the floating menu is currently hidden, you can temporarily bring it up by moving either controller close to your head. (Enabled by default in settings)
@@ -45,7 +46,7 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
   - **Double click Trigger** near a hand or foot will return it to the default position. **Double clicking Trigger while not being near any particular hand or foot** will return *ALL* limbs to their default positions. Extremely useful when limbs get stuck to the wrong places.
 
 
-- Use the in-game menu or the floating menu to insert. **DO NOT engage auto mode by clicking inside the animation gauge box**, as this will override SetParent's animation control and you'd need to switch position to reset it. Once inserted, you can control the movement speed by moving the controller that the girl is parented to. Moving the controller past the configured range would cause the animation to switch from weak to strong motion. Maintain the movement range within the configured threshold for **1.5 seconds** will cause it to switch back from strong to weak motion.  
+- Pick a position or H category using the in-game menu, then use the in-game menu or the floating menu to insert. Once inserted, you can control the movement speed by moving the controller that the girl is parented to. Moving the controller past the configured range would cause the animation to switch from weak to strong motion. Maintain the movement range within the configured threshold for **1.5 seconds** will cause it to switch back from strong to weak motion.  
 
 - If enabled in settings, after maintaining the girl's excitement gauge past 70 for set number of seconds, animation will enter orgasm automatically.
 
