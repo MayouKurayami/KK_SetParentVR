@@ -20,8 +20,24 @@ namespace SetParentKK
 		{
 			hSprite = _hsprite;
 			lstMotionIK = _lstMotionIK;
-			shortcuts[(int)Key.SetParent] = (KeyCode)Enum.Parse(typeof(KeyCode), SetParentToggle.Value.ToString());
-			shortcuts[(int)Key.LimbRelease] = (KeyCode)Enum.Parse(typeof(KeyCode), LimbReleaseKey.Value.ToString());
+			//If keys are not set in configuration manager, it ruturns "Not set" instead of "None", causing it fail to parse to KeyCode
+			try
+			{
+				shortcuts[(int)Key.SetParent] = (KeyCode)Enum.Parse(typeof(KeyCode), SetParentToggle.Value.ToString());
+			}
+			catch (ArgumentException e)
+			{ 
+				shortcuts[(int)Key.SetParent] = KeyCode.None;
+			}
+			try
+			{
+				shortcuts[(int)Key.LimbRelease] = (KeyCode)Enum.Parse(typeof(KeyCode), LimbReleaseKey.Value.ToString());
+			}
+			catch (ArgumentException e)
+			{ 
+				shortcuts[(int)Key.LimbRelease] = KeyCode.None; 
+			}
+			
 		}
 		
 		public void Start()
