@@ -384,7 +384,6 @@ namespace SetParentKK
 					else
 					{
 						MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
-						meshCollider.isTrigger = true;
 						meshCollider.convex = false;
 						meshCollider.sharedMesh = meshFilter.mesh;
 					}
