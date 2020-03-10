@@ -803,6 +803,12 @@ namespace SetParentKK
 
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
+			if (SetControllerCollider.Value)
+			{
+				leftController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
+				rightController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
+			}
+			
 			if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 			{
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
@@ -1173,13 +1179,22 @@ namespace SetParentKK
 			{
 				parentDummy.transform.parent = leftController.transform;
 				if (hideModel)
+				{
 					leftController.transform.Find("Model").gameObject.SetActive(false);
+					if (SetControllerCollider.Value)
+						leftController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				}
+					
 			}
 			else
 			{
 				parentDummy.transform.parent = rightController.transform;
 				if (hideModel)
+				{
 					rightController.transform.Find("Model").gameObject.SetActive(false);
+					if (SetControllerCollider.Value)
+						rightController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				}		
 			}
 			parentDummy.transform.position = target.transform.position;
 			parentDummy.transform.rotation = target.transform.rotation;
