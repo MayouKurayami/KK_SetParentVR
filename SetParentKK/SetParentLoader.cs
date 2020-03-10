@@ -162,31 +162,31 @@ namespace SetParentKK
 
 		private void LoadFromModPref()
 		{
-			SetParentMode = new ConfigWrapper<ParentMode>("SetParentMode", this, ParentMode.PositionAndAnimation);
-			CalcController = new ConfigWrapper<ControllerAnimMode>("CalcPattern", this, ControllerAnimMode.SetParentController);
-			Finishcount = new ConfigWrapper<float>("Finishcount", this, 0f);
-			SetParentMale = new ConfigWrapper<bool>("SetParentMale", this, true);
-			SetFemaleCollider = new ConfigWrapper<bool>("SetFemaleCollider", this, true);
-			SetMaleCollider = new ConfigWrapper<bool>("SetMaleCollider", this, true);
-			ParentPart = new ConfigWrapper<BodyPart>("ParentPart", this, BodyPart.Torso);
-			TrackingMode = new ConfigWrapper<bool>("TrackingMode", this, true);
-			GazeControl = new ConfigWrapper<bool>("GazeControl", this, false);
-			MenuHideDefault = new ConfigWrapper<bool>("MenuHideDefault", this, true);
-			MenuUpProximity = new ConfigWrapper<float>("MenuUpProximity", this, 0.25f);
+			SetParentMode = new ConfigWrapper<ParentMode>(nameof(SetParentMode), this, ParentMode.PositionAndAnimation);
+			CalcController = new ConfigWrapper<ControllerAnimMode>(nameof(CalcController), this, ControllerAnimMode.SetParentController);
+			Finishcount = new ConfigWrapper<float>(nameof(Finishcount), this, 0f);
+			SetParentMale = new ConfigWrapper<bool>(nameof(SetParentMale), this, true);
+			SetFemaleCollider = new ConfigWrapper<bool>(nameof(SetFemaleCollider), this, true);
+			SetMaleCollider = new ConfigWrapper<bool>(nameof(SetMaleCollider), this, true);
+			ParentPart = new ConfigWrapper<BodyPart>(nameof(ParentPart), this, BodyPart.Torso);
+			TrackingMode = new ConfigWrapper<bool>(nameof(TrackingMode), this, true);
+			GazeControl = new ConfigWrapper<bool>(nameof(GazeControl), this, false);
+			MenuHideDefault = new ConfigWrapper<bool>(nameof(MenuHideDefault), this, true);
+			MenuUpProximity = new ConfigWrapper<float>(nameof(MenuUpProximity), this, 0.25f);
 
-			LimbReleaseKey = new SavedKeyboardShortcut("LimbReleaseKey", this, new KeyboardShortcut(KeyCode.None));
-			SetParentToggle = new SavedKeyboardShortcut("SetParentToggle", this, new KeyboardShortcut(KeyCode.None));
+			LimbReleaseKey = new SavedKeyboardShortcut(nameof(LimbReleaseKey), this, new KeyboardShortcut(KeyCode.None));
+			SetParentToggle = new SavedKeyboardShortcut(nameof(SetParentToggle), this, new KeyboardShortcut(KeyCode.None));
 
-			MoveDistancePoolSize = new ConfigWrapper<int>("MoveDistancePoolSize", this, 55);
-			AnimStartThreshold = new ConfigWrapper<float>("AnimStartThreshold", this, 0.04f);
-			AnimMaxThreshold = new ConfigWrapper<float>("AnimMaxThreshold", this, 0.2f);
-			MoveCoordinatePoolSize = new ConfigWrapper<int>("MoveCoordinatePoolSize", this, 8);
-			StrongMotionThreshold = new ConfigWrapper<float>("StrongMotionThreshold", this, 0.03f);
-			WeakMotionThreshold = new ConfigWrapper<float>("WeakMotionThreshold", this, 0.01f);
-			StrongThresholdMultiplier = new ConfigWrapper<float>("StrongThresholdMultiplier", this, 1.2f);
-			MaleYaw = new ConfigWrapper<bool>("MaleYaw", this, true);
-			StretchLimitArms = new ConfigWrapper<float>("StretchLimitArms", this, 0.5f);
-			StretchLimitLegs = new ConfigWrapper<float>("StretchLimitLegs", this, 0.7f);
+			MoveDistancePoolSize = new ConfigWrapper<int>(nameof(MoveDistancePoolSize), this, 55);
+			AnimStartThreshold = new ConfigWrapper<float>(nameof(AnimStartThreshold), this, 0.04f);
+			AnimMaxThreshold = new ConfigWrapper<float>(nameof(AnimMaxThreshold), this, 0.2f);
+			MoveCoordinatePoolSize = new ConfigWrapper<int>(nameof(MoveCoordinatePoolSize), this, 8);
+			StrongMotionThreshold = new ConfigWrapper<float>(nameof(StrongMotionThreshold), this, 0.03f);
+			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.01f);
+			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.2f);
+			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
+			StretchLimitArms = new ConfigWrapper<float>(nameof(StretchLimitArms), this, 0.5f);
+			StretchLimitLegs = new ConfigWrapper<float>(nameof(StretchLimitLegs), this, 0.7f);
 		}
 		public enum ParentMode
 		{
