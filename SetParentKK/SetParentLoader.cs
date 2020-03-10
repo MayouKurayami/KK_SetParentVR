@@ -34,9 +34,19 @@ namespace SetParentKK
 		[Description("If enabled, the male body will rotate to align his head with the headset")]
 		public static ConfigWrapper<bool> SetParentMale { get; private set; }
 
-		[DisplayName("Make Girl's Hands and Feet Stick to Objects")]
-		[Description("If enabled, girl's hands and feet will automatically grab onto objects when in contact")]
-		public static ConfigWrapper<bool> SetFemaleCollider { get; private set; }
+		[DisplayName("Enable Holding Girl's Limbs with Controllers")]
+		[Description("If enabled, touching the girl's hands or feet with a controller will cause it to stick to the controller")]
+		public static ConfigWrapper<bool> SetControllerCollider { get; private set; }
+
+		[DisplayName("Distance to Detach Female Arms")]
+		[Description("When stretched above this distance, the arms that are currently attached to objects will detach. This has no effect when the arms are attached manually via the floating menu button or by the controller. \nSet to 0 to disable automatic attachment of hands to objects")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
+		public static ConfigWrapper<float> StretchLimitArms { get; private set; }
+
+		[DisplayName("Distance to Detach Female Legs")]
+		[Description("When stretched above this distance, the legs that are currently attached to objects will detach. This has no effect when the legs are attached manually via the floating menu button or by the controller. \nSet to 0 to disable automatic attachment of legs to objects")]
+		[AcceptableValueRange(0, float.MaxValue, false)]
+		public static ConfigWrapper<float> StretchLimitLegs { get; private set; }
 
 		[DisplayName("Make Male's Feet Stick to Objects")]
 		[Description("If enabled, male's feet will automatically grab onto objects when in contact. \nThis is useful to prevent male's feet from clipping into the ground")]
@@ -128,18 +138,6 @@ namespace SetParentKK
 		[Description("Enable/disable male body's yaw (left/right) rotation when male synchronization is enabled")]
 		public static ConfigWrapper<bool> MaleYaw { get; private set; }
 
-		[Category("Advanced Settings")]
-		[DisplayName("Distance to Detach Female Arms")]
-		[Description("When stretched above this distance, the arms that are currently attached to objects will detach. This has no effect when the arms are attached manually via the floating menu button or by the controller")]
-		[AcceptableValueRange(0, float.MaxValue, false)]
-		public static ConfigWrapper<float> StretchLimitArms { get; private set; }
-
-		[Category("Advanced Settings")]
-		[DisplayName("Distance to Detach Female Legs")]
-		[Description("When stretched above this distance, the legs that are currently attached to objects will detach. This has no effect when the legs are attached manually via the floating menu button or by the controller")]
-		[AcceptableValueRange(0, float.MaxValue, false)]
-		public static ConfigWrapper<float> StretchLimitLegs { get; private set; }
-
 
 		private void Start()
 		{
@@ -166,13 +164,15 @@ namespace SetParentKK
 			CalcController = new ConfigWrapper<ControllerAnimMode>(nameof(CalcController), this, ControllerAnimMode.SetParentController);
 			Finishcount = new ConfigWrapper<float>(nameof(Finishcount), this, 0f);
 			SetParentMale = new ConfigWrapper<bool>(nameof(SetParentMale), this, true);
-			SetFemaleCollider = new ConfigWrapper<bool>(nameof(SetFemaleCollider), this, true);
+			SetControllerCollider = new ConfigWrapper<bool>(nameof(SetControllerCollider), this, true);
 			SetMaleCollider = new ConfigWrapper<bool>(nameof(SetMaleCollider), this, true);
 			ParentPart = new ConfigWrapper<BodyPart>(nameof(ParentPart), this, BodyPart.Torso);
 			TrackingMode = new ConfigWrapper<bool>(nameof(TrackingMode), this, true);
 			GazeControl = new ConfigWrapper<bool>(nameof(GazeControl), this, false);
 			MenuHideDefault = new ConfigWrapper<bool>(nameof(MenuHideDefault), this, true);
 			MenuUpProximity = new ConfigWrapper<float>(nameof(MenuUpProximity), this, 0.25f);
+			StretchLimitArms = new ConfigWrapper<float>(nameof(StretchLimitArms), this, 0.5f);
+			StretchLimitLegs = new ConfigWrapper<float>(nameof(StretchLimitLegs), this, 0.7f);
 
 			LimbReleaseKey = new SavedKeyboardShortcut(nameof(LimbReleaseKey), this, new KeyboardShortcut(KeyCode.None));
 			SetParentToggle = new SavedKeyboardShortcut(nameof(SetParentToggle), this, new KeyboardShortcut(KeyCode.None));
@@ -185,8 +185,6 @@ namespace SetParentKK
 			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.01f);
 			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.2f);
 			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
-			StretchLimitArms = new ConfigWrapper<float>(nameof(StretchLimitArms), this, 0.5f);
-			StretchLimitLegs = new ConfigWrapper<float>(nameof(StretchLimitLegs), this, 0.7f);
 		}
 		public enum ParentMode
 		{

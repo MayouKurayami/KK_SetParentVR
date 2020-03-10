@@ -22,7 +22,7 @@ namespace SetParentKK
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if ((!SetParentLoader.SetFemaleCollider.Value && !SetParentLoader.SetMaleCollider.Value) || !setParentObj.setFlag)
+			if (!setParentObj.setFlag)
 				return;
 			if (other.gameObject.name != "SPCollider" && other.gameObject.name != "ControllerCollider")
 				return;

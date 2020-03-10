@@ -164,19 +164,17 @@ namespace SetParentKK
 				male_leg_R_bd);
 
 
-			if (SetFemaleCollider.Value)
+			SetBodyColliders();
+			SetMapObjectsColliders();
+
+			if (SetControllerCollider.Value)
 			{
-				SetBodyColliders();
 				SetControllerColliders(leftController);
 				SetControllerColliders(rightController);
 			}
 			if (SetMaleCollider.Value)
 			{
 				SetMaleFeetColliders();
-			}
-			if (SetFemaleCollider.Value || SetMaleCollider.Value)
-			{
-				SetMapObjectsColliders();
 			}
 		}
 
@@ -531,7 +529,7 @@ namespace SetParentKK
 				if (leftController == null)
 				{
 					leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
-					if (SetFemaleCollider.Value)
+					if (SetControllerCollider.Value)
 						SetControllerColliders(leftController);
 				}
 				leftVVC = leftController.GetComponent<VRViveController>();
@@ -542,7 +540,7 @@ namespace SetParentKK
 				if (rightController == null)
 				{
 					rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
-					if (SetFemaleCollider.Value)
+					if (SetControllerCollider.Value)
 						SetControllerColliders(rightController);
 				}	
 				rightVVC = rightController.GetComponent<VRViveController>();
@@ -704,8 +702,7 @@ namespace SetParentKK
 				}
 
 				//Update player's shoulder collider's rotation to always be facing the girl
-				if (SetFemaleCollider.Value)
-					shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
+				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
 				
 				txtSetParentL.text = "親子付け Turn Off";
