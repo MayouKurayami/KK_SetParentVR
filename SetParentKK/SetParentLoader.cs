@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Reflection;
 using System.ComponentModel;
 using UnityEngine;
 using BepInEx;
+using BepInEx.Logging;
 using Harmony;
 
 namespace SetParentKK
@@ -147,7 +148,16 @@ namespace SetParentKK
 			if (!Application.dataPath.EndsWith("KoikatuVR_Data"))
 				return;
 
-			HarmonyInstance.Create(GUID).PatchAll(typeof(SetParentHooks));
+			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
+			harmony.PatchAll(typeof(SetParentHooks));
+			try
+			{
+				harmony.PatchAll(Assembly.GetExecutingAssembly());
+			}
+			catch
+			{
+				BepInEx.Logger.Log(LogLevel.Error, PluginName + ": KoikatuVRAssist Not Found, Patching Aborted");
+			}
 		}
 
 		private void LoadFromModPref()
