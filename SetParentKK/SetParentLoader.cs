@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Reflection;
 using System.ComponentModel;
 using UnityEngine;
 using BepInEx;
@@ -147,7 +147,9 @@ namespace SetParentKK
 			if (!Application.dataPath.EndsWith("KoikatuVR_Data"))
 				return;
 
-			HarmonyInstance.Create(GUID).PatchAll(typeof(SetParentHooks));
+			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
+			harmony.PatchAll(typeof(SetParentHooks));
+			harmony.PatchAll(Assembly.GetExecutingAssembly());
 		}
 
 		private void LoadFromModPref()
