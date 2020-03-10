@@ -634,7 +634,30 @@ namespace SetParentKK
 					UnsetP();
 				}
 			}
-			
+
+			//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
+			if (LeftTriggerRelease())
+				ControllerLimbActions(leftController, ref lastTriggerRelease[0]);
+			else
+				lastTriggerRelease[0] += Time.deltaTime;
+
+			if (RightTriggerRelease())
+				ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
+			else
+				lastTriggerRelease[1] += Time.deltaTime;
+
+			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
+			if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
+			{
+				float _ = 0;
+				ControllerLimbActions(leftController, ref _, true);
+			}
+
+			MaleIKs();
+
+			FemaleIKs();
+
+
 			if (setFlag)
 			{
 				//Reposition male rotation axis if motion changed
@@ -643,29 +666,7 @@ namespace SetParentKK
 					if (SetParentMale.Value)
 						InitMaleFollow();
 					nowAnimState = hFlag.nowAnimStateName;
-				}
-
-				//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
-				if (LeftTriggerRelease())
-					ControllerLimbActions(leftController, ref lastTriggerRelease[0]);
-				else
-					lastTriggerRelease[0] += Time.deltaTime;
-
-				if (RightTriggerRelease())
-					ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
-				else
-					lastTriggerRelease[1] += Time.deltaTime;
-
-				//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
-				if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
-				{
-					float _ = 0;
-					ControllerLimbActions(leftController, ref _, true);
-				}
-
-				MaleIKs();
-
-				FemaleIKs();
+				}			
 			
 				ControllerCharacterAdjustment();
 
