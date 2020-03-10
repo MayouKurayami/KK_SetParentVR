@@ -1,25 +1,38 @@
-﻿using System;
+﻿using System.Reflection;
 using Harmony;
+using static SetParentKK.SetParentLoader;
+using static SetParentKK.SetParent;
 
 
 namespace SetParentKK
 {
 	[HarmonyPatch]
-	public static class KoikatuVRAssistPatch
+	internal static class KoikatuVRAssistPatch
 	{
-		public static bool Prepare()
+		private static bool Prepare()
 		{
-			if (Type.GetType("GripMoveAssistObj") != null)
+			if (typeof(KoikatuVRAssistPlugin.GripMoveAssistObj) != null)
 			{
-				Console.WriteLine("KoikatuVRAssistPlugin found, proceed to patch");
+				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Debug, PluginName + ": KoikatuVRAssist Patched for Compatibility");
 				return true;
 			}
 			else
+				return false;
+		}
+
+		private static MethodInfo TargetMethod()
+		{
+			return typeof(KoikatuVRAssistPlugin.GripMoveAssistObj).GetMethod("ProcSpeedUpClick", AccessTools.all);
+		}
+
+		private static bool Prefix()
+		{
+			if (setParentObj.setFlag && (setParentObj.currentCtrlstate >= CtrlState.MaleControl || SetParentMode.Value >= ParentMode.PositionAndAnimation))
 			{
-				Console.WriteLine("KoikatuVRAssistPlugin not found");
 				return false;
 			}
-				
+			else
+				return true;
 		}
 	}
  

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.ComponentModel;
 using UnityEngine;
 using BepInEx;
+using BepInEx.Logging;
 using Harmony;
 
 namespace SetParentKK
@@ -149,7 +150,14 @@ namespace SetParentKK
 
 			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
 			harmony.PatchAll(typeof(SetParentHooks));
-			harmony.PatchAll(Assembly.GetExecutingAssembly());
+			try
+			{
+				harmony.PatchAll(Assembly.GetExecutingAssembly());
+			}
+			catch
+			{
+				BepInEx.Logger.Log(LogLevel.Error, PluginName + ": KoikatuVRAssist Not Found, Patching Aborted");
+			}
 		}
 
 		private void LoadFromModPref()
