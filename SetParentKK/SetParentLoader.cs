@@ -74,7 +74,7 @@ namespace SetParentKK
 		public static SavedKeyboardShortcut LimbReleaseKey { get; private set; }
 
 		[DisplayName("SetParent Toggle")]
-		[Description("Press this key to enable/disable SetParent plugin")]
+		[Description("Press this key to enable/disable SetParent plugin using the left controller as parent")]
 		public static SavedKeyboardShortcut SetParentToggle { get; private set; }
 
 
