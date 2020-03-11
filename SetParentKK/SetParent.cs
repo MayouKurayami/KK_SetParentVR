@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Illusion.Component.Correct;
@@ -75,6 +76,23 @@ namespace SetParentKK
 			female_cf_j_spine02 = femaleFBBIK.references.spine[1].gameObject;
 			female_cf_j_neck = femaleFBBIK.references.spine[2].gameObject;
 			female_cf_j_spine03 = femaleFBBIK.references.spine[2].parent.gameObject;
+
+			switch (ParentPart.Value)
+			{
+				case BodyPart.Ass:
+					femaleBase = female_cf_j_hips;
+					break;
+				case BodyPart.Torso:
+					femaleBase = female_cf_j_spine02;
+					break;
+				case BodyPart.Head:
+					femaleBase = female_cf_j_neck;
+					break;
+				default:
+					femaleBase = female_cf_j_spine02;
+					break;
+			}
+			femaleSpinePos = new GameObject("femaleSpinePos");
 
 			Transform female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R");
 			Transform female_cf_pv_hand_L = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_L");
@@ -262,38 +280,38 @@ namespace SetParentKK
 			////////////////
 			//Populate left side floating menu with buttons
 			////////////////
-			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00"), objLeftMenuCanvas);
-			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00"), objLeftMenuCanvas);
-			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24"), objLeftMenuCanvas);
-			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23"), objLeftMenuCanvas);
+			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00")), objLeftMenuCanvas);
+			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00")), objLeftMenuCanvas);
+			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24")), objLeftMenuCanvas);
+			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas);
 
-			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06"), objLeftMenuCanvas);
-			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16"), objLeftMenuCanvas);
+			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06")), objLeftMenuCanvas);
+			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16")), objLeftMenuCanvas);
 
-			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22"), objLeftMenuCanvas);
-			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08"), objLeftMenuCanvas);
+			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22")), objLeftMenuCanvas);
+			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas);
 
-			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07"), objLeftMenuCanvas);
-			CreateButton("プール", new Vector3(28f, 0f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20"), objLeftMenuCanvas);
+			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas);
+			CreateButton("プール", new Vector3(28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas);
 			
-			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02"), objLeftMenuCanvas);
-			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02"), objLeftMenuCanvas);
-			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11"), objLeftMenuCanvas);
-			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11"), objLeftMenuCanvas);
-			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18"), objLeftMenuCanvas);
-			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18"), objLeftMenuCanvas);
+			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas);
+			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas);
+			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas);
+			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas);
+			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas);
+			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas);
 
-			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21"), objLeftMenuCanvas);
-			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28"), objLeftMenuCanvas);
+			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21")), objLeftMenuCanvas);
+			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas);
 
-			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26"), objLeftMenuCanvas);
-			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25"), objLeftMenuCanvas);
+			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas);
+			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
 
-			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27"), objLeftMenuCanvas);
-			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04"), objLeftMenuCanvas);	
+			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas);
+			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
 
-			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09"), objLeftMenuCanvas);
-			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10"), objLeftMenuCanvas);
+			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09")), objLeftMenuCanvas);
+			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10")), objLeftMenuCanvas);
 			
 
 			point = femaleAim.transform.position - cameraEye.transform.position;
@@ -421,8 +439,18 @@ namespace SetParentKK
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="name"></param>
-		private void ChangeMotion(string path, string name)
+		private IEnumerator ChangeMotion(string path, string name)
 		{
+			if (femaleSpinePos == null)
+			{
+				femaleSpinePos = new GameObject("femaleSpinePos");
+			}
+			femaleSpinePos.transform.position = femaleBase.transform.position;
+			femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
+
+			CtrlState oldState = currentCtrlstate;
+			currentCtrlstate = CtrlState.Following;
+
 			Animator component = female_p_cf_bodybone.GetComponent<Animator>();
 			RuntimeAnimatorController runtimeAnimatorController = CommonLib.LoadAsset<RuntimeAnimatorController>(path, name, false, string.Empty);
 			AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(component.runtimeAnimatorController);
@@ -433,6 +461,13 @@ namespace SetParentKK
 			animatorOverrideController.name = runtimeAnimatorController.name;
 			component.runtimeAnimatorController = animatorOverrideController;
 			AssetBundleManager.UnloadAssetBundle(path, true, null, false);
+
+			for (int k = 0; k < 2; k++)
+			{
+				yield return null;
+			}
+			currentCtrlstate = oldState;
+			yield break;
 		}
 
 		private void PushPLButton()
@@ -670,8 +705,6 @@ namespace SetParentKK
 			
 				ControllerCharacterAdjustment();
 
-				FemalePositionUpdate();
-
 
 				if (male_p_cf_bodybone != null && SetParentMale.Value && currentCtrlstate != CtrlState.Following)
 				{
@@ -702,6 +735,9 @@ namespace SetParentKK
 					}
 				}
 
+				if((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following)
+					FemalePositionUpdate();
+
 				//Update player's shoulder collider's rotation to always be facing the girl
 				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
@@ -714,6 +750,9 @@ namespace SetParentKK
 				txtSetParentL.text = "左 親子付け Turn On";
 				txtSetParentR.text = "右 親子付け Turn On";
 			}
+
+			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
+				FemalePositionUpdate();
 
 			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
@@ -735,21 +774,6 @@ namespace SetParentKK
 			parentIsLeft = _parentIsLeft;
 			nowAnimState = hFlag.nowAnimStateName;		
 
-			switch (ParentPart.Value)
-			{
-				case BodyPart.Ass:
-					femaleBase = female_cf_j_hips;
-					break;
-				case BodyPart.Torso:
-					femaleBase = female_cf_j_spine02;
-					break;
-				case BodyPart.Head:
-					femaleBase = female_cf_j_neck;
-					break;
-				default:
-					femaleBase = female_cf_j_spine02;
-					break;
-			}
 			if (femaleSpinePos == null)
 			{
 				femaleSpinePos = new GameObject("femaleSpinePos");
@@ -794,7 +818,7 @@ namespace SetParentKK
 		{
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
-			UnityEngine.Object.Destroy(femaleSpinePos);
+			femaleSpinePos.transform.parent = null;
 
 			foreach (Limb limb in limbs)
 			{
