@@ -623,18 +623,18 @@ namespace SetParentKK
 					if (vector.magnitude <= MenuUpProximity.Value)
 					{
 						objRightMenuCanvas.SetActive(true);
-						objLeftMenuCanvas.SetActive(true);
+						objLeftMenuCanvas.SetActive(hFlag.mode != HFlag.EMode.aibu);
 					}
 					else
 					{
 						objRightMenuCanvas.SetActive(!hideCanvas);
-						objLeftMenuCanvas.SetActive(!hideCanvas);
+						objLeftMenuCanvas.SetActive(!hideCanvas && hFlag.mode != HFlag.EMode.aibu);
 					}
 				}
 				else 
 				{
 					objRightMenuCanvas.SetActive(!hideCanvas);
-					objLeftMenuCanvas.SetActive(!hideCanvas);
+					objLeftMenuCanvas.SetActive(!hideCanvas && hFlag.mode != HFlag.EMode.aibu);
 				}
 			}			
 			
