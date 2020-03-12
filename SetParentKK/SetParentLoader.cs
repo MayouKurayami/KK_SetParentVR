@@ -148,14 +148,8 @@ namespace SetParentKK
 
 			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
 			harmony.PatchAll(typeof(SetParentHooks));
-			try
-			{
-				harmony.PatchAll(Assembly.GetExecutingAssembly());
-			}
-			catch
-			{
-				BepInEx.Logger.Log(LogLevel.Error, PluginName + ": KoikatuVRAssist Not Found, Patching Aborted");
-			}
+			harmony.PatchAll(Assembly.GetExecutingAssembly());
+		
 		}
 
 		private void LoadFromModPref()

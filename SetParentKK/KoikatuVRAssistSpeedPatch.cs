@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System;
 using Harmony;
 using static SetParentKK.SetParentLoader;
 using static SetParentKK.SetParent;
@@ -7,22 +8,26 @@ using static SetParentKK.SetParent;
 namespace SetParentKK
 {
 	[HarmonyPatch]
-	internal static class KoikatuVRAssistPatch
+	internal static class KoikatuVRAssistSpeedPatch
 	{
 		private static bool Prepare()
 		{
-			if (typeof(KoikatuVRAssistPlugin.GripMoveAssistObj) != null)
+			if (Type.GetType("KoikatuVRAssistPlugin.GripMoveAssistObj, KoikatuVRAssistPlugin") != null)
 			{
-				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Debug, PluginName + ": KoikatuVRAssist Patched for Compatibility");
+				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, PluginName + ": KoikatuVRAssist patched for compatibility");
 				return true;
 			}
 			else
+			{
+				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, PluginName + ": KoikatuVRAssist not found, not patched");
 				return false;
+			}
+				
 		}
 
 		private static MethodInfo TargetMethod()
 		{
-			return typeof(KoikatuVRAssistPlugin.GripMoveAssistObj).GetMethod("ProcSpeedUpClick", AccessTools.all);
+			return Type.GetType("KoikatuVRAssistPlugin.GripMoveAssistObj, KoikatuVRAssistPlugin").GetMethod("ProcSpeedUpClick", AccessTools.all);
 		}
 
 		private static bool Prefix()
