@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static SetParentKK.SetParentLoader;
@@ -34,7 +35,17 @@ namespace SetParentKK
 				setParentObj.female_p_cf_bodybone.transform.localPosition = Vector3.zero;
 				setParentObj.female_p_cf_bodybone.transform.localRotation = Quaternion.identity;
 			}
-			
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(Animator), "CrossFadeInFixedTime", new Type[3] {typeof(string), typeof(float), typeof(int)} )]
+		public static void CrossFadePostfix(float transitionDuration)
+		{
+			if(setParentObj != null && setParentObj.setFlag)
+			{
+				setParentObj.StartCoroutine(setParentObj.MotionChangeUpdate(transitionDuration));
+			}
+				
 		}
 	}
 }

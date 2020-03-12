@@ -918,6 +918,20 @@ namespace SetParentKK
 			return text;
 		}
 
+		internal IEnumerator MotionChangeUpdate(float transTime)
+		{
+			float timer = 0;
+			UnsetP();
+			while (timer < transTime)
+			{
+				timer += Time.deltaTime;
+				yield return null;
+			}
+			SetP(parentIsLeft);
+			yield break;
+		}
+
+
 		/// <summary>
 		/// Update female position and rotation
 		/// </summary>
