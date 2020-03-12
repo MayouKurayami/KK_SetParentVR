@@ -700,6 +700,8 @@ namespace SetParentKK
 				{
 					if (SetParentMale.Value)
 						InitMaleFollow();
+
+					
 					nowAnimState = hFlag.nowAnimStateName;
 				}			
 			
@@ -918,6 +920,22 @@ namespace SetParentKK
 			return text;
 		}
 
+		internal IEnumerator MotionChangeUpdate(GameObject pivot, GameObject target, float transTime, CtrlState oldState)
+		{
+			float timer = 0;
+			while (timer < transTime)
+			{
+				pivot.transform.position = target.transform.position;
+				pivot.transform.rotation = target.transform.rotation;
+				timer += Time.deltaTime;
+				yield return null;
+			}
+			currentCtrlstate = oldState;
+			isFade = false;
+			yield break;
+		}
+
+
 		/// <summary>
 		/// Update female position and rotation
 		/// </summary>
@@ -947,7 +965,7 @@ namespace SetParentKK
 						break;
 				}
 			}
-			else
+			else if (!isFade)
 			{
 				switch (ParentPart.Value)
 				{
@@ -967,7 +985,7 @@ namespace SetParentKK
 			}
 
 
-			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
+			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following && !isFade)
 			{
 				Vector3 a = Vector3.zero;
 				foreach (Vector3 b in vecSpinePos)
@@ -977,7 +995,7 @@ namespace SetParentKK
 				a /= 20f;
 				female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
 			}
-			else
+			else if(!isFade)
 			{
 				female_p_cf_bodybone.transform.position += target.transform.position - femaleBase.transform.position;
 			}
@@ -1533,9 +1551,9 @@ namespace SetParentKK
 
 		private GameObject female_cf_j_neck;
 
-		private GameObject femaleBase;
+		internal GameObject femaleBase;
 
-		private GameObject femaleSpinePos;
+		internal GameObject femaleSpinePos;
 
 		internal GameObject male_p_cf_bodybone;
 
@@ -1560,6 +1578,8 @@ namespace SetParentKK
 		private bool hideCanvas;
 
 		private bool parentIsLeft;
+
+		internal bool isFade;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 
