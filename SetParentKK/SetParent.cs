@@ -77,6 +77,9 @@ namespace SetParentKK
 			female_cf_j_neck = femaleFBBIK.references.spine[2].gameObject;
 			female_cf_j_spine03 = femaleFBBIK.references.spine[2].parent.gameObject;
 
+			maleNeck = maleFBBIK.references.spine[2].gameObject;
+			maleCrotch = maleFBBIK.references.leftThigh.parent.Find("cf_d_kokan/cm_J_dan_top").gameObject;
+
 			switch (ParentPart.Value)
 			{
 				case BodyPart.Ass:
@@ -696,22 +699,19 @@ namespace SetParentKK
 
 			if (setFlag)
 			{
-				//Reposition male rotation axis if motion changed
-				if (nowAnimState != hFlag.nowAnimStateName)
+				//Detects if animation is in crossfading, then update male and female pivot position and apply flag
+				if (fadeTime > 0)
 				{
 					if (SetParentMale.Value)
 						InitMaleFollow();
-
 					
-					nowAnimState = hFlag.nowAnimStateName;
-				}
-
-				//Detects if animation is in crossfading, and apply flag
-				if (fadeTime > 0)
-				{
+					if (UpdatePosture.Value)
+					{
+						femaleSpinePos.transform.position = femaleBase.transform.position;
+						femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
+					}
+					
 					isFade = true;
-					femaleSpinePos.transform.position = femaleBase.transform.position;
-					femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
 					fadeTime -= Time.deltaTime;
 				}
 				else if (isFade)
@@ -773,7 +773,7 @@ namespace SetParentKK
 			///
 			///Use arrays to store the position and rotation of the female pivot object during the last constant number of frames.
 			///Fill the arrays with the current position and rotation if we want the female to strictly follow
-			if (currentCtrlstate == CtrlState.Following || isFade)
+			if (currentCtrlstate == CtrlState.Following || (isFade && UpdatePosture.Value))
 			{
 				for (int j = 0; j < smoothBuffer; j++)
 					quatSpineRot[j] = femaleSpinePos.transform.rotation;
@@ -820,8 +820,7 @@ namespace SetParentKK
 			{
 				GameObject.Find("chaM_001/BodyTop/p_cf_body_bone");
 			}
-			parentIsLeft = _parentIsLeft;
-			nowAnimState = hFlag.nowAnimStateName;		
+			parentIsLeft = _parentIsLeft;	
 
 			if (femaleSpinePos == null)
 			{
@@ -896,7 +895,6 @@ namespace SetParentKK
 		/// </summary>
 		public void InitMaleFollow()
 		{
-			GameObject maleNeck = maleFBBIK.references.spine[2].gameObject;
 			if (maleHeadPos == null)
 				maleHeadPos = new GameObject("maleHeadPos");
 			maleHeadPos.transform.position = maleNeck.transform.position;
@@ -904,7 +902,6 @@ namespace SetParentKK
 			maleHeadPos.transform.parent = maleNeck.transform;
 			maleHeadPos.transform.localPosition = new Vector3(0, 0, 0.08f);
 			
-			GameObject maleCrotch = maleFBBIK.references.leftThigh.parent.Find("cf_d_kokan/cm_J_dan_top").gameObject;
 			if (maleCrotchPos == null)
 				maleCrotchPos = new GameObject("maleCrotchPos");
 			maleCrotchPos.transform.position = maleCrotch.transform.position;
@@ -1495,8 +1492,6 @@ namespace SetParentKK
 
 		private List<MotionIK> lstMotionIK;
 
-		private string nowAnimState = "";
-
 		private GameObject leftController;
 
 		private GameObject rightController;
@@ -1566,6 +1561,10 @@ namespace SetParentKK
 		private GameObject maleHeadPos;
 
 		private GameObject maleCrotchPos;
+
+		private GameObject maleNeck;
+
+		private GameObject maleCrotch;
 
 		private Text txtSetParentL;
 

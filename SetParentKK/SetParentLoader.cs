@@ -140,7 +140,7 @@ namespace SetParentKK
 
 		[Category("Advanced Settings")]
 		[DisplayName("UpdatePivot")]
-		[Description("When animation changes (e.g., from weak to strong), update the posture to fit animation. This will cause a slight pause in female tracking during transitions between animation.\n" +
+		[Description("When animation changes (e.g., from weak to strong), update the position and rotation of female to fit the new animation. This will cause a slight pause in female tracking during transitions between animation.\n" +
 			"You may want to disable this when synchronizing with a doll to keep the posture static")]
 		public static ConfigWrapper<bool> UpdatePosture { get; private set; }
 
