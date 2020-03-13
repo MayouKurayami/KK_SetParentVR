@@ -184,7 +184,8 @@ namespace SetParentKK
 		{
 			PositionOnly,
 			PositionAndAnimation,
-			AnimationOnly
+			AnimationOnly,
+			HeadOnly
 		}
 
 		public enum ControllerAnimMode
