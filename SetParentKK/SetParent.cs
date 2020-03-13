@@ -14,9 +14,9 @@ using RootMotion.FinalIK;
 
 namespace SetParentKK
 {
-	
 	public class SetParent : MonoBehaviour
 	{
+		const int smoothBuffer = 20;
 		public void Init(HSprite _hsprite, List<MotionIK> _lstMotionIK)
 		{
 			hSprite = _hsprite;
@@ -748,8 +748,36 @@ namespace SetParentKK
 				txtSetParentR.text = "右 親子付け Turn On";
 			}
 
+			/////////////////////////////////////////////////////////
+			///Use arrays to store the position and rotation of the female pivot object during the last constant number of frames.
+			///Fill the arrays with the current position and rotation if we want the female to strictly follow
+			if (currentCtrlstate == CtrlState.Following)
+			{
+				for (int j = 0; j < smoothBuffer; j++)
+					quatSpineRot[j] = femaleSpinePos.transform.rotation;
+				for (int i = 0; i < smoothBuffer; i++)
+					vecSpinePos[i] = femaleSpinePos.transform.position;
+			}
+			else
+			{
+				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
+				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
+			}
+				
+			if (indexSpineRot >= (smoothBuffer -1))
+				indexSpineRot = 0;
+			else
+				indexSpineRot++;
+			if (indexSpinePos >= (smoothBuffer - 1))
+				indexSpinePos = 0;
+			else
+				indexSpinePos++;
+
+
+
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
 				FemalePositionUpdate(femaleSpinePos);
+
 
 			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
@@ -896,19 +924,6 @@ namespace SetParentKK
 		/// <param name="target">The object to synchronize female body to</param>
 		private void FemalePositionUpdate(GameObject target)
 		{
-			if (currentCtrlstate == CtrlState.Following)
-			{
-				for (int j = 0; j < 20; j++)
-					quatSpineRot[j] = target.transform.rotation;
-			}
-			else
-				quatSpineRot[indexSpineRot] = target.transform.rotation;
-
-			if (indexSpineRot >= 19)
-				indexSpineRot = 0;
-			else
-				indexSpineRot++;
-
 			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 			{
 				Quaternion quaternion = quatSpineRot[0];
@@ -951,18 +966,6 @@ namespace SetParentKK
 				}
 			}
 
-			if (currentCtrlstate == CtrlState.Following)
-			{
-				for (int i = 0; i < 20; i++)
-					vecSpinePos[i] = target.transform.position;
-			}
-			else
-				vecSpinePos[indexSpinePos] = target.transform.position;
-
-			if (indexSpinePos >= 19)
-				indexSpinePos = 0;
-			else
-				indexSpinePos++;
 
 			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 			{
@@ -1546,11 +1549,11 @@ namespace SetParentKK
 
 		private Text txtSetParentMode;
 
-		private Vector3[] vecSpinePos = new Vector3[20];
+		private Vector3[] vecSpinePos = new Vector3[smoothBuffer];
 
 		private int indexSpinePos;
 
-		private Quaternion[] quatSpineRot = new Quaternion[20];
+		private Quaternion[] quatSpineRot = new Quaternion[smoothBuffer];
 
 		private int indexSpineRot;
 
