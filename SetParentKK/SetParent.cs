@@ -692,6 +692,7 @@ namespace SetParentKK
 
 			FemaleIKs();
 
+							
 
 			if (setFlag)
 			{
@@ -700,9 +701,26 @@ namespace SetParentKK
 				{
 					if (SetParentMale.Value)
 						InitMaleFollow();
+
+					
 					nowAnimState = hFlag.nowAnimStateName;
-				}			
-			
+				}
+
+				//Detects if animation is in crossfading, and apply flag
+				if (fadeTime > 0)
+				{
+					isFade = true;
+					femaleSpinePos.transform.position = femaleBase.transform.position;
+					femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
+					fadeTime -= Time.deltaTime;
+				}
+				else if (isFade)
+				{
+					isFade = false;
+					fadeTime = 0;
+				}
+
+
 				ControllerCharacterAdjustment();
 
 
@@ -748,10 +766,14 @@ namespace SetParentKK
 				txtSetParentR.text = "右 親子付け Turn On";
 			}
 
-			/////////////////////////////////////////////////////////
+			//////////////////////////////////////////////////////////////////////////////////////
+			//Female Position Update Algorithm
+			////This runs even when SetParent is off so when user presses the position buttons when SetParent is off, the female stays in position
+			//////////////////////////////////////////////////////////////////////////////////////
+			///
 			///Use arrays to store the position and rotation of the female pivot object during the last constant number of frames.
 			///Fill the arrays with the current position and rotation if we want the female to strictly follow
-			if (currentCtrlstate == CtrlState.Following)
+			if (currentCtrlstate == CtrlState.Following || isFade)
 			{
 				for (int j = 0; j < smoothBuffer; j++)
 					quatSpineRot[j] = femaleSpinePos.transform.rotation;
@@ -774,9 +796,11 @@ namespace SetParentKK
 				indexSpinePos++;
 
 
-
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
 				FemalePositionUpdate(femaleSpinePos);
+			//////////////////////////////////////////////////////////////////////////////////////
+			//End Female Position Update Algorithm
+			//////////////////////////////////////////////////////////////////////////////////////
 
 
 			txtSetParentMode.text = SetParentMode.Value.ToString();
@@ -1560,6 +1584,10 @@ namespace SetParentKK
 		private bool hideCanvas;
 
 		private bool parentIsLeft;
+
+		private bool isFade;
+
+		internal float fadeTime = 0;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 

@@ -138,6 +138,12 @@ namespace SetParentKK
 		[Description("Enable/disable male body's yaw (left/right) rotation when male synchronization is enabled")]
 		public static ConfigWrapper<bool> MaleYaw { get; private set; }
 
+		[Category("Advanced Settings")]
+		[DisplayName("UpdatePivot")]
+		[Description("When animation changes (e.g., from weak to strong), update the posture to fit animation. This will cause a slight pause in female tracking during transitions between animation.\n" +
+			"You may want to disable this when synchronizing with a doll to keep the posture static")]
+		public static ConfigWrapper<bool> UpdatePosture { get; private set; }
+
 
 		private void Start()
 		{
@@ -179,6 +185,7 @@ namespace SetParentKK
 			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.01f);
 			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.2f);
 			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
+			UpdatePosture = new ConfigWrapper<bool>(nameof(UpdatePosture), this, true);
 		}
 		public enum ParentMode
 		{
