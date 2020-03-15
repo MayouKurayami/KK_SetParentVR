@@ -798,6 +798,7 @@ namespace SetParentKK
 			}
 			parentIsLeft = _parentIsLeft;
 			nowAnimState = hFlag.nowAnimStateName;		
+			parentController = _parentIsLeft ? leftController : rightController;
 
 			if (femaleSpinePos == null)
 			{
@@ -805,7 +806,7 @@ namespace SetParentKK
 			}
 			if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
 			{
-				SetParentToController(_parentIsLeft, femaleSpinePos, femaleBase, true);
+				SetParentToController(parentController, femaleSpinePos, femaleBase, true);
 			}	
 			else
 			{
@@ -1199,29 +1200,16 @@ namespace SetParentKK
 				animSpeedController.SetController(_rightController, _leftController, this);
 		}
 
-		private void SetParentToController (bool _parentIsLeft, GameObject parentDummy, GameObject target, bool hideModel)
+		private void SetParentToController (GameObject controller, GameObject parentDummy, GameObject target, bool hideModel)
 		{
-			if (_parentIsLeft)
+			parentDummy.transform.parent = controller.transform;
+			if (hideModel)
 			{
-				parentDummy.transform.parent = leftController.transform;
-				if (hideModel)
-				{
-					leftController.transform.Find("Model").gameObject.SetActive(false);
-					if (SetControllerCollider.Value)
-						leftController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
-				}
+				controller.transform.Find("Model").gameObject.SetActive(false);
+				if (SetControllerCollider.Value)
+					controller.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+			}
 					
-			}
-			else
-			{
-				parentDummy.transform.parent = rightController.transform;
-				if (hideModel)
-				{
-					rightController.transform.Find("Model").gameObject.SetActive(false);
-					if (SetControllerCollider.Value)
-						rightController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
-				}		
-			}
 			parentDummy.transform.position = target.transform.position;
 			parentDummy.transform.rotation = target.transform.rotation;
 		}
@@ -1250,7 +1238,7 @@ namespace SetParentKK
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						femaleSpinePos.transform.parent = null;
 					else
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
+						SetParentToController(parentController, femaleSpinePos, femaleBase, true);
 					break;
 
 				case CtrlState.Following:
@@ -1263,7 +1251,7 @@ namespace SetParentKK
 
 				case CtrlState.Stationary:
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
+						SetParentToController(parentController, femaleSpinePos, femaleBase, true);
 					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
 					break;
@@ -1280,12 +1268,12 @@ namespace SetParentKK
 					return CtrlState.MaleControl;
 
 				case CtrlState.FemaleControl:
-					SetParentToController(!parentIsLeft, femaleSpinePos, femaleBase, false);
+					SetParentToController(parentIsLeft ? rightController : leftController, femaleSpinePos, femaleBase, false);
 					return CtrlState.FemaleControl;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, false);
+						SetParentToController(parentController, femaleSpinePos, femaleBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
@@ -1476,6 +1464,8 @@ namespace SetParentKK
 		private GameObject leftController;
 
 		private GameObject rightController;
+
+		private GameObject parentController;
 
 		private GameObject cameraEye;
 
