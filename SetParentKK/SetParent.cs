@@ -544,6 +544,7 @@ namespace SetParentKK
 		{
 			int index = (int)SetParentMode.Value + 1;
 			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
+			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
 
 		public void LateUpdate()
@@ -776,9 +777,6 @@ namespace SetParentKK
 
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
 				FemalePositionUpdate(femaleSpinePos);
-
-
-			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
 
 		/// <summary>
