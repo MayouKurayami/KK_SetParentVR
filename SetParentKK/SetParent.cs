@@ -17,6 +17,8 @@ namespace SetParentKK
 	public class SetParent : MonoBehaviour
 	{
 		const int smoothBuffer = 20;
+		private readonly string[] UpdatePostureText = new string[2] { "姿勢変化 Turn On", "姿勢変化 Turn Off" };
+
 		public void Init(HSprite _hsprite, List<MotionIK> _lstMotionIK)
 		{
 			hSprite = _hsprite;
@@ -234,16 +236,18 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定/解除", new Vector3(28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
-			CreateButton("左足固定/解除", new Vector3(-28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("右手固定/解除", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("左手固定/解除", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -4f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -4f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			CreateButton("右足固定/解除", new Vector3(28f, -88f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
+			CreateButton("左足固定/解除", new Vector3(-28f, -88f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("右手固定/解除", new Vector3(28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
+			CreateButton("左手固定/解除", new Vector3(-28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -28f, 0f), () => PushPLButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -28f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(-28f, -4f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
+			txtUpdatePosture = CreateButton(UpdatePostureText[0], new Vector3(28f, -4f, 0f), () => UpdatePostureToggle(), objRightMenuCanvas);
+
 			CreateButton("ヌク", new Vector3(-28f, 20f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
-			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(28f, 20f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
 			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
 			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
 			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objRightMenuCanvas);
@@ -444,6 +448,8 @@ namespace SetParentKK
 		/// <param name="name"></param>
 		private IEnumerator ChangeMotion(string path, string name)
 		{
+			UpdatePostureToggle(true);
+			
 			if (femaleSpinePos == null)
 			{
 				femaleSpinePos = new GameObject("femaleSpinePos");
@@ -547,6 +553,13 @@ namespace SetParentKK
 		{
 			int index = (int)SetParentMode.Value + 1;
 			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
+		}
+
+
+		private void UpdatePostureToggle(bool forceOff = false)
+		{
+			updatePosture = forceOff ? false : !updatePosture;
+			txtUpdatePosture.text = updatePosture ? UpdatePostureText[1] : UpdatePostureText[0];
 		}
 
 		public void LateUpdate()
@@ -702,22 +715,30 @@ namespace SetParentKK
 				//Detects if animation is in crossfading, then update male and female pivot position and apply flag
 				if (fadeTime > 0)
 				{
-					if (SetParentMale.Value)
-						InitMaleFollow();
-					
-					if (UpdatePosture.Value)
+					if (!isFade)
 					{
-						femaleSpinePos.transform.position = femaleBase.transform.position;
-						femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
+						lastBaseRot = femaleBase.transform.rotation;
+						lastBasePos = femaleBase.transform.position;
+						isFade = true;
 					}
 					
-					isFade = true;
+					if (SetParentMale.Value)
+						InitMaleFollow();
+
+					if (updatePosture)
+					{
+						femaleSpinePos.transform.rotation = femaleSpinePos.transform.rotation * (femaleBase.transform.rotation * Quaternion.Inverse(lastBaseRot));
+						femaleSpinePos.transform.position += (femaleBase.transform.position - lastBasePos);
+					}
+	
 					fadeTime -= Time.deltaTime;
 				}
 				else if (isFade)
 				{
 					isFade = false;
 					fadeTime = 0;
+					femaleSpinePos.transform.position = femaleBase.transform.position;
+					femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
 				}
 
 
@@ -773,7 +794,7 @@ namespace SetParentKK
 			///
 			///Use arrays to store the position and rotation of the female pivot object during the last constant number of frames.
 			///Fill the arrays with the current position and rotation if we want the female to strictly follow
-			if (currentCtrlstate == CtrlState.Following || (isFade && UpdatePosture.Value))
+			if (currentCtrlstate == CtrlState.Following)
 			{
 				for (int j = 0; j < smoothBuffer; j++)
 					quatSpineRot[j] = femaleSpinePos.transform.rotation;
@@ -782,9 +803,17 @@ namespace SetParentKK
 			}
 			else
 			{
+				if (isFade && updatePosture)
+				{
+					for (int j = 0; j < smoothBuffer; j++)
+						quatSpineRot[j] = quatSpineRot[j] * (femaleBase.transform.rotation * Quaternion.Inverse(lastBaseRot));
+					for (int i = 0; i < smoothBuffer; i++)
+						vecSpinePos[i] += (femaleBase.transform.position - lastBasePos);	
+				}
 				quatSpineRot[indexSpineRot] = femaleSpinePos.transform.rotation;
 				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
 			}
+
 				
 			if (indexSpineRot >= (smoothBuffer -1))
 				indexSpineRot = 0;
@@ -798,11 +827,12 @@ namespace SetParentKK
 
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
 				FemalePositionUpdate(femaleSpinePos);
+
+			lastBaseRot = femaleBase.transform.rotation;
+			lastBasePos = femaleBase.transform.position;
 			//////////////////////////////////////////////////////////////////////////////////////
 			//End Female Position Update Algorithm
-			//////////////////////////////////////////////////////////////////////////////////////
-
-
+			//////////////////////////////////////////////////////////////////////////////////////		
 			txtSetParentMode.text = SetParentMode.Value.ToString();
 		}
 
@@ -867,6 +897,7 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			femaleSpinePos.transform.parent = null;
+			UpdatePostureToggle(true);
 
 			foreach (Limb limb in limbs)
 			{
@@ -1542,7 +1573,7 @@ namespace SetParentKK
 
 		private GameObject female_cf_n_height;
 
-		private GameObject female_cf_j_hips;
+		internal GameObject female_cf_j_hips;
 
 		private GameObject female_cf_j_spine01;
 
@@ -1552,7 +1583,7 @@ namespace SetParentKK
 
 		private GameObject female_cf_j_neck;
 
-		private GameObject femaleBase;
+		internal GameObject femaleBase;
 
 		private GameObject femaleSpinePos;
 
@@ -1572,6 +1603,8 @@ namespace SetParentKK
 
 		private Text txtSetParentMode;
 
+		private Text txtUpdatePosture;
+
 		private Vector3[] vecSpinePos = new Vector3[smoothBuffer];
 
 		private int indexSpinePos;
@@ -1584,9 +1617,15 @@ namespace SetParentKK
 
 		private bool parentIsLeft;
 
+		private bool updatePosture;
+
 		private bool isFade;
 
 		internal float fadeTime = 0;
+
+		internal Vector3 lastBasePos;
+
+		internal Quaternion lastBaseRot;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 
