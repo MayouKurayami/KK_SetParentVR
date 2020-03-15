@@ -16,7 +16,7 @@ namespace SetParentKK
 {
 	public class SetParent : MonoBehaviour
 	{
-		const int smoothBuffer = 20;
+		const int SmoothBuffer = 20;
 		public void Init(HSprite _hsprite, List<MotionIK> _lstMotionIK)
 		{
 			hSprite = _hsprite;
@@ -753,9 +753,9 @@ namespace SetParentKK
 			///Fill the arrays with the current position and rotation if we want the female to strictly follow
 			if (currentCtrlstate == CtrlState.Following)
 			{
-				for (int j = 0; j < smoothBuffer; j++)
+				for (int j = 0; j < SmoothBuffer; j++)
 					quatSpineRot[j] = femaleSpinePos.transform.rotation;
-				for (int i = 0; i < smoothBuffer; i++)
+				for (int i = 0; i < SmoothBuffer; i++)
 					vecSpinePos[i] = femaleSpinePos.transform.position;
 			}
 			else
@@ -764,15 +764,14 @@ namespace SetParentKK
 				vecSpinePos[indexSpinePos] = femaleSpinePos.transform.position;
 			}
 				
-			if (indexSpineRot >= (smoothBuffer -1))
+			if (indexSpineRot >= (SmoothBuffer -1))
 				indexSpineRot = 0;
 			else
 				indexSpineRot++;
-			if (indexSpinePos >= (smoothBuffer - 1))
+			if (indexSpinePos >= (SmoothBuffer - 1))
 				indexSpinePos = 0;
 			else
 				indexSpinePos++;
-
 
 
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
@@ -1539,11 +1538,11 @@ namespace SetParentKK
 
 		private Text txtSetParentMode;
 
-		private Vector3[] vecSpinePos = new Vector3[smoothBuffer];
+		private Vector3[] vecSpinePos = new Vector3[SmoothBuffer];
 
 		private int indexSpinePos;
 
-		private Quaternion[] quatSpineRot = new Quaternion[smoothBuffer];
+		private Quaternion[] quatSpineRot = new Quaternion[SmoothBuffer];
 
 		private int indexSpineRot;
 

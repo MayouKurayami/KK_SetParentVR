@@ -33,8 +33,7 @@ namespace SetParentKK
 				setParentObj.male_p_cf_bodybone.transform.localRotation = Quaternion.identity;
 				setParentObj.female_p_cf_bodybone.transform.localPosition = Vector3.zero;
 				setParentObj.female_p_cf_bodybone.transform.localRotation = Quaternion.identity;
-			}
-			
+			}			
 		}
 	}
 }
