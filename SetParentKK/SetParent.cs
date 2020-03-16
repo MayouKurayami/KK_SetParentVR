@@ -936,24 +936,24 @@ namespace SetParentKK
 		{
 			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 			{
-				Quaternion quaternion = quatSpineRot[0];
+				Quaternion average = quatSpineRot[0];
 				for (int i = 1; i < 20; i++)
 				{
-					quaternion = Quaternion.Lerp(quaternion, quatSpineRot[i], 1f / (i + 1));
+					average = Quaternion.Lerp(average, quatSpineRot[i], 1f / (i + 1));
 				}
 				switch (ParentPart.Value)
 				{
 					case BodyPart.Ass:
-						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						female_p_cf_bodybone.transform.rotation = average * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 						break;
 					case BodyPart.Torso:
-						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						female_p_cf_bodybone.transform.rotation = average * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 						break;
 					case BodyPart.Head:
-						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						female_p_cf_bodybone.transform.rotation = average * Quaternion.Inverse(female_cf_j_neck.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine03.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 						break;
 					default:
-						female_p_cf_bodybone.transform.rotation = quaternion * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
+						female_p_cf_bodybone.transform.rotation = average * Quaternion.Inverse(female_cf_j_spine02.transform.localRotation) * Quaternion.Inverse(female_cf_j_spine01.transform.localRotation) * Quaternion.Inverse(female_cf_j_hips.transform.localRotation) * Quaternion.Inverse(female_cf_n_height.transform.localRotation) * Quaternion.Inverse(female_cf_j_root.transform.localRotation);
 						break;
 				}
 			}
@@ -979,13 +979,13 @@ namespace SetParentKK
 
 			if (TrackingMode.Value && currentCtrlstate != CtrlState.Following)
 			{
-				Vector3 a = Vector3.zero;
-				foreach (Vector3 b in vecSpinePos)
+				Vector3 sum = Vector3.zero;
+				foreach (Vector3 pos in vecSpinePos)
 				{
-					a += b;
+					sum += pos;
 				}
-				a /= 20f;
-				female_p_cf_bodybone.transform.position += a - femaleBase.transform.position;
+				sum /= 20f;
+				female_p_cf_bodybone.transform.position += sum - femaleBase.transform.position;
 			}
 			else
 			{
