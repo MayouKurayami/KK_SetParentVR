@@ -94,9 +94,9 @@ namespace SetParentKK
 			}
 			femaleSpinePos = new GameObject("femaleSpinePos");
 
-			femaleHeadEffector = new GameObject("femaleHeadEffector");
-			headEffector = femaleHeadEffector.AddComponent<FBBIKHeadEffector>();
-			headEffector.ik = femaleFBBIK;
+			femaleHeadEffectorGO = new GameObject("femaleHeadEffector");
+			femaleHeadEffector = femaleHeadEffectorGO.AddComponent<FBBIKHeadEffector>();
+			femaleHeadEffector.ik = femaleFBBIK;
 			FBBIKHeadEffector.BendBone waist = new FBBIKHeadEffector.BendBone
 			{
 				transform = femaleFBBIK.references.spine[0],
@@ -112,7 +112,7 @@ namespace SetParentKK
 				transform = femaleFBBIK.references.spine[2],
 				weight = 1f
 			};
-			headEffector.bendBones = new FBBIKHeadEffector.BendBone[3] {neck, spine, waist};
+			femaleHeadEffector.bendBones = new FBBIKHeadEffector.BendBone[3] {neck, spine, waist};
 
 
 			Transform female_cf_pv_hand_R = female_cf_n_height.transform.Find("cf_pv_root/cf_pv_hand_R");
@@ -733,8 +733,8 @@ namespace SetParentKK
 					if (SetParentMale.Value)
 						InitMaleFollow();
 
-					femaleHeadEffector.transform.position = femaleFBBIK.references.head.position;
-					femaleHeadEffector.transform.rotation = femaleFBBIK.references.head.rotation;
+					femaleHeadEffectorGO.transform.position = femaleFBBIK.references.head.position;
+					femaleHeadEffectorGO.transform.rotation = femaleFBBIK.references.head.rotation;
 					nowAnimState = hFlag.nowAnimStateName;
 				}			
 			
@@ -865,9 +865,9 @@ namespace SetParentKK
 				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, leftController, rightController);
 			}
 
-			femaleHeadEffector.transform.parent = _parentIsLeft ? leftController.transform : rightController.transform;
-			femaleHeadEffector.transform.position = femaleFBBIK.references.head.position;
-			femaleHeadEffector.transform.rotation = femaleFBBIK.references.head.rotation;
+			femaleHeadEffectorGO.transform.parent = femaleHeadEffector.bendBones[0].transform.Find("HeadRef");
+			femaleHeadEffectorGO.transform.localPosition = Vector3.zero;
+			femaleHeadEffectorGO.transform.localRotation = Quaternion.identity;
 
 			setFlag = true;
 		}
@@ -880,7 +880,7 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(maleHeadPos);
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			femaleSpinePos.transform.parent = null;
-			femaleHeadEffector.transform.parent = null;
+			femaleHeadEffectorGO.transform.parent = null;
 
 			foreach (Limb limb in limbs)
 			{
@@ -1128,15 +1128,15 @@ namespace SetParentKK
 
 			if (setFlag && SetParentMode.Value == ParentMode.HeadOnly)
 			{
-				headEffector.bendWeight = 0.8f;
-				headEffector.positionWeight = 0.65f;
-				headEffector.rotationWeight = 0.65f;
+				femaleHeadEffector.bendWeight = 0.8f;
+				femaleHeadEffector.positionWeight = 1f;
+				femaleHeadEffector.rotationWeight = 1f;
 			}
 			else
 			{
-				headEffector.bendWeight = 0f;
-				headEffector.positionWeight = 0f;
-				headEffector.rotationWeight = 0f;
+				femaleHeadEffector.bendWeight = 0f;
+				femaleHeadEffector.positionWeight = 0f;
+				femaleHeadEffector.rotationWeight = 0f;
 			}
 		}
 
@@ -1508,7 +1508,7 @@ namespace SetParentKK
 
 		private FullBodyBipedIK femaleFBBIK;
 
-		private FBBIKHeadEffector headEffector;
+		private FBBIKHeadEffector femaleHeadEffector;
 
 		private List<MotionIK> lstMotionIK;
 
@@ -1580,7 +1580,7 @@ namespace SetParentKK
 
 		private GameObject femaleSpinePos;
 
-		private GameObject femaleHeadEffector;
+		private GameObject femaleHeadEffectorGO;
 
 		internal GameObject male_p_cf_bodybone;
 
