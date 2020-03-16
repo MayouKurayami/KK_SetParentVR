@@ -1048,10 +1048,10 @@ namespace SetParentKK
 				}
 				//If arms are not attached to objects, we still need to take care of the default IK's (e.g., hands sticking to male)
 				//If stretching is beyond a set threshold then reduce effector weights to 0
-				else if (!(limbs[i].AnchorObj) && distance > 0.2f)
+				else if (!(limbs[i].AnchorObj) && distance > 0.15f)
 				{
-					limbs[i].Effector.positionWeight = 0f;
-					limbs[i].Effector.rotationWeight = 0f;
+					limbs[i].Effector.positionWeight = (0.3f - distance) / 0.15f;
+					limbs[i].Effector.rotationWeight = (0.3f - distance) / 0.15f;
 					continue;
 				}
 
