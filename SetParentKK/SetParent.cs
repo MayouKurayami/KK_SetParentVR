@@ -231,24 +231,26 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("右足固定/解除", new Vector3(28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
-			CreateButton("左足固定/解除", new Vector3(-28f, -68f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("右手固定/解除", new Vector3(28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("左手固定/解除", new Vector3(-28f, -48f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -28f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -4f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -4f, 0f), () => PushPRButton(), objRightMenuCanvas);
-			CreateButton("ヌク", new Vector3(-28f, 20f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
-			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(28f, 20f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
-			CreateButton("モーション 強弱", new Vector3(-28f, 40f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
-			CreateButton("モーション 開始/停止", new Vector3(28f, 40f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
-			CreateButton("中に出すよ", new Vector3(-28f, 60f, 0f), () => PushFIButton(), objRightMenuCanvas);
-			CreateButton("外に出すよ", new Vector3(28f, 60f, 0f), () => PushFOButton(), objRightMenuCanvas);
-			CreateButton("入れるよ", new Vector3(-28f, 80f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
-			CreateButton("イレル", new Vector3(28f, 80f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
-			CreateButton("アナル入れるよ", new Vector3(-28f, 100f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
-			CreateButton("アナルイレル", new Vector3(28f, 100f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
+			CreateButton("右足固定/解除", new Vector3(28f, -63f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas) ;
+			CreateButton("左足固定/解除", new Vector3(-28f, -63f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("右手固定/解除", new Vector3(28f, -43f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
+			CreateButton("左手固定/解除", new Vector3(-28f, -43f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -23f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -23f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, -3f, 0f), () => PushPLButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, -3f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(-28f, 17f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
+			txtLimbAuto = CreateButton("手足固定 Turn Off", new Vector3(28f, 17f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
+
+			CreateButton("ヌク", new Vector3(-28f, 37f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
+			CreateButton("モーション 強弱", new Vector3(-28f, 57f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
+			CreateButton("モーション 開始/停止", new Vector3(28f, 57f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
+			CreateButton("中に出すよ", new Vector3(-28f, 77f, 0f), () => PushFIButton(), objRightMenuCanvas);
+			CreateButton("外に出すよ", new Vector3(28f, 77f, 0f), () => PushFOButton(), objRightMenuCanvas);
+			CreateButton("入れるよ", new Vector3(-28f, 97f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
+			CreateButton("イレル", new Vector3(28f, 97f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
+			CreateButton("アナル入れるよ", new Vector3(-28f, 117f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
+			CreateButton("アナルイレル", new Vector3(28f, 117f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
 			
 
 
@@ -441,6 +443,8 @@ namespace SetParentKK
 		/// <param name="name"></param>
 		private IEnumerator ChangeMotion(string path, string name)
 		{
+			LimbAutoAttachToggle(true);
+
 			if (femaleSpinePos == null)
 			{
 				femaleSpinePos = new GameObject("femaleSpinePos");
@@ -513,6 +517,12 @@ namespace SetParentKK
 			{
 				component.weakMotion = !component.weakMotion;
 			}
+		}
+
+		private void LimbAutoAttachToggle(bool forceON = false)
+		{
+			limbAutoAttach = forceON ? true : !limbAutoAttach;
+			txtLimbAuto.text = limbAutoAttach ? "手足固定 Turn Off" : "手足固定 Turn On";
 		}
 
 		private void PushFIButton()
@@ -848,6 +858,8 @@ namespace SetParentKK
 				if (limb.AnchorObj)
 					FixLimbToggle(limb);
 			}
+
+			LimbAutoAttachToggle(true);
 
 			leftController.transform.Find("Model").gameObject.SetActive(true);
 			rightController.transform.Find("Model").gameObject.SetActive(true);
@@ -1536,6 +1548,8 @@ namespace SetParentKK
 
 		private Text txtSetParentMode;
 
+		private Text txtLimbAuto;
+
 		private Vector3[] vecSpinePos = new Vector3[SmoothBuffer];
 
 		private int indexSpinePos;
@@ -1545,6 +1559,8 @@ namespace SetParentKK
 		private int indexSpineRot;
 
 		private bool hideCanvas;
+
+		internal bool limbAutoAttach = true;
 
 		private bool parentIsLeft;
 

@@ -22,7 +22,7 @@ namespace SetParentKK
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!setParentObj.setFlag)
+			if (!setParentObj.setFlag || !setParentObj.limbAutoAttach)
 				return;
 			if (other.gameObject.name != "SPCollider" && other.gameObject.name != "ControllerCollider")
 				return;
