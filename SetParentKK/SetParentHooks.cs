@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using System.Collections.Generic;
 using UnityEngine;
+using static ItemObject;
 using static SetParentKK.SetParentLoader;
 
 namespace SetParentKK
@@ -34,6 +35,20 @@ namespace SetParentKK
 				setParentObj.female_p_cf_bodybone.transform.localPosition = Vector3.zero;
 				setParentObj.female_p_cf_bodybone.transform.localRotation = Quaternion.identity;
 			}			
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(ItemObject), "LoadItem")]
+		public static void LoadItemPostfix(ItemObject __instance)
+		{
+			if (setParentObj != null)
+			{
+				Dictionary<int, Item> dictItem = (Dictionary<int, Item>)Traverse.Create(__instance).Field("dicItem").GetValue();
+				foreach (Item item in dictItem.Values)
+				{
+					setParentObj.SetObjectColliders(item.objItem.transform);
+				}
+			}
 		}
 	}
 }

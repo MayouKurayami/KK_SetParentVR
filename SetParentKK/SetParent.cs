@@ -183,7 +183,10 @@ namespace SetParentKK
 
 
 			SetBodyColliders();
-			SetMapObjectsColliders();
+			foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
+			{
+				SetObjectColliders(transform);
+			}
 
 			if (SetControllerCollider.Value)
 			{
@@ -368,43 +371,40 @@ namespace SetParentKK
 			}
 		}
 
-		private void SetMapObjectsColliders()
+		internal void SetObjectColliders(Transform transform)
 		{
-			foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
+			MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
+			if (!(meshFilter == null) && transform.Find("SPCollider") == null)
 			{
-				MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
-				if (!(meshFilter == null))
+				GameObject mapObjCollider = new GameObject("SPCollider");
+				mapObjCollider.transform.parent = transform.transform;
+				mapObjCollider.transform.localPosition = Vector3.zero;
+				mapObjCollider.transform.localRotation = Quaternion.identity;
+				mapObjCollider.AddComponent<Rigidbody>().isKinematic = true;
+				if (meshFilter.mesh.bounds.size.x < 0.03f || meshFilter.mesh.bounds.size.y < 0.03f || meshFilter.mesh.bounds.size.z < 0.03f)
 				{
-					GameObject mapObjCollider = new GameObject("SPCollider");
-					mapObjCollider.transform.parent = transform.transform;
-					mapObjCollider.transform.localPosition = Vector3.zero;
-					mapObjCollider.transform.localRotation = Quaternion.identity;
-					mapObjCollider.AddComponent<Rigidbody>().isKinematic = true;
-					if (meshFilter.mesh.bounds.size.x < 0.03f || meshFilter.mesh.bounds.size.y < 0.03f || meshFilter.mesh.bounds.size.z < 0.03f)
+					BoxCollider boxCollider = mapObjCollider.AddComponent<BoxCollider>();
+					boxCollider.isTrigger = true;
+					boxCollider.center = meshFilter.mesh.bounds.center;
+					boxCollider.size = meshFilter.mesh.bounds.size;
+					if (boxCollider.size.x < 0.03f)
 					{
-						BoxCollider boxCollider = mapObjCollider.AddComponent<BoxCollider>();
-						boxCollider.isTrigger = true;
-						boxCollider.center = meshFilter.mesh.bounds.center;
-						boxCollider.size = meshFilter.mesh.bounds.size;
-						if (boxCollider.size.x < 0.03f)
-						{
-							boxCollider.size += new Vector3(0.04f, 0f, 0f);
-						}
-						if (boxCollider.size.y < 0.03f)
-						{
-							boxCollider.size += new Vector3(0f, 0.04f, 0f);
-						}
-						if (boxCollider.size.z < 0.03f)
-						{
-							boxCollider.size += new Vector3(0f, 0f, 0.04f);
-						}
+						boxCollider.size += new Vector3(0.04f, 0f, 0f);
 					}
-					else
+					if (boxCollider.size.y < 0.03f)
 					{
-						MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
-						meshCollider.convex = false;
-						meshCollider.sharedMesh = meshFilter.mesh;
+						boxCollider.size += new Vector3(0f, 0.04f, 0f);
 					}
+					if (boxCollider.size.z < 0.03f)
+					{
+						boxCollider.size += new Vector3(0f, 0f, 0.04f);
+					}
+				}
+				else
+				{
+					MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
+					meshCollider.convex = false;
+					meshCollider.sharedMesh = meshFilter.mesh;
 				}
 			}
 		}
