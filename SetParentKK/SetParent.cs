@@ -201,19 +201,6 @@ namespace SetParentKK
 
 		private void InitCanvas()
 		{
-			objRightMenuCanvas = new GameObject("CanvasSetParent", new Type[]
-			{
-				typeof(Canvas)
-			});
-			canvasSetParent = objRightMenuCanvas.GetComponent<Canvas>();
-			objRightMenuCanvas.AddComponent<GraphicRaycaster>();
-			objRightMenuCanvas.AddComponent<VRTK_UICanvas>();
-			objRightMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasScalerSetParent = objRightMenuCanvas.AddComponent<CanvasScaler>();
-			canvasScalerSetParent.dynamicPixelsPerUnit = 20000f;
-			canvasScalerSetParent.referencePixelsPerUnit = 80000f;
-			canvasSetParent.renderMode = RenderMode.WorldSpace;
-			objRightMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
 			if (GazeControl.Value)
 			{
 				VRTK_UIPointer vrtk_UIPointer = cameraEye.AddComponent<VRTK_UIPointer>();
@@ -224,6 +211,21 @@ namespace SetParentKK
 				vrtk_UIPointer.clickAfterHoverDuration = 1f;
 				vrtk_UIPointer.controller = cameraEye.AddComponent<VRTK_ControllerEvents>();
 			}
+
+			//Initialize right menu
+			objRightMenuCanvas = new GameObject("CanvasSetParent", new Type[]
+			{
+				typeof(Canvas)
+			});
+			canvasRight = objRightMenuCanvas.GetComponent<Canvas>();
+			objRightMenuCanvas.AddComponent<GraphicRaycaster>();
+			objRightMenuCanvas.AddComponent<VRTK_UICanvas>();
+			objRightMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
+			canvasRightScaler = objRightMenuCanvas.AddComponent<CanvasScaler>();
+			canvasRightScaler.dynamicPixelsPerUnit = 20000f;
+			canvasRightScaler.referencePixelsPerUnit = 80000f;
+			canvasRight.renderMode = RenderMode.WorldSpace;
+			objRightMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
 			eventSystemSetParent = new GameObject("CanvasSetParentEventSystem", new Type[]
 			{
 				typeof(EventSystem)
@@ -254,26 +256,27 @@ namespace SetParentKK
 			CreateButton("イレル", new Vector3(28f, 97f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
 			CreateButton("アナル入れるよ", new Vector3(-28f, 117f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
 			CreateButton("アナルイレル", new Vector3(28f, 117f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
-			
-
 
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
 			point.Normalize();
-			canvasSetParent.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
-			canvasSetParent.transform.forward = (canvasSetParent.transform.position - cameraEye.transform.position).normalized;
+			canvasRight.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
+			canvasRight.transform.forward = (canvasRight.transform.position - cameraEye.transform.position).normalized;
+
+
+			//Initialize left menu
 			objLeftMenuCanvas = new GameObject("CanvasMotion", new Type[]
 			{
 				typeof(Canvas)
 			});
-			canvasMotion = objLeftMenuCanvas.GetComponent<Canvas>();
+			canvasLeft = objLeftMenuCanvas.GetComponent<Canvas>();
 			objLeftMenuCanvas.AddComponent<GraphicRaycaster>();
 			objLeftMenuCanvas.AddComponent<VRTK_UICanvas>();
 			objLeftMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasScalerMotion = objLeftMenuCanvas.AddComponent<CanvasScaler>();
-			canvasScalerMotion.dynamicPixelsPerUnit = 20000f;
-			canvasScalerMotion.referencePixelsPerUnit = 80000f;
-			canvasMotion.renderMode = RenderMode.WorldSpace;
+			canvasLeftScaler = objLeftMenuCanvas.AddComponent<CanvasScaler>();
+			canvasLeftScaler.dynamicPixelsPerUnit = 20000f;
+			canvasLeftScaler.referencePixelsPerUnit = 80000f;
+			canvasLeft.renderMode = RenderMode.WorldSpace;
 			objLeftMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
 			eventSystemMotion = new GameObject("CanvasEventSystemMotion", new Type[]
 			{
@@ -322,8 +325,8 @@ namespace SetParentKK
 			point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
 			point.Normalize();
-			canvasMotion.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
-			canvasMotion.transform.forward = (canvasMotion.transform.position - cameraEye.transform.position).normalized;
+			canvasLeft.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
+			canvasLeft.transform.forward = (canvasLeft.transform.position - cameraEye.transform.position).normalized;
 		}
 
 		private void SetBodyColliders()
@@ -1492,19 +1495,19 @@ namespace SetParentKK
 
 		private SteamVR_Controller.Device rightDevice;
 
-		private Canvas canvasSetParent;
+		private Canvas canvasRight;
 
 		private GameObject objRightMenuCanvas;
 
-		private CanvasScaler canvasScalerSetParent;
+		private CanvasScaler canvasRightScaler;
 
 		private GameObject eventSystemSetParent;
 
-		private Canvas canvasMotion;
+		private Canvas canvasLeft;
 
 		private GameObject objLeftMenuCanvas;
 
-		private CanvasScaler canvasScalerMotion;
+		private CanvasScaler canvasLeftScaler;
 
 		private GameObject eventSystemMotion;
 
