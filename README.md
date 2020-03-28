@@ -47,7 +47,7 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 
 - Pick a position or H category using the in-game menu, then use the in-game menu or the floating menu to insert. Once inserted, you can control the movement speed by moving the controller that the girl is parented to. Moving the controller past the configured range would cause the animation to switch from weak to strong motion. Maintain the movement range within the configured threshold for **1.5 seconds** will cause it to switch back from strong to weak motion.  
 
-- The positions buttons in the left floating menu are **NOT** meant to be a replacement for changing positions via the built-in menu. They are designed to change the **posture only** as they do not change the position and rotation of the character.  
+- The positions buttons in the left floating menu are **NOT** meant to be a replacement for changing positions via the built-in menu. They are designed to change only the girl's **posture** as they do not change the position and rotation of the characters.    
 
 - If enabled in settings, after maintaining the girl's excitement gauge past 70 for set number of seconds, animation will enter orgasm automatically.
 
@@ -60,7 +60,9 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 
 - **Control Mode (SetParentMode)** - Whether to use the controller to control the girl's position, animation, or both. **(Default: PositionAndAnimation)**  
 
-- **Distance to Display Hidden Menu (MenuUpProximity)** - When the floating menu is hidden, bring the controller close to the headset within this distance to temporarily display the menu. Unit in meters approximately. Set to 0 to disable this feature **(Default:0.25)**
+- **Distance to Display Hidden Menu (MenuUpProximity)** - When the floating menu is hidden, bring the controller close to the headset within this distance to temporarily display the menu. Unit in meters approximately. Set to 0 to disable this feature **(Default:0.25)**  
+
+- **Enable Holding Girl's Limbs with Controllers (SetControllerCollider)** - If enabled, touching the girl's hands or feet with a controller will cause it to stick to the controller **(Default: True)**  
 
 - **Gaze Control** - Enable/disable selecting any menu item by looking at it for more than 1 second **(Default: False)**  
 
@@ -112,11 +114,16 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 
 - Currently does not work in the unofficial VR mod for main game.
 - The plugin does not work well with positions that have significant animation differences between motions (e.g., cowgirl).  
-Use the floating menu to switch to **Animation Only Mode** as a workaround.
+Use the floating menu to switch to **Animation Only Mode** as a workaround.  
+
+- The positions buttons in the left floating menu are **NOT** meant to be a replacement for changing positions via the built-in menu. They are designed to change only the girl's **posture** as they do not change the position and rotation of the characters.   
+
 - Changing girl's position via the floating menu will not change the guy's position. This may cause the guy's hands to be in unnatural or undesired positions at times.  
+
 - Likewise, the guy's feet will often clip into the ground if using a standing position while being close to the ground. Enabling the male feet collider option mitigates this somewhat, but not much.  
+
 - Limited functionality in 3P. Currently only the first girl's position will be controlled. The plugin cannot control the position and pose of the second girl.  
-- Due to the extensive controller input needed to operate this plugin, some buttons input overlap with other plugins such as *KoikatuVRAssistPlugin*, causing some unintentional behavior. For example, *touching* the Trackpad/Thumbstick will cause KoikatuVRAssistPlugin to override control of the animation speed gauge, interfering with SetParent's animation control.
+
 - With male following enabled, the shadow casted by the male body may be distracting. Use [KK_HAutosets](https://github.com/MayouKurayami/KK_HAutoSets) to disable it.
 
 
