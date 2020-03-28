@@ -918,7 +918,7 @@ namespace SetParentKK
 			colors.pressedColor = Color.cyan;
 			button.colors = colors;
 			text.rectTransform.sizeDelta = new Vector2(0.24f, 0.08f);
-			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+			text.font = Font.CreateDynamicFontFromOSFont("Arial", 13);
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = buttonText;
