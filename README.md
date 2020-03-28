@@ -12,7 +12,7 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 - Afterschool DLC  
 - [Koikatsu Official VR Patch 0531](http://www.illusion.jp/preview/koikatu/download/vr.php)
 - BepInEx 4 and above  
-- (optional, recommended): [CrossFader](https://vr-erogamer.com/wp-content/uploads/CrossFader.zip) plugin
+- (optional, recommended): [CrossFader](https://github.com/MayouKurayami/KK_CrossFader/releases) plugin
 - (optional, strongly recommended): [KoikatuVRAssistPlugin](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin
 
 
@@ -24,8 +24,7 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 
 - **(Optional)** To translate the text on the floating menu, make sure the [AutoTranslator](https://github.com/bbepis/XUnity.AutoTranslator/releases) is installed **(also included with HF Patch)**.  Then make sure **EnableUGUI** is set to **True** under [*TextFrameworks*] in *BepInEx/config/AutoTranslatorConfig.ini*  
 
-- Installation of the [**CrossFader.dll**](https://vr-erogamer.com/wp-content/uploads/CrossFader.zip) plugin found on https://vr-erogamer.com/archives/527 is recommended to ensure smooth transitions between animations and poses.
-(Install by placing in BepInEx root folder)  
+- Installation of the [**CrossFader**](https://github.com/MayouKurayami/KK_CrossFader/releases) plugin is recommended to ensure smooth transitions between animations and poses.
 
 - Also **strongly recommended** is the [**KoikatuVRAssistPlugin**](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin found on https://vr-erogamer.com/archives/322, for easier movement and better access to actions in VR. With it installed, one can rotate and move the camera at all times by holding the trigger button. While the UI menu is visible, hold the grip button for 1 second to freeze it in place, and drag and move it by holding the grip button. Double click the grip button to return the menu to your controller.
 
@@ -110,11 +109,13 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 
 ## Notes and Limitations
 - Unknown compatibility with Koikatsu Party (Steam release)  
+
 - Currently does not work in the unofficial VR mod for main game.
-- The plugin does not work well with positions that have significant animation differences between motions (e.g., cowgirl).
+- The plugin does not work well with positions that have significant animation differences between motions (e.g., cowgirl).  
+Use the floating menu to switch to **Animation Only Mode** as a workaround.
 - Changing girl's position via the floating menu will not change the guy's position. This may cause the guy's hands to be in unnatural or undesired positions at times.  
 - Likewise, the guy's feet will often clip into the ground if using a standing position while being close to the ground. Enabling the male feet collider option mitigates this somewhat, but not much.  
-- Limited functionality in 3P. Currently only the first girl's position will be controlled. Cannot switch to control the position and pose of the second girl.  
+- Limited functionality in 3P. Currently only the first girl's position will be controlled. The plugin cannot control the position and pose of the second girl.  
 - Due to the extensive controller input needed to operate this plugin, some buttons input overlap with other plugins such as *KoikatuVRAssistPlugin*, causing some unintentional behavior. For example, *touching* the Trackpad/Thumbstick will cause KoikatuVRAssistPlugin to override control of the animation speed gauge, interfering with SetParent's animation control.
 - With male following enabled, the shadow casted by the male body may be distracting. Use [KK_HAutosets](https://github.com/MayouKurayami/KK_HAutoSets) to disable it.
 
