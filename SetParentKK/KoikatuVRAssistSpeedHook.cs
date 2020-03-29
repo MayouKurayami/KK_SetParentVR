@@ -14,15 +14,14 @@ namespace SetParentKK
 		{
 			if (Type.GetType("KoikatuVRAssistPlugin.GripMoveAssistObj, KoikatuVRAssistPlugin") != null)
 			{
-				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, PluginName + ": KoikatuVRAssist patched for compatibility");
+				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Debug, PluginName + ": KoikatuVRAssist patched for compatibility");
 				return true;
 			}
 			else
 			{
-				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, PluginName + ": KoikatuVRAssist not found, not patched");
+				BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Debug, PluginName + ": KoikatuVRAssist not found, not patched");
 				return false;
-			}
-				
+			}		
 		}
 
 		private static MethodInfo TargetMethod()
@@ -32,7 +31,7 @@ namespace SetParentKK
 
 		private static bool Prefix()
 		{
-			if (setParentObj.setFlag && (setParentObj.currentCtrlstate >= CtrlState.MaleControl || SetParentMode.Value >= ParentMode.PositionAndAnimation))
+			if ((setParentObj?.setFlag ?? false) && (setParentObj.currentCtrlstate >= CtrlState.MaleControl || SetParentMode.Value >= ParentMode.PositionAndAnimation))
 			{
 				return false;
 			}
