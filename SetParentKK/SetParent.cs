@@ -1310,92 +1310,92 @@ namespace SetParentKK
 
 		private bool RightTrackPadPressing()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Touchpad, -1) || rightDevice.GetPress(4294967296UL);
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (rightDevice?.GetPress(4294967296UL) ?? false);
 		}
 
 		private bool LeftTrackPadPressing()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Touchpad, -1) || leftDevice.GetPress(4294967296UL);
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (leftDevice?.GetPress(4294967296UL) ?? false);
 		}
 
 		private bool RightTrackPadUp()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) || rightDevice.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
 		}
 
 		private bool LeftTrackPadUp()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) || leftDevice.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
 		}
 
 		private bool RightTrackPadDown()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) || rightDevice.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
 		}
 
 		private bool LeftTrackPadDown()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) || leftDevice.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
 		}
 
 		private bool RightMenuPressing()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || rightDevice.GetPress(2UL);
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPress(2UL) ?? false);
 		}
 
 		private bool LeftMenuPressing()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Menu, -1) || leftDevice.GetPress(2UL);
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPress(2UL) ?? false);
 		}
 
 		private bool RightTriggerPressDown()
 		{
-			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || rightDevice.GetPressDown(8589934592UL);
+			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressDown(8589934592UL) ?? false);
 		}
 
 		private bool LeftTriggerPressDown()
 		{
-			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPressDown(8589934592UL);
+			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressDown(8589934592UL) ?? false);
 		}
 
 		private bool RightTriggerRelease()
 		{
-			return rightVVC.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) || rightDevice.GetPressUp(8589934592UL);
+			return (rightVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressUp(8589934592UL) ?? false);
 		}
 
 		private bool LeftTriggerRelease()
 		{
-			return leftVVC.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPressUp(8589934592UL);
+			return (leftVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressUp(8589934592UL) ?? false);
 		}
 
 		private bool RightTriggerPressing()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Trigger, -1) || rightDevice.GetPress(8589934592UL);
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPress(8589934592UL) ?? false);
 		}
 
 		private bool LeftTriggerPressing()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Trigger, -1) || leftDevice.GetPress(8589934592UL);
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPress(8589934592UL) ?? false);
 		}
 
 		private bool LeftGripPressing()
 		{
-			return leftVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPress(4UL);
+			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPress(4UL) ?? false);
 		}
 
 		private bool LeftGripPressDown()
 		{
-			return leftVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || leftDevice.GetPressDown(4UL);
+			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPressDown(4UL) ?? false);
 		}
 
 		private bool RightGripPressing()
 		{
-			return rightVVC.IsState(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPress(4UL);
+			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPress(4UL) ?? false);
 		}
 
 		private bool RightGripPressDown()
 		{
-			return rightVVC.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) || rightDevice.GetPressDown(4UL);
+			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPressDown(4UL) ?? false);
 		}
 
 		
