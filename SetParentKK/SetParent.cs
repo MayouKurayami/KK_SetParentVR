@@ -303,18 +303,18 @@ namespace SetParentKK
 			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas);
 			CreateButton("プール", new Vector3(28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas);
 			
-			CreateButton("跪くバック", new Vector3(-28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas);
-			CreateButton("腕引っ張りバック", new Vector3(28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas);
-			CreateButton("椅子にバック", new Vector3(-28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas);
-			CreateButton("椅子腕引っ張りバック", new Vector3(28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas);
-			CreateButton("壁にバック", new Vector3(-28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas);
-			CreateButton("壁バック片足上げ", new Vector3(28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas);
+			CreateButton("跪く後背位", new Vector3(-28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas);
+			CreateButton("腕引っ張り後背位", new Vector3(28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas);
+			CreateButton("椅子に後背位", new Vector3(-28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas);
+			CreateButton("椅子腕引っ張り後背位", new Vector3(28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas);
+			CreateButton("壁に後背位", new Vector3(-28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas);
+			CreateButton("壁に片足上げ後背位", new Vector3(28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas);
 
 			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21")), objLeftMenuCanvas);
-			CreateButton("押し付け壁バック", new Vector3(28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas);
+			CreateButton("壁に押し付け後背位", new Vector3(28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas);
 
-			CreateButton("寝バック", new Vector3(-28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas);
-			CreateButton("跳び箱バック", new Vector3(28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
+			CreateButton("寝後背位", new Vector3(-28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas);
+			CreateButton("跳び箱後背位", new Vector3(28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
 
 			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas);
 			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
