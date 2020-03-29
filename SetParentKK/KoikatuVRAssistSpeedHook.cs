@@ -8,7 +8,7 @@ using static SetParentKK.SetParent;
 namespace SetParentKK
 {
 	[HarmonyPatch]
-	internal static class KoikatuVRAssistSpeedPatch
+	internal static class KoikatuVRAssistSpeedHook
 	{
 		private static bool Prepare()
 		{
