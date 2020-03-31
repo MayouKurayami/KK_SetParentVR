@@ -15,8 +15,8 @@
 - Fix character misplacement when switching position/category/H point  
 - Other various bugfixes
 
-### 2.0.3  
-- Improves compatibility with KoikatuVRAssistPlugin  
+### 2.0.4  
+- Improve compatibility with KoikatuVRAssistPlugin  
 - Add config option to enable/disable the grabbing of girl's limbs with controller  
 - Add floating menu button to disable all limb fixing functionalities
 - Limb fixing buttons now work even when SetParent is not enabled  
@@ -24,4 +24,7 @@
 - Fix left floating menu position buttons behavior when SetParent is not enabled
 - Smooth the release of female default IK's  
 - Limbs will now fix to new objects created in the scene (e.g., vault in vault doggy position)  
-- Fix Japanese text not displaying properly in floating menu 
+- Fix Japanese text not displaying properly in floating menu
+- Change some text on position buttons  
+- Fix issues caused by controller(s) being inactive at runtime  
+- Adjust advanced settings default values
