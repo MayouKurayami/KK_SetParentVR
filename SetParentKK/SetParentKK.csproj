@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="AnimSpeedController.cs" />
     <Compile Include="FixBodyParts.cs" />
+    <Compile Include="KoikatuVRAssistMenuHook.cs" />
     <Compile Include="KoikatuVRAssistSpeedHook.cs" />
     <Compile Include="SetParentLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

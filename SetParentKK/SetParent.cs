@@ -1566,7 +1566,7 @@ namespace SetParentKK
 
 		internal bool limbAutoAttach = true;
 
-		private bool parentIsLeft;
+		internal bool parentIsLeft;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 
