@@ -102,7 +102,7 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 
 - **Smooth Tracking (TrackingMode)** - Enables smooth(ramped) following of the girl's body to the controller. Disable to use strict and immediate following. **(Default: True)**  
 
-- **Strong Motion Speed Maximum Multiplier (StrongThresholdMultiplier)** - In strong motion, multiply the animation speed max threshold by this number to avoid reaching the maximum speed too easily due to the wide range of motion. **(Default: 1.2)**  
+- **Strong Motion Speed Maximum Multiplier (StrongThresholdMultiplier)** - In strong motion, multiply the animation speed max threshold by this number to avoid reaching the maximum speed too easily due to the wide range of motion. **(Default: 1.3)**  
 
 - **Strong Motion Threshold** - If the movement range of the controller calculated using *MoveCoordinatePoolSize* exceeds this threshold, animation will switch to strong motion. Unit in meters approximately. **(Default: 0.03)**  
 
