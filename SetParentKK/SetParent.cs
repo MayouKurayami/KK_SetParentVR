@@ -108,6 +108,12 @@ namespace SetParentKK
 			Transform male_cf_pv_hand_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hand_L");
 			Transform male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R");
 			Transform male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L");
+
+			male_cf_pv_shoulder_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_R");
+			male_cf_pv_shoulder_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_L");
+			male_shoulder_R_bd = maleFBBIK.solver.rightShoulderEffector.target.GetComponent<BaseData>();
+			male_shoulder_L_bd = maleFBBIK.solver.leftShoulderEffector.target.GetComponent<BaseData>();
+
 			BaseData male_hand_L_bd = maleFBBIK.solver.leftHandEffector.target.GetComponent<BaseData>();
 			BaseData male_hand_R_bd = maleFBBIK.solver.rightHandEffector.target.GetComponent<BaseData>();
 			BaseData male_leg_L_bd = maleFBBIK.solver.leftFootEffector.target.GetComponent<BaseData>();
@@ -789,8 +795,21 @@ namespace SetParentKK
 				indexSpinePos++;
 
 
-			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
+			if (setFlag && SetParentMode.Value < ParentMode.AnimationOnly)
+			{
 				FemalePositionUpdate(femaleSpinePos);
+
+				//assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
+				male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
+				male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
+				maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
+				maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
+			}
+			else if (currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
+			{
+				FemalePositionUpdate(femaleSpinePos);
+			}
+				
 		}
 
 		/// <summary>
@@ -879,6 +898,9 @@ namespace SetParentKK
 			}
 
 			setFlag = false;
+
+			maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
+			maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
 		}
 
 		/// <summary>
@@ -1007,11 +1029,10 @@ namespace SetParentKK
 			{
 				//Since the male hands don't have colliders and won't attach to objects, we only need to consider the default IKs (e.g., grabing female body parts)
 				//To prevent excessive stretching or the hands being at a weird angle, 
-				//if position and rotation difference between the IK effector and original animation is beyond threshold, set IK weights to 0. 
+				//if rotation difference between the IK effector and original animation is beyond threshold, set IK weights to 0. 
 				//Set IK weights to 1 if otherwise.
-				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
 				float twist = Quaternion.Angle(limbs[i].Effector.target.rotation, limbs[i].AnimPos.rotation);
-				if (distance > 0.2f || twist > 45f)
+				if (twist > 45f)
 				{
 					limbs[i].Effector.positionWeight = 0f;
 					limbs[i].Effector.rotationWeight = 0f;
@@ -1572,6 +1593,14 @@ namespace SetParentKK
 		private GameObject maleHeadPos;
 
 		private GameObject maleCrotchPos;
+
+		private Transform male_cf_pv_shoulder_R;
+
+		private Transform male_cf_pv_shoulder_L;
+
+		private BaseData male_shoulder_R_bd;
+
+		private BaseData male_shoulder_L_bd;
 
 		private Text txtSetParentL;
 
