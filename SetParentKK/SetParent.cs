@@ -1047,57 +1047,84 @@ namespace SetParentKK
 			//Algorithm for female hands
 			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
 			{
-				//Calculate distance between effector target and original animation to determine stretching
-				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj && distance > StretchLimitArms.Value)
-				{
-					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
-					if (!limbs[i].Fixed)
-					{
-						FixLimbToggle(limbs[i]);
-						continue;
-					}
-					//If fixed flag is enabled but arms are stretched past set threshold, reduce bending weight to 0 
-					//to avoid arms bending towards a bending goal that is no longer in a natural position
-					else
-						limbs[i].Chain.bendConstraint.weight = 0f;
-				}
-				//If arms are not attached to objects, we still need to take care of the default IK's (e.g., hands sticking to male)
-				//If stretching is beyond a set threshold then reduce effector weights to 0
-				else if (!(limbs[i].AnchorObj) && distance > 0.15f)
-				{
-					limbs[i].Effector.positionWeight = (0.3f - distance) / 0.15f;
-					limbs[i].Effector.rotationWeight = (0.3f - distance) / 0.15f;
-					continue;
-				}
-
-				//If arms are not overly stretched, set effector weights to max and set other IK parameters to improve animation naturalness
+				//Reset parameters to default values		
 				limbs[i].Effector.positionWeight = 1f;
 				limbs[i].Effector.rotationWeight = 1f;
-				limbs[i].Effector.maintainRelativePositionWeight = 1f;
-				limbs[i].Chain.push = 0.1f;
-				limbs[i].Chain.pushParent = 0.5f;
+
+				//Calculate distance between effector target and original animation to determine stretching
+				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
+
+				if (limbs[i].AnchorObj)
+				{
+					//If limb is manually held or placed, disable bending goal to avoid unnatural bending
+					if (limbs[i].Fixed)
+					{
+						limbs[i].Chain.bendConstraint.weight = 0f;
+					}
+					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
+					else if (distance > StretchLimitArms.Value)
+					{
+						FixLimbToggle(limbs[i]);
+						continue;		
+					}
+					//Optimize IK behaviors if arms are attached to objects
+					limbs[i].Effector.maintainRelativePositionWeight = 1f;
+					limbs[i].Chain.push = 0.1f;
+					limbs[i].Chain.pushParent = 0.5f;
+				}	
+				else
+				{
+					//Arms are not attached to objects, so restore IK parameters to default values
+					limbs[i].Chain.bendConstraint.weight = 1f;
+					limbs[i].Effector.maintainRelativePositionWeight = 0f;
+					limbs[i].Chain.push = 0f;
+					limbs[i].Chain.pushParent = 0f;
+
+					//If arms are not attached to objects, we still need to take care of the default IK's (e.g., hands sticking to male)
+					//If stretching is beyond a set threshold then gradually reduce effector weights to 0
+					if (distance > 0.15f)
+					{
+						limbs[i].Effector.positionWeight = (0.3f - distance) / 0.15f;
+						limbs[i].Effector.rotationWeight = (0.3f - distance) / 0.15f;
+					}		
+				}			
 			}
 
 			//Algorithm for female feet
 			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
 			{
-				//Again use distance between effecotr target and animation position to determine stretching
-				//Since feet don't have default IK's (they don't grab onto anything by default), 
-				//we only need to release them from grabbing onto objects if stretched too far
-				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-				if (limbs[i].AnchorObj && !limbs[i].Fixed && distance > StretchLimitLegs.Value)
+				if (limbs[i].AnchorObj)
 				{
-					FixLimbToggle(limbs[i]);
-				}
-				//If feet are not overly stretched, set effector weights to max and set other IK parameters to improve animation naturalness
-				else
-				{
+					//Use distance between effecotr target and animation position to determine stretching
+					//Since feet don't have default IK's (they don't grab onto anything by default), 
+					//we only need to release them from grabbing onto objects if stretched too far
+					float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
+
+					//If limb is manually held or placed, disable bending goal to avoid unnatural bending
+					if (limbs[i].Fixed)
+					{
+						limbs[i].Chain.bendConstraint.weight = 0f;
+					}
+					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
+					else if (distance > StretchLimitLegs.Value)
+					{
+						FixLimbToggle(limbs[i]);
+						continue;
+					}
+					//Adjust IK parameters to optimize behavior
+					//Set effector weights to 1 just in case
 					limbs[i].Effector.positionWeight = 1f;
 					limbs[i].Effector.rotationWeight = 1f;
 					limbs[i].Chain.push = 0.1f;
-					limbs[i].Chain.pushParent = 0.5f;
-					limbs[i].Chain.bendConstraint.weight = 0f;	
+					limbs[i].Chain.pushParent = 0.5f;	
+				}
+				else
+				{	
+					//Restore IK parameters to default. 
+					//No need to adjust effector weights because the defaults are already 1
+					limbs[i].Chain.push = 0f;
+					limbs[i].Chain.pushParent = 0f;
+					limbs[i].Chain.bendConstraint.weight = 1f;
 				}
 			}
 		}
