@@ -565,6 +565,14 @@ namespace SetParentKK
 			int index = (int)SetParentMode.Value + 1;
 			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
 			txtSetParentMode.text = SetParentMode.Value.ToString();
+
+			if (setFlag)
+			{
+				if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
+					parentController?.transform.Find("Model").gameObject.SetActive(false);
+				else
+					parentController?.transform.Find("Model").gameObject.SetActive(true);
+			}
 		}
 
 		public void LateUpdate()
