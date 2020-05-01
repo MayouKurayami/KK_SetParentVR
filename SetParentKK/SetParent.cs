@@ -59,6 +59,8 @@ namespace SetParentKK
 			cameraEye = hSprite.managerVR.objCamera;
 			leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
 			rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
+			itemHands[0] = Traverse.Create(leftController.transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+			itemHands[1] = Traverse.Create(rightController.transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 
 			male = (ChaControl)Traverse.Create(hSprite).Field("male").GetValue();
 			female = ((List<ChaControl>)Traverse.Create(hSprite).Field("females").GetValue())[0];
@@ -161,7 +163,8 @@ namespace SetParentKK
 				male_cf_pv_hand_L, 
 				maleFBBIK.solver.leftHandEffector, 
 				maleFBBIK.solver.leftHandEffector.target, 
-				male_hand_L_bd);
+				male_hand_L_bd,
+				maleFBBIK.solver.leftArmChain);
 
 			limbs[(int)LimbName.MaleRightHand] = new Limb(
 				LimbName.MaleRightHand, 
@@ -169,7 +172,8 @@ namespace SetParentKK
 				male_cf_pv_hand_R, 
 				maleFBBIK.solver.rightHandEffector, 
 				maleFBBIK.solver.rightHandEffector.target, 
-				male_hand_R_bd);
+				male_hand_R_bd,
+				maleFBBIK.solver.rightArmChain);
 
 			limbs[(int)LimbName.MaleLeftFoot] = new Limb(
 				LimbName.MaleLeftFoot, 
@@ -242,27 +246,30 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("左足固定/解除", new Vector3(-28f, -50f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("右足固定/解除", new Vector3(28f, -50f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("左手固定/解除", new Vector3(-28f, -32f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("右手固定/解除", new Vector3(28f, -32f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-28f, -14f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(28f, -14f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, 4f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, 4f, 0f), () => PushPRButton(), objRightMenuCanvas);
-			txtLimbAuto = CreateButton("手足固定 Turn Off", new Vector3(-28f, 22f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
-			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(28f, 22f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);		
+			CreateButton("左足固定/解除", new Vector3(-28f, -50f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas, out _);
+			CreateButton("右足固定/解除", new Vector3(28f, -50f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas, out _);
+			CreateButton("左手固定/解除", new Vector3(-28f, -32f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas, out _);
+			CreateButton("右手固定/解除", new Vector3(28f, -32f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas, out _);
+			CreateButton("男の左足固定/解除", new Vector3(-28f, -14f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas, out _);
+			CreateButton("男の右足固定/解除", new Vector3(28f, -14f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas, out _);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-28f, 4f, 0f), () => PushPLButton(), objRightMenuCanvas, out _);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(28f, 4f, 0f), () => PushPRButton(), objRightMenuCanvas, out _);
+			txtLimbAuto = CreateButton("手足固定 Turn Off", new Vector3(-28f, 22f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas, out _);
+			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(28f, 22f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas, out _);		
 
-			CreateButton("ヌク", new Vector3(-28f, 40f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
+			CreateButton("ヌク", new Vector3(-28f, 40f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas, out _);
+			CreateButton("男の手親子付け ON/OFF", new Vector3(28f, 40f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag), objRightMenuCanvas, out syncMaleHandsButton);
+			//Hide sync male hands button by default since it should only show when SetParent is active
+			syncMaleHandsButton.SetActive(false);
 
-			CreateButton("モーション 強弱", new Vector3(-28f, 58f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
-			CreateButton("モーション 開始/停止", new Vector3(28f, 58f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);	
-			CreateButton("中に出すよ", new Vector3(-28f, 76f, 0f), () => PushFIButton(), objRightMenuCanvas);
-			CreateButton("外に出すよ", new Vector3(28f, 76f, 0f), () => PushFOButton(), objRightMenuCanvas);
-			CreateButton("入れるよ", new Vector3(-28f, 94f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
-			CreateButton("イレル", new Vector3(28f, 94f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
-			CreateButton("アナル入れるよ", new Vector3(-28f, 112f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
-			CreateButton("アナルイレル", new Vector3(28f, 112f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
+			CreateButton("モーション 強弱", new Vector3(-28f, 58f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas, out _);
+			CreateButton("モーション 開始/停止", new Vector3(28f, 58f, 0f), () => PushModeChangeButton(), objRightMenuCanvas, out _);	
+			CreateButton("中に出すよ", new Vector3(-28f, 76f, 0f), () => PushFIButton(), objRightMenuCanvas, out _);
+			CreateButton("外に出すよ", new Vector3(28f, 76f, 0f), () => PushFOButton(), objRightMenuCanvas, out _);
+			CreateButton("入れるよ", new Vector3(-28f, 94f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas, out _);
+			CreateButton("イレル", new Vector3(28f, 94f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas, out _);
+			CreateButton("アナル入れるよ", new Vector3(-28f, 112f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas, out _);
+			CreateButton("アナルイレル", new Vector3(28f, 112f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas, out _);
 
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
@@ -295,38 +302,38 @@ namespace SetParentKK
 			////////////////
 			//Populate left side floating menu with buttons
 			////////////////
-			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00")), objLeftMenuCanvas);
-			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00")), objLeftMenuCanvas);
-			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24")), objLeftMenuCanvas);
-			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas);
+			CreateButton("正常位", new Vector3(-28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00")), objLeftMenuCanvas, out _);
+			CreateButton("開脚正常位", new Vector3(28f, -64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00")), objLeftMenuCanvas, out _);
+			CreateButton("脚持つ正常位", new Vector3(-28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24")), objLeftMenuCanvas, out _);
+			CreateButton("脚持つ(強弱差分)", new Vector3(28f, -48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas, out _);
 
-			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06")), objLeftMenuCanvas);
-			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16")), objLeftMenuCanvas);
+			CreateButton("側位(片足上げ)", new Vector3(-28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06")), objLeftMenuCanvas, out _);
+			CreateButton("机側位", new Vector3(28f, -32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16")), objLeftMenuCanvas, out _);
 
-			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22")), objLeftMenuCanvas);
-			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas);
+			CreateButton("駅弁", new Vector3(-28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22")), objLeftMenuCanvas, out _);
+			CreateButton("駅弁(強弱差分)", new Vector3(28f, -16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas, out _);
 
-			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas);
-			CreateButton("プール", new Vector3(28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas);
+			CreateButton("立位", new Vector3(-28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas, out _);
+			CreateButton("プール", new Vector3(28f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas, out _);
 			
-			CreateButton("跪く後背位", new Vector3(-28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas);
-			CreateButton("腕引っ張り後背位", new Vector3(28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas);
-			CreateButton("椅子に後背位", new Vector3(-28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas);
-			CreateButton("椅子腕引っ張り後背位", new Vector3(28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas);
-			CreateButton("壁に後背位", new Vector3(-28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas);
-			CreateButton("壁に片足上げ後背位", new Vector3(28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas);
+			CreateButton("跪く後背位", new Vector3(-28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas, out _);
+			CreateButton("腕引っ張り後背位", new Vector3(28f, 16f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas, out _);
+			CreateButton("椅子に後背位", new Vector3(-28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas, out _);
+			CreateButton("椅子腕引っ張り後背位", new Vector3(28f, 32f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas, out _);
+			CreateButton("壁に後背位", new Vector3(-28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas, out _);
+			CreateButton("壁に片足上げ後背位", new Vector3(28f, 48f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas, out _);
 
-			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21")), objLeftMenuCanvas);
-			CreateButton("壁に押し付け後背位", new Vector3(28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas);
+			CreateButton("フェンス後背位", new Vector3(-28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21")), objLeftMenuCanvas, out _);
+			CreateButton("壁に押し付け後背位", new Vector3(28f, 64f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas, out _);
 
-			CreateButton("寝後背位", new Vector3(-28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas);
-			CreateButton("跳び箱後背位", new Vector3(28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
+			CreateButton("寝後背位", new Vector3(-28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas, out _);
+			CreateButton("跳び箱後背位", new Vector3(28f, 80f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas, out _);
 
-			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas);
-			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
+			CreateButton("騎乗位", new Vector3(-28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas, out _);
+			CreateButton("騎乗位(強弱差分)", new Vector3(28f, 96f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas, out _);	
 
-			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09")), objLeftMenuCanvas);
-			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10")), objLeftMenuCanvas);
+			CreateButton("座位対面", new Vector3(-28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09")), objLeftMenuCanvas, out _);
+			CreateButton("座位背面", new Vector3(28f, 112f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10")), objLeftMenuCanvas, out _);
 			
 
 			point = femaleAim.transform.position - cameraEye.transform.position;
@@ -575,6 +582,59 @@ namespace SetParentKK
 			}
 		}
 
+		/// <summary>
+		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
+		/// </summary>
+		/// <param name="enable">To enable or disable the functionality</param>
+		private void SyncMaleHandsToggle(bool enable)
+		{
+			if (hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
+				return;
+			
+			if (enable)
+			{
+				FixLimbToggle(limbs[(int)LimbName.MaleLeftHand]);
+				FixLimbToggle(limbs[(int)LimbName.MaleRightHand]);
+
+				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.parent = leftController.transform;
+				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.parent = rightController.transform;
+
+				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
+				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
+
+				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, 90f, 0f) * Quaternion.Euler(0, -30f, 0f);
+				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, -90f, 0f) * Quaternion.Euler(0, 30f, 0f);
+
+				foreach (SkinnedMeshRenderer mesh in leftController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+					mesh.enabled = false;
+				foreach (SkinnedMeshRenderer mesh in rightController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+					mesh.enabled = false;
+
+				//Restore male shoulder parameters to default as shoulder fixing will be disabled when hands are anchored to the controllers
+				male_shoulder_R_bd.bone = null;
+				male_shoulder_L_bd.bone = null;
+				maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
+				maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
+			}
+			else
+			{
+				for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
+				{
+					if (limbs[i].AnchorObj)
+						FixLimbToggle(limbs[i]);
+
+					if (MaleHandsDisplay.Value < HideHandMode.AlwaysShow)
+						itemHands[(int)(LimbName.MaleLeftHand - 4)].enabled = true;
+				}
+				foreach (SkinnedMeshRenderer mesh in leftController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+					mesh.enabled = true;
+				foreach (SkinnedMeshRenderer mesh in rightController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+					mesh.enabled = true;
+			}
+
+			MaleHandsSyncFlag = enable;
+		}
+
 		public void LateUpdate()
 		{
 			if (!femaleExists)
@@ -595,6 +655,8 @@ namespace SetParentKK
 					leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
 					if (SetControllerCollider.Value)
 						SetControllerColliders(leftController);
+
+					itemHands[0] = Traverse.Create(leftController.transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 				}
 				leftVVC = leftController.GetComponent<VRViveController>();
 				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
@@ -606,7 +668,9 @@ namespace SetParentKK
 					rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
 					if (SetControllerCollider.Value)
 						SetControllerColliders(rightController);
-				}	
+
+					itemHands[1] = Traverse.Create(rightController.transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+				}
 				rightVVC = rightController.GetComponent<VRViveController>();
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
@@ -768,6 +832,8 @@ namespace SetParentKK
 				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
 				
+
+
 				txtSetParentL.text = "親子付け Turn Off";
 				txtSetParentR.text = "親子付け Turn Off";
 			}
@@ -803,21 +869,8 @@ namespace SetParentKK
 				indexSpinePos++;
 
 
-			if (setFlag && SetParentMode.Value < ParentMode.AnimationOnly)
-			{
-				FemalePositionUpdate(femaleSpinePos);
-
-				//assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
-				male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
-				male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
-				maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
-				maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
-			}
-			else if (currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
-			{
-				FemalePositionUpdate(femaleSpinePos);
-			}
-				
+			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
+				FemalePositionUpdate(femaleSpinePos);			
 		}
 
 		/// <summary>
@@ -872,6 +925,12 @@ namespace SetParentKK
 				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, leftController, rightController);
 			}
 
+			if (SyncMaleHands.Value)
+			{
+				SyncMaleHandsToggle(enable: true);
+			}
+			syncMaleHandsButton.SetActive(true);
+
 			setFlag = true;
 		}
 
@@ -905,10 +964,22 @@ namespace SetParentKK
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
 
-			setFlag = false;
+			if (MaleHandsSyncFlag)
+			{
+				SyncMaleHandsToggle(enable: false);
+			}
+			else
+			{
+				//If male hands are not anchored to controllers, then male shoulders are fixed and need to be restored to default as SetParent becomes disabled 
+				male_shoulder_R_bd.bone = null;
+				male_shoulder_L_bd.bone = null;
+				maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
+				maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
+			}
 
-			maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
-			maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
+			syncMaleHandsButton.SetActive(false);
+			
+			setFlag = false;
 		}
 
 		/// <summary>
@@ -932,7 +1003,7 @@ namespace SetParentKK
 			maleCrotchPos.transform.parent = male_p_cf_bodybone.transform;
 		}
 
-		private Text CreateButton(string buttonText, Vector3 localPosition, UnityAction action, GameObject parentObject)
+		private Text CreateButton(string buttonText, Vector3 localPosition, UnityAction action, GameObject parentObject, out GameObject buttonObj)
 		{
 			GameObject buttonObject = new GameObject("button");
 			GameObject textObject = new GameObject("text", new Type[]
@@ -959,6 +1030,7 @@ namespace SetParentKK
 			textObject.transform.localPosition = Vector3.zero;
 			buttonObject.GetComponent<Button>().onClick.AddListener(action);
 
+			buttonObj = buttonObject;
 			return text;
 		}
 
@@ -1032,11 +1104,40 @@ namespace SetParentKK
 		/// </summary>
 		private void MaleIKs()
 		{
+			bool hideGropeHands = setFlag && hFlag.mode != HFlag.EMode.aibu && MaleHandsDisplay.Value < HideHandMode.AlwaysShow;
+
 			//Algorithm for the male hands
 			for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
 			{
-				//Since the male hands don't have colliders and won't attach to objects, we only need to consider the default IKs (e.g., grabing female body parts)
-				//To prevent excessive stretching or the hands being at a weird angle, 
+				//If anchors exist for the male hands, that means they are following the controllers
+				//Lower bendConstraint weight to allow rotation of the arm
+				//Set chain pull weight to zero to avoid arms from pulling the body (may not be effective however)
+				if (limbs[i].AnchorObj)
+				{
+					limbs[i].Effector.positionWeight = 1f;
+					limbs[i].Effector.rotationWeight = 1f;
+					limbs[i].Chain.bendConstraint.weight = 0.2f;
+					limbs[i].Chain.pull = 0f;
+
+					//Hide/unhide the additional hands that show up when groping, depending on config setting
+					//If settings is set to auto (neither AlwaysShow or AlwaysHide), hide them only when the controller gets close
+					if (hideGropeHands)
+					{
+						if (MaleHandsDisplay.Value == HideHandMode.AlwaysHide)
+							itemHands[i - 4].enabled = false;
+						else if ((itemHands[i - 4].transform.position - limbs[i].AnchorObj.transform.position).magnitude > 0.2f)
+							itemHands[i - 4].enabled = true;
+						else
+							itemHands[i - 4].enabled = false;
+					}
+					continue;
+				}
+
+				//Restore IK parameters to default if hands are not attached
+				limbs[i].Chain.bendConstraint.weight = 1f;
+				limbs[i].Chain.pull = 1f;
+
+				//To prevent excessive stretching or the hands being at a weird angle with the default IKs (e.g., grabing female body parts),
 				//if rotation difference between the IK effector and original animation is beyond threshold, set IK weights to 0. 
 				//Set IK weights to 1 if otherwise.
 				float twist = Quaternion.Angle(limbs[i].Effector.target.rotation, limbs[i].AnimPos.rotation);
@@ -1064,6 +1165,16 @@ namespace SetParentKK
 				{
 					limbs[i].Effector.positionWeight = 1f;
 				}
+			}
+
+			//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
+			//Does not run if male hands are in sync with controllers to allow further movement of the hands
+			if (setFlag && !MaleHandsSyncFlag)
+			{
+				male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
+				male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
+				maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
+				maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
 			}
 		}
 
@@ -1610,6 +1721,8 @@ namespace SetParentKK
 
 		private BaseData male_shoulder_L_bd;
 
+		private SkinnedMeshRenderer[] itemHands = new SkinnedMeshRenderer[2];
+
 		private Text txtSetParentL;
 
 		private Text txtSetParentR;
@@ -1617,6 +1730,8 @@ namespace SetParentKK
 		private Text txtSetParentMode;
 
 		private Text txtLimbAuto;
+
+		private GameObject syncMaleHandsButton;
 
 		private Vector3[] vecSpinePos = new Vector3[SmoothBuffer];
 
@@ -1631,6 +1746,8 @@ namespace SetParentKK
 		internal bool limbAutoAttach = true;
 
 		internal bool parentIsLeft;
+
+		private bool MaleHandsSyncFlag;
 
 		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 

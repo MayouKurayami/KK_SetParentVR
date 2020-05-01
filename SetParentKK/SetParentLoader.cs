@@ -34,6 +34,10 @@ namespace SetParentKK
 		[Description("If enabled, the male body will rotate to align his head with the headset")]
 		public static ConfigWrapper<bool> SetParentMale { get; private set; }
 
+		[DisplayName("Synchronize Male's Hands with Controllers")]
+		[Description("If enabled, the male hands and arms will be glued to the controllers")]
+		public static ConfigWrapper<bool> SyncMaleHands { get; private set; }
+
 		[DisplayName("Enable Holding Girl's Limbs with Controllers")]
 		[Description("If enabled, touching the girl's hands or feet with a controller will cause it to stick to the controller")]
 		public static ConfigWrapper<bool> SetControllerCollider { get; private set; }
@@ -138,6 +142,11 @@ namespace SetParentKK
 		[Description("Enable/disable male body's yaw (left/right) rotation when male synchronization is enabled")]
 		public static ConfigWrapper<bool> MaleYaw { get; private set; }
 
+		[Category("Advanced Settings")]
+		[DisplayName("Male Hands Display Mode")]
+		[Description("When male hands are synchronized with the controllers, this controls whether additioanl hands will show on female body parts when you grope them. \nSet to auto to automatically hide them based on proximity of your hands.")]
+		public static ConfigWrapper<HideHandMode> MaleHandsDisplay { get; private set; }
+
 
 		private void Start()
 		{
@@ -158,6 +167,7 @@ namespace SetParentKK
 			CalcController = new ConfigWrapper<ControllerAnimMode>(nameof(CalcController), this, ControllerAnimMode.SetParentController);
 			Finishcount = new ConfigWrapper<float>(nameof(Finishcount), this, 0f);
 			SetParentMale = new ConfigWrapper<bool>(nameof(SetParentMale), this, true);
+			SyncMaleHands = new ConfigWrapper<bool>(nameof(SyncMaleHands), this, true);
 			SetControllerCollider = new ConfigWrapper<bool>(nameof(SetControllerCollider), this, true);
 			SetMaleCollider = new ConfigWrapper<bool>(nameof(SetMaleCollider), this, true);
 			ParentPart = new ConfigWrapper<BodyPart>(nameof(ParentPart), this, BodyPart.Torso);
@@ -179,6 +189,7 @@ namespace SetParentKK
 			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.01f);
 			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.3f);
 			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
+			MaleHandsDisplay = new ConfigWrapper<HideHandMode>(nameof(MaleHandsDisplay), this, HideHandMode.Auto);
 		}
 		public enum ParentMode
 		{
@@ -199,6 +210,13 @@ namespace SetParentKK
 			Ass,
 			Torso,
 			Head
+		}
+
+		public enum HideHandMode
+		{
+			AlwaysHide,
+			Auto,
+			AlwaysShow
 		}
 	}
 }
