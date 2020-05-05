@@ -26,7 +26,7 @@ namespace SetParentKK
 			{
 				shortcuts[(int)Key.SetParent] = (KeyCode)Enum.Parse(typeof(KeyCode), SetParentToggle.Value.ToString());
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{ 
 				shortcuts[(int)Key.SetParent] = KeyCode.None;
 			}
@@ -34,7 +34,7 @@ namespace SetParentKK
 			{
 				shortcuts[(int)Key.LimbRelease] = (KeyCode)Enum.Parse(typeof(KeyCode), LimbReleaseKey.Value.ToString());
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{ 
 				shortcuts[(int)Key.LimbRelease] = KeyCode.None; 
 			}
@@ -42,7 +42,7 @@ namespace SetParentKK
 			{
 				shortcuts[(int)Key.MaleFeet] = (KeyCode)Enum.Parse(typeof(KeyCode), MaleFeetToggle.Value.ToString());
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				shortcuts[(int)Key.MaleFeet] = KeyCode.None;
 			}
