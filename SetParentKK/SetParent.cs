@@ -38,7 +38,15 @@ namespace SetParentKK
 			{ 
 				shortcuts[(int)Key.LimbRelease] = KeyCode.None; 
 			}
-			
+			try
+			{
+				shortcuts[(int)Key.MaleFeet] = (KeyCode)Enum.Parse(typeof(KeyCode), MaleFeetToggle.Value.ToString());
+			}
+			catch (ArgumentException e)
+			{
+				shortcuts[(int)Key.MaleFeet] = KeyCode.None;
+			}
+
 		}
 		
 		public void Start()
@@ -765,14 +773,22 @@ namespace SetParentKK
 
 			//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
 			if (LeftTriggerRelease())
-				ControllerLimbActions(leftController, ref lastTriggerRelease[0]);
-			else
-				lastTriggerRelease[0] += Time.deltaTime;
-
+			{
+				if (LeftGripPressing())
+					ControllerMaleFeetToggle(ref lastTriggerRelease[(int)TriggerState.LeftGripped]);
+				else
+					ControllerLimbActions(leftController, ref lastTriggerRelease[(int)TriggerState.Left]);
+			}				
 			if (RightTriggerRelease())
-				ControllerLimbActions(rightController, ref lastTriggerRelease[1]);
-			else
-				lastTriggerRelease[1] += Time.deltaTime;
+			{
+				if (RightGripPressing())
+					ControllerMaleFeetToggle(ref lastTriggerRelease[(int)TriggerState.RightGripped]);
+				else
+					ControllerLimbActions(rightController, ref lastTriggerRelease[(int)TriggerState.Right]);
+			}
+			for (int i = 0; i < lastTriggerRelease.Length;  i++)
+				lastTriggerRelease[i] += Time.deltaTime;
+			
 
 			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
 			if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
@@ -780,6 +796,13 @@ namespace SetParentKK
 				float _ = 0;
 				ControllerLimbActions(leftController, ref _, true);
 			}
+
+			if (Input.GetKeyDown(shortcuts[(int)Key.MaleFeet]))
+			{
+				float _ = 0;
+				ControllerMaleFeetToggle(ref _);
+			}				
+
 
 			MaleIKs();
 
@@ -1316,7 +1339,39 @@ namespace SetParentKK
 			timeNoClick = 0f;
 		}
 
+		/// <summary>
+		/// Fix male feet in place, or release them if they're already fixed
+		/// </summary>
+		/// <param name="timeNoClick">Time since the last click, for double click registration</param>
+		private void ControllerMaleFeetToggle(ref float timeNoClick)
+		{
+			if (timeNoClick < 0.3f)
+			{
+				bool releaseAll = true;
+				for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+				{
+					if (!limbs[i].AnchorObj)
+					{
+						FixLimbToggle(limbs[i], fix: true);
+						releaseAll = false;
+					}
+					else if (!limbs[i].Fixed)
+					{
+						limbs[i].Fixed = true;
+						releaseAll = false;
+					}
+				}
 
+				//Release both feet if and only if both feet are alrady fixed
+				if (releaseAll)
+				{
+					for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+						FixLimbToggle(limbs[i]);
+				}
+			}
+
+			timeNoClick = 0f;
+		}
 
 		/// <summary>
 		/// Change state of controller-to-characters relationship based on controller input
@@ -1593,7 +1648,16 @@ namespace SetParentKK
 		public enum Key
 		{
 			SetParent,
-			LimbRelease
+			LimbRelease,
+			MaleFeet
+		}
+
+		private enum TriggerState
+		{
+			Left,
+			Right,
+			LeftGripped,
+			RightGripped
 		}
 
 		internal class Limb
@@ -1749,8 +1813,8 @@ namespace SetParentKK
 
 		private bool MaleHandsSyncFlag;
 
-		private float[] lastTriggerRelease = new float[2] { 0, 0 };
 
-		private KeyCode[] shortcuts = new KeyCode[2];
+		private KeyCode[] shortcuts = new KeyCode[3];
+		private float[] lastTriggerRelease = new float[4] { 0, 0 ,0 ,0};
 	}
 }

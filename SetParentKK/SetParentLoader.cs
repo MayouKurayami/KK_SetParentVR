@@ -77,6 +77,10 @@ namespace SetParentKK
 		[Description("Press this key to release all limbs from attachment")]
 		public static SavedKeyboardShortcut LimbReleaseKey { get; private set; }
 
+		[DisplayName("Male Feet Fix/Release")]
+		[Description("Press this key to fix or release both feet of the male in place")]
+		public static SavedKeyboardShortcut MaleFeetToggle { get; private set; }
+
 		[DisplayName("SetParent Toggle")]
 		[Description("Press this key to enable/disable SetParent plugin using the left controller as parent")]
 		public static SavedKeyboardShortcut SetParentToggle { get; private set; }
@@ -180,6 +184,7 @@ namespace SetParentKK
 
 			LimbReleaseKey = new SavedKeyboardShortcut(nameof(LimbReleaseKey), this, new KeyboardShortcut(KeyCode.None));
 			SetParentToggle = new SavedKeyboardShortcut(nameof(SetParentToggle), this, new KeyboardShortcut(KeyCode.None));
+			MaleFeetToggle = new SavedKeyboardShortcut(nameof(MaleFeetToggle), this, new KeyboardShortcut(KeyCode.None));
 
 			MoveDistancePoolSize = new ConfigWrapper<int>(nameof(MoveDistancePoolSize), this, 55);
 			AnimStartThreshold = new ConfigWrapper<float>(nameof(AnimStartThreshold), this, 0.04f);
