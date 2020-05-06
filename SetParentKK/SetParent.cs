@@ -775,33 +775,24 @@ namespace SetParentKK
 			if (LeftTriggerRelease())
 			{
 				if (LeftGripPressing())
-					ControllerMaleFeetToggle(ref lastTriggerRelease[(int)TriggerState.LeftGripped]);
+					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
 				else
-					ControllerLimbActions(leftController, ref lastTriggerRelease[(int)TriggerState.Left]);
+					ControllerLimbActions(leftController, IsDoubleClick(TriggerState.Left, 0.25f));
 			}				
 			if (RightTriggerRelease())
 			{
 				if (RightGripPressing())
-					ControllerMaleFeetToggle(ref lastTriggerRelease[(int)TriggerState.RightGripped]);
+					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
 				else
-					ControllerLimbActions(rightController, ref lastTriggerRelease[(int)TriggerState.Right]);
-			}
-			for (int i = 0; i < lastTriggerRelease.Length;  i++)
-				lastTriggerRelease[i] += Time.deltaTime;
-			
+					ControllerLimbActions(rightController, IsDoubleClick(TriggerState.Right, 0.25f));
+			}			
 
 			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
 			if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
-			{
-				float _ = 0;
-				ControllerLimbActions(leftController, ref _, true);
-			}
-
+				ControllerLimbActions(leftController, doubleClick: true, forceAll: true);
+			
 			if (Input.GetKeyDown(shortcuts[(int)Key.MaleFeet]))
-			{
-				float _ = 0;
-				ControllerMaleFeetToggle(ref _);
-			}				
+				ControllerMaleFeetToggle();			
 
 
 			MaleIKs();
@@ -1298,10 +1289,10 @@ namespace SetParentKK
 		/// <param name="controller">The controller being pressed</param>
 		/// <param name="timeNoClick">Time since the last click, for double click registration</param>
 		/// <param name="forceAll">Whether to force release all limbs</param>
-		private void ControllerLimbActions(GameObject controller, ref float timeNoClick, bool forceAll = false)
+		private void ControllerLimbActions(GameObject controller, bool doubleClick, bool forceAll = false)
 		{
 			//If time since last click is greater than 0.25 second, register as single click and freeze the limb that is currently following this controller
-			if (timeNoClick > 0.25f)
+			if (!doubleClick)
 			{
 				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
 				{
@@ -1335,42 +1326,37 @@ namespace SetParentKK
 					}
 				}
 			}
-
-			timeNoClick = 0f;
 		}
 
 		/// <summary>
 		/// Fix male feet in place, or release them if they're already fixed
 		/// </summary>
-		/// <param name="timeNoClick">Time since the last click, for double click registration</param>
-		private void ControllerMaleFeetToggle(ref float timeNoClick)
+		private void ControllerMaleFeetToggle(bool doubleClick = true)
 		{
-			if (timeNoClick < 0.3f)
+			if (!doubleClick)
+				return;
+			
+			bool releaseAll = true;
+			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
 			{
-				bool releaseAll = true;
-				for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+				if (!limbs[i].AnchorObj)
 				{
-					if (!limbs[i].AnchorObj)
-					{
-						FixLimbToggle(limbs[i], fix: true);
-						releaseAll = false;
-					}
-					else if (!limbs[i].Fixed)
-					{
-						limbs[i].Fixed = true;
-						releaseAll = false;
-					}
+					FixLimbToggle(limbs[i], fix: true);
+					releaseAll = false;
 				}
-
-				//Release both feet if and only if both feet are alrady fixed
-				if (releaseAll)
+				else if (!limbs[i].Fixed)
 				{
-					for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-						FixLimbToggle(limbs[i]);
+					limbs[i].Fixed = true;
+					releaseAll = false;
 				}
 			}
 
-			timeNoClick = 0f;
+			//Release both feet if and only if both feet are alrady fixed
+			if (releaseAll)
+			{
+				for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+					FixLimbToggle(limbs[i]);
+			}
 		}
 
 		/// <summary>
@@ -1620,6 +1606,19 @@ namespace SetParentKK
 			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPressDown(4UL) ?? false);
 		}
 
+		private bool IsDoubleClick(TriggerState input, float threshold)
+		{
+			if (Time.time - lastTriggerRelease[(int)input] > threshold)
+			{
+				lastTriggerRelease[(int)input] = Time.time;
+				return false;
+			}
+			else
+			{
+				lastTriggerRelease[(int)input] = Time.time;
+				return true;
+			}
+		}
 		
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character
