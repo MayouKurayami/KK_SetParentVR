@@ -36,8 +36,7 @@
   <ItemGroup>
     <Compile Include="AnimSpeedController.cs" />
     <Compile Include="FixBodyParts.cs" />
-    <Compile Include="KoikatuVRAssistMenuHook.cs" />
-    <Compile Include="KoikatuVRAssistSpeedHook.cs" />
+    <Compile Include="KoikatuVRAssistPluginHooks.cs" />
     <Compile Include="SetParentLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetParent.cs" />
@@ -58,6 +57,9 @@
     </Reference>
     <Reference Include="ConfigurationManager">
       <HintPath>..\lib\ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="KoikatuVRAssistPlugin">
+      <HintPath>..\lib\KoikatuVRAssistPlugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
