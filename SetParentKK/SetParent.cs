@@ -1708,7 +1708,7 @@ namespace SetParentKK
 
 		private GameObject rightController;
 
-		private GameObject parentController;
+		internal GameObject parentController;
 
 		private GameObject cameraEye;
 

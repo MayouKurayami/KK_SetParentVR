@@ -50,5 +50,37 @@ namespace SetParentKK
 				}
 			}
 		}
+
+		/// <summary>
+		/// Disable controller input when controller is being used as parent
+		/// </summary>
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(VRViveController), "IsPressDown")]
+		public static bool IsPressDownPre(VRViveController __instance, ref bool __result)
+		{
+			if ((setParentObj?.setFlag ?? false) && setParentObj.parentController == __instance.gameObject)
+			{
+				__result = false;
+				return false;
+			}
+			else
+				return true;
+		}
+
+		/// <summary>
+		/// Disable controller input when controller is being used as parent
+		/// </summary>
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(VRViveController), "IsPressUp")]
+		public static bool IsPressUpPre(VRViveController __instance, ref bool __result)
+		{
+			if ((setParentObj?.setFlag ?? false) && setParentObj.parentController == __instance.gameObject)
+			{
+				__result = false;
+				return false;
+			}
+			else
+				return true;
+		}
 	}
 }
