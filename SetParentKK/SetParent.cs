@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using Illusion.Component.Correct;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,32 +22,6 @@ namespace SetParentKK
 		{
 			hSprite = _hsprite;
 			lstMotionIK = _lstMotionIK;
-			//If keys are not set in configuration manager, it ruturns "Not set" instead of "None", causing it fail to parse to KeyCode
-			try
-			{
-				shortcuts[(int)Key.SetParent] = (KeyCode)Enum.Parse(typeof(KeyCode), SetParentToggle.Value.ToString());
-			}
-			catch (ArgumentException)
-			{ 
-				shortcuts[(int)Key.SetParent] = KeyCode.None;
-			}
-			try
-			{
-				shortcuts[(int)Key.LimbRelease] = (KeyCode)Enum.Parse(typeof(KeyCode), LimbReleaseKey.Value.ToString());
-			}
-			catch (ArgumentException)
-			{ 
-				shortcuts[(int)Key.LimbRelease] = KeyCode.None; 
-			}
-			try
-			{
-				shortcuts[(int)Key.MaleFeet] = (KeyCode)Enum.Parse(typeof(KeyCode), MaleFeetToggle.Value.ToString());
-			}
-			catch (ArgumentException)
-			{
-				shortcuts[(int)Key.MaleFeet] = KeyCode.None;
-			}
-
 		}
 		
 		public void Start()
@@ -744,7 +719,8 @@ namespace SetParentKK
 			//* Pressing keyboard shortcut or 
 			//* Pressing menu button and trigger at the same time
 			//////////////
-			bool setParentToggle = Input.GetKeyDown(shortcuts[(int)Key.SetParent]) || (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
+			bool setParentToggle = (Input.GetKeyDown(SetParentToggle.Value.MainKey) && SetParentToggle.Value.Modifiers.All(x => Input.GetKey(x)))
+				|| (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
 			if (setParentToggle)
 			{
 				//Toggle parenting based on current parenting status
@@ -788,10 +764,10 @@ namespace SetParentKK
 			}			
 
 			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
-			if (Input.GetKeyDown(shortcuts[(int)Key.LimbRelease]))
+			if (Input.GetKeyDown(LimbReleaseKey.Value.MainKey) && LimbReleaseKey.Value.Modifiers.All(x => Input.GetKey(x)))
 				ControllerLimbActions(leftController, doubleClick: true, forceAll: true);
 			
-			if (Input.GetKeyDown(shortcuts[(int)Key.MaleFeet]))
+			if (Input.GetKeyDown(MaleFeetToggle.Value.MainKey) && MaleFeetToggle.Value.Modifiers.All(x => Input.GetKey(x)))
 				ControllerMaleFeetToggle();			
 
 
@@ -1644,13 +1620,6 @@ namespace SetParentKK
 			MaleRightFoot
 		}
 
-		public enum Key
-		{
-			SetParent,
-			LimbRelease,
-			MaleFeet
-		}
-
 		private enum TriggerState
 		{
 			Left,
@@ -1812,8 +1781,6 @@ namespace SetParentKK
 
 		private bool MaleHandsSyncFlag;
 
-
-		private KeyCode[] shortcuts = new KeyCode[3];
 		private float[] lastTriggerRelease = new float[4] { 0, 0 ,0 ,0};
 	}
 }
