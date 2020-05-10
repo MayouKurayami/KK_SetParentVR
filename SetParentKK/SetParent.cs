@@ -719,9 +719,7 @@ namespace SetParentKK
 			//* Pressing keyboard shortcut or 
 			//* Pressing menu button and trigger at the same time
 			//////////////
-			bool setParentToggle = (Input.GetKeyDown(SetParentToggle.Value.MainKey) && SetParentToggle.Value.Modifiers.All(x => Input.GetKey(x)))
-				|| (RightMenuPressing() && RightTriggerPressDown()) || (LeftMenuPressing() && LeftTriggerPressDown());
-			if (setParentToggle)
+			if (SetParentToggleCondition())
 			{
 				//Toggle parenting based on current parenting status
 				//* Set parent to the opposite controller of the one pressing the buttons, since the controller that's parenting the female would become invisible and unable to receive input
@@ -1492,6 +1490,18 @@ namespace SetParentKK
 			}
 		}
 
+		private bool SetParentToggleCondition()
+		{
+			if (RightMenuPressing() && RightTriggerPressing() && (RightMenuPressDown() || RightTriggerPressDown()))
+				return true;
+			else if (LeftMenuPressing() && LeftTriggerPressing() && (LeftMenuPressDown() || LeftTriggerPressDown()))
+				return true;
+			else if (Input.GetKeyDown(SetParentToggle.Value.MainKey) && SetParentToggle.Value.Modifiers.All(x => Input.GetKey(x)))
+				return true;
+
+			return false;
+		}
+
 		private bool RightTrackPadPressing()
 		{
 			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 32) ?? false);
@@ -1527,9 +1537,19 @@ namespace SetParentKK
 			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 1) ?? false);
 		}
 
+		private bool RightMenuPressDown()
+		{
+			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 1) ?? false);
+		}
+
 		private bool LeftMenuPressing()
 		{
 			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 1) ?? false);
+		}
+
+		private bool LeftMenuPressDown()
+		{
+			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 1) ?? false);
 		}
 
 		private bool RightTriggerPressDown()
