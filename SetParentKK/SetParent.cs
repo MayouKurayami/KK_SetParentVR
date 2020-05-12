@@ -96,8 +96,11 @@ namespace SetParentKK
 
 			male_cf_pv_shoulder_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_R");
 			male_cf_pv_shoulder_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_L");
+			male_cf_pv_hips = male_cf_n_height.Find("cf_pv_root/cf_pv_hips");
+
 			male_shoulder_R_bd = maleFBBIK.solver.rightShoulderEffector.target.GetComponent<BaseData>();
 			male_shoulder_L_bd = maleFBBIK.solver.leftShoulderEffector.target.GetComponent<BaseData>();
+			male_hips_bd = maleFBBIK.solver.bodyEffector.target.GetComponent<BaseData>();
 
 			BaseData male_hand_L_bd = maleFBBIK.solver.leftHandEffector.target.GetComponent<BaseData>();
 			BaseData male_hand_R_bd = maleFBBIK.solver.rightHandEffector.target.GetComponent<BaseData>();
@@ -965,6 +968,9 @@ namespace SetParentKK
 				maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
 			}
 
+			male_hips_bd.bone = null;
+			maleFBBIK.solver.bodyEffector.positionWeight = 0f;
+
 			syncMaleHandsButton.SetActive(false);
 			
 			setFlag = false;
@@ -1154,15 +1160,22 @@ namespace SetParentKK
 					limbs[i].Effector.positionWeight = 1f;
 				}
 			}
-
-			//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
-			//Does not run if male hands are in sync with controllers to allow further movement of the hands
-			if (setFlag && !MaleHandsSyncFlag)
+			
+			if (setFlag)
 			{
-				male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
-				male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
-				maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
-				maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
+				//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
+				//Does not run if male hands are in sync with controllers to allow further movement of the hands
+				if (!MaleHandsSyncFlag)
+				{
+					male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
+					male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
+					maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
+					maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
+				}
+				//Fix male hips to animation position to prevent male genital from drifting due to pulling from limb chains
+				male_hips_bd.bone = male_cf_pv_hips;
+				maleFBBIK.solver.bodyEffector.positionWeight = 1f;
+				maleFBBIK.solver.bodyEffector.rotationWeight = 1f;
 			}
 		}
 
@@ -1769,9 +1782,13 @@ namespace SetParentKK
 
 		private Transform male_cf_pv_shoulder_L;
 
+		private Transform male_cf_pv_hips;
+
 		private BaseData male_shoulder_R_bd;
 
 		private BaseData male_shoulder_L_bd;
+
+		private BaseData male_hips_bd;
 
 		private SkinnedMeshRenderer[] itemHands = new SkinnedMeshRenderer[2];
 
