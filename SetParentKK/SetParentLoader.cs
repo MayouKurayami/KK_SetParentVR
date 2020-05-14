@@ -35,7 +35,7 @@ namespace SetParentKK
 		public static ConfigWrapper<bool> SetParentMale { get; private set; }
 
 		[DisplayName("Synchronize Male's Hands with Controllers")]
-		[Description("If enabled, the male hands and arms will be glued to the controllers")]
+		[Description("If enabled, the male's hands and arms will be synchronized to the controllers")]
 		public static ConfigWrapper<bool> SyncMaleHands { get; private set; }
 
 		[DisplayName("Enable Holding Girl's Limbs with Controllers")]
@@ -78,7 +78,7 @@ namespace SetParentKK
 		public static SavedKeyboardShortcut LimbReleaseKey { get; private set; }
 
 		[DisplayName("Male Feet Fix/Release")]
-		[Description("Press this key to fix or release both feet of the male in place")]
+		[Description("Press this key to fix or release male's feet in place")]
 		public static SavedKeyboardShortcut MaleFeetToggle { get; private set; }
 
 		[DisplayName("SetParent Toggle")]
@@ -148,7 +148,7 @@ namespace SetParentKK
 
 		[Category("Advanced Settings")]
 		[DisplayName("Male Hands Display Mode")]
-		[Description("When male hands are synchronized with the controllers, this controls whether additioanl hands will show on female body parts when you grope them. \nSet to auto to automatically hide them based on proximity of your hands.")]
+		[Description("When male hands are synchronized with the controllers, this controls whether additioanl hands will show on female body parts when you touch them. \nSet to auto to automatically hide them based on the proximity of your hands.")]
 		public static ConfigWrapper<HideHandMode> MaleHandsDisplay { get; private set; }
 
 
