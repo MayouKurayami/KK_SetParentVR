@@ -28,3 +28,13 @@
 - Change some text on position buttons  
 - Fix issues caused by controller(s) being inactive at runtime  
 - Adjust advanced settings default values
+
+### 2.1.0  
+- Add feature to sync male's hands to controllers  
+- Add controller and keyboard shortcuts to fix/release male feet  
+- Disable controller input for the parenting controller to prevent accidental input
+- Fix issues with misplaced female limbs due to IK  
+- Fix issue with male limbs pulling the head or body out of position  
+- Fix controller 3D model visibility not updating when changing SetParentMode via the floating menu  
+- Fix issues with modifiers not working for keyboard shortcuts  
+- Fix issues with controller shortcuts sometimes not properly toggling SetParent

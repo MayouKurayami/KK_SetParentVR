@@ -16,7 +16,8 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 - (optional, strongly recommended): [KoikatuVRAssistPlugin](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin
 
 
-## Installation
+## Installation  
+- Download the latest **KK_SetParentVR.dll** from [releases](https://github.com/MayouKurayami/KK_SetParentVR/releases).
 - Place **KK_SetParentVR.dll** in BepInEx root folder.  
   - Remove the old IPA version plugin if you have it installed.  
   - This is a BepInEx 4 plugin, to run it with BepInEx 5 you'd need [BepInEx 4 Patcher](https://github.com/BepInEx/BepInEx.BepInEx4Upgrader) (included with HF Patch)  
@@ -42,14 +43,17 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
   - You can also hold the position of each limb by pressing the buttons on the floating menu  
   - If enabled in settings, girl's hands and feet as well as guy's feet will stick to objects on contact. **Girl's limbs will also stick to your shoulder on contact**.  
   - When stretched beyond a certain point, the limbs will automatically detach from objects. *Note: the limb will not automatically detach if it was held in place manually via the controller or the floating menu.*
-  - **Double click Trigger** near a hand or foot will return it to the default position. **Double clicking Trigger while not being near any particular hand or foot** will return *ALL* limbs to their default positions. Extremely useful when limbs get stuck to the wrong places.
+  - **Double click Trigger** near a hand or foot will return it to the default position. **Double clicking Trigger while not being near any particular hand or foot** will return *ALL* limbs to their default positions. Extremely useful when limbs get stuck to the wrong places.  
+  - **Hold Grip *then* double click Trigger** to fix or release male's feet at where they are.
 
 
 - Pick a position or H category using the in-game menu, then use the in-game menu or the floating menu to insert. Once inserted, you can control the movement speed by moving the controller that the girl is parented to. Moving the controller past the configured range would cause the animation to switch from weak to strong motion. Maintain the movement range within the configured threshold for **1.5 seconds** will cause it to switch back from strong to weak motion.  
 
 - The positions buttons in the left floating menu are **NOT** meant to be a replacement for changing positions via the built-in menu. They are designed to change only the girl's **posture** as they do not change the position and rotation of the characters.    
 
-- If enabled in settings, after maintaining the girl's excitement gauge past 70 for set number of seconds, animation will enter orgasm automatically.
+- If enabled in settings, after maintaining the girl's excitement gauge past 70 for set number of seconds, animation will enter orgasm automatically.  
+
+- Controller input will be disabled for the parenting controller, to prevent unintentional or accidental input.
 
 
 ## Configurations
@@ -74,10 +78,14 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 
 - **Synchronize Male's Head with Headset (SetParentMale)** - If enabled, the male body will rotate to align his head with the headset, so that it is never in front of you. Useful if you don't like getting NTR'ed by your own 3D model  **(Default: True)**  
 
+- **Synchronize Male's Hands with Controllers (SyncMaleHands)** - If enabled, the male's hands and arms will be synchronized to the controllers. Useful for when male's hands are in the wrong place. This can be toggled on and off in the floating menu.  **(Default: True)**  
+
 - **Which Controller Controls Animation(CalcController)** - Select which controller affects animation speed and switching between weak/strong motion. **(Default: SetParentController)**  
 
 #### Keyboard Shortcuts  
 - **Limb Release** - Press this key to release all limbs from attachment. **(Default: None)**  
+
+- **Male Feet Fix/Release** - Press this key to fix or release both male's feet in place. This can also be toggled by holding **Grip** then double click **Trigger**. **(Default: None)**  
 
 - **SetParent Toggle** - Press this key to enable/disable SetParent plugin using the left controller as parent. **(Default: None)**
 <br/><br/>
@@ -95,6 +103,8 @@ Configurations are located in *config.ini* in the BepInEx root folder, under sec
 - **Distance to Detach Female Arms (StretchLimitArms)** - When stretched above this distance, the arms that are currently attached to objects will detach. Unit in meters approximately. This has no effect when the arms are attached manually via the floating menu button or by the controller  **(Default: 0.5)**  
 
 - **Distance to Detach Female Legs (StretchLimitLegs)** - When stretched above this distance, the legs that are currently attached to objects will detach. Unit in meters approximately. This has no effect when the legs are attached manually via the floating menu button or by the controller. **(Default: 0.7)**  
+
+- **Male Hands Display Mode (MaleHandsDisplay)** - When male hands are synchronized with the controllers, this controls whether additioanl hands will show on female body parts when you touch them. Set to auto to automatically hide them based on the proximity of your hands. **(Default: Auto)**
 
 - **Male Yaw Rotation (MaleYaw)** - Enable/disable male body's yaw (left/right) rotation when male synchronization is enabled. **(Default: True)**
 
@@ -118,9 +128,9 @@ Use the floating menu to switch to **Animation Only Mode** as a workaround.
 
 - The positions buttons in the left floating menu are **NOT** meant to be a replacement for changing positions via the built-in menu. They are designed to change only the girl's **posture** as they do not change the position and rotation of the characters.   
 
-- Changing girl's position via the floating menu will not change the guy's position. This may cause the guy's hands to be in unnatural or undesired positions at times.  
+- Changing girl's position via the floating menu will not change the guy's position. This may cause the guy's hands to be in unnatural or undesired positions at times. Enable male hands to controllers synchronization **(SyncMaleHands)** to mitigate this.
 
-- Likewise, the guy's feet will often clip into the ground if using a standing position while being close to the ground. Enabling the male feet collider option mitigates this somewhat, but not much.  
+- Likewise, the guy's feet will often clip into the ground if using a standing position while being close to the ground. Enabling the male feet collider option mitigates this somewhat, but not much. You can also position the male feet to a desired position then fix them there using the controller or keyboard shortcut.
 
 - Limited functionality in 3P. Currently only the first girl's position will be controlled. The plugin cannot control the position and pose of the second girl.  
 
