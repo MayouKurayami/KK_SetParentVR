@@ -559,12 +559,16 @@ namespace SetParentKK
 			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
 			txtSetParentMode.text = SetParentMode.Value.ToString();
 
+			//Update parent controller hand visibility and collider if not in AnimationOnly mode, 
+			//as they should be hidden and disabled when the parent controller is being used to control female position.
+			//The actual parenting is taken care of by ControllerCharacterAdjustment() called from the trigger press
 			if (setFlag)
 			{
-				if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
-					parentController?.transform.Find("Model").gameObject.SetActive(false);
-				else
-					parentController?.transform.Find("Model").gameObject.SetActive(true);
+				bool parentHandShow = SetParentMode.Value == ParentMode.AnimationOnly ? true : false;
+
+				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
+				if (SetControllerCollider.Value)
+					parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = parentHandShow;
 			}
 		}
 
