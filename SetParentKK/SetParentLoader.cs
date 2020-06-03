@@ -151,6 +151,11 @@ namespace SetParentKK
 		[Description("When male hands are synchronized with the controllers, this controls whether additioanl hands will show on female body parts when you touch them. \nSet to auto to automatically hide them based on the proximity of your hands.")]
 		public static ConfigWrapper<HideHandMode> MaleHandsDisplay { get; private set; }
 
+		[Category("Advanced Settings")]
+		[DisplayName("Hide Parent Controller")]
+		[Description("Hides the parent controller in animation only mode")]
+		public static ConfigWrapper<bool> HideParentCon { get; private set; }
+
 
 		private void Start()
 		{
@@ -199,6 +204,7 @@ namespace SetParentKK
 			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.3f);
 			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
 			MaleHandsDisplay = new ConfigWrapper<HideHandMode>(nameof(MaleHandsDisplay), this, HideHandMode.Auto);
+			HideParentCon = new ConfigWrapper<bool>(nameof(HideParentCon), this, true);
 		}
 		public enum ParentMode
 		{

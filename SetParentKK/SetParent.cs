@@ -564,7 +564,7 @@ namespace SetParentKK
 			//The actual parenting is taken care of by ControllerCharacterAdjustment() called from the trigger press
 			if (setFlag)
 			{
-				bool parentHandShow = SetParentMode.Value == ParentMode.AnimationOnly ? true : false;
+				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentCon.Value) ? true : false;
 
 				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
 				if (SetControllerCollider.Value)
@@ -896,6 +896,13 @@ namespace SetParentKK
 			}	
 			else
 			{
+				if (HideParentCon.Value)
+				{
+					parentController.transform.Find("Model").gameObject.SetActive(false);
+					if (SetControllerCollider.Value)
+						parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				}
+
 				femaleSpinePos.transform.position = femaleBase.transform.position;
 				femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
 			}
