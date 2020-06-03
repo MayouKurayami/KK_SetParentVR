@@ -243,19 +243,23 @@ namespace SetParentKK
 			txtLimbAuto = CreateButton("手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas, out _);
 			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas, out _);		
 
-			CreateButton("ヌク", new Vector3(-26f, 39f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas, out _);
-			CreateButton("男の手親子付け ON/OFF", new Vector3(26f, 39f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag), objRightMenuCanvas, out syncMaleHandsButton);
+			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 39f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[0], true), objRightMenuCanvas, out syncMaleHandsButton[0]);
+			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 39f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[1], false), objRightMenuCanvas, out syncMaleHandsButton[1]);
 			//Hide sync male hands button by default since it should only show when SetParent is active
-			syncMaleHandsButton.SetActive(false);
+			foreach (GameObject button in syncMaleHandsButton)
+				button.SetActive(false);
 
-			CreateButton("モーション 強弱", new Vector3(-26f, 52f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas, out _);
-			CreateButton("モーション 開始/停止", new Vector3(26f, 52f, 0f), () => PushModeChangeButton(), objRightMenuCanvas, out _);	
-			CreateButton("中に出すよ", new Vector3(-26f, 65f, 0f), () => PushFIButton(), objRightMenuCanvas, out _);
-			CreateButton("外に出すよ", new Vector3(26f, 65f, 0f), () => PushFOButton(), objRightMenuCanvas, out _);
-			CreateButton("入れるよ", new Vector3(-26f, 78f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas, out _);
-			CreateButton("イレル", new Vector3(26f, 78f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas, out _);
-			CreateButton("アナル入れるよ", new Vector3(-26f, 91f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas, out _);
-			CreateButton("アナルイレル", new Vector3(26f, 91f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas, out _);
+			CreateButton("ヌク", new Vector3(-26f, 52f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas, out _);
+
+			CreateButton("モーション 強弱", new Vector3(-26f, 65f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas, out _);
+			CreateButton("モーション 開始/停止", new Vector3(26f, 65f, 0f), () => PushModeChangeButton(), objRightMenuCanvas, out _);
+			
+			CreateButton("中に出すよ", new Vector3(-26f, 78f, 0f), () => PushFIButton(), objRightMenuCanvas, out _);
+			CreateButton("外に出すよ", new Vector3(26f, 78f, 0f), () => PushFOButton(), objRightMenuCanvas, out _);
+			CreateButton("入れるよ", new Vector3(-26f, 91f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas, out _);
+			CreateButton("イレル", new Vector3(26f, 91f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas, out _);
+			CreateButton("アナル入れるよ", new Vector3(-26f, 104f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas, out _);
+			CreateButton("アナルイレル", new Vector3(26f, 104f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas, out _);
 
 			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
 			point.y = 0f;
@@ -576,53 +580,46 @@ namespace SetParentKK
 		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
 		/// </summary>
 		/// <param name="enable">To enable or disable the functionality</param>
-		private void SyncMaleHandsToggle(bool enable)
+		private void SyncMaleHandsToggle(bool enable, bool left)
 		{
 			if (hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
 				return;
-			
+
+			BaseData shoulderBD = left ? male_shoulder_L_bd : male_shoulder_R_bd;
+			IKEffector shoulderEffector = left ? maleFBBIK.solver.leftShoulderEffector : maleFBBIK.solver.rightShoulderEffector;
+			int limbIndex = left ? (int)LimbName.MaleLeftHand : (int)LimbName.MaleRightHand;
+			GameObject controller = left ? leftController : rightController;
+
 			if (enable)
 			{
-				FixLimbToggle(limbs[(int)LimbName.MaleLeftHand]);
-				FixLimbToggle(limbs[(int)LimbName.MaleRightHand]);
+				FixLimbToggle(limbs[limbIndex]);
+				limbs[limbIndex].AnchorObj.transform.parent = controller.transform;
 
-				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.parent = leftController.transform;
-				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.parent = rightController.transform;
+				//Reposition anchor to align the male hand model to the controller
+				limbs[limbIndex].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
+				limbs[limbIndex].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, left ? 90f : -90f, 0f) * Quaternion.Euler(0, left ? -30f : 30f, 0f);
 
-				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
-				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
-
-				limbs[(int)LimbName.MaleLeftHand].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, 90f, 0f) * Quaternion.Euler(0, -30f, 0f);
-				limbs[(int)LimbName.MaleRightHand].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, -90f, 0f) * Quaternion.Euler(0, 30f, 0f);
-
-				foreach (SkinnedMeshRenderer mesh in leftController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
-					mesh.enabled = false;
-				foreach (SkinnedMeshRenderer mesh in rightController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+				//Hide controller hand model
+				foreach (SkinnedMeshRenderer mesh in controller.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
 					mesh.enabled = false;
 
 				//Restore male shoulder parameters to default as shoulder fixing will be disabled when hands are anchored to the controllers
-				male_shoulder_R_bd.bone = null;
-				male_shoulder_L_bd.bone = null;
-				maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
-				maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
+				shoulderBD.bone = null;
+				shoulderEffector.positionWeight = 0f;
 			}
 			else
 			{
-				for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
-				{
-					if (limbs[i].AnchorObj)
-						FixLimbToggle(limbs[i]);
+				if (limbs[limbIndex].AnchorObj)
+					FixLimbToggle(limbs[limbIndex]);
 
-					if (MaleHandsDisplay.Value < HideHandMode.AlwaysShow)
-						itemHands[(int)(LimbName.MaleLeftHand - 4)].enabled = true;
-				}
-				foreach (SkinnedMeshRenderer mesh in leftController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
-					mesh.enabled = true;
-				foreach (SkinnedMeshRenderer mesh in rightController.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+				if (MaleHandsDisplay.Value < HideHandMode.AlwaysShow)
+					itemHands[limbIndex - 4].enabled = true;
+
+				foreach (SkinnedMeshRenderer mesh in controller.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
 					mesh.enabled = true;
 			}
 
-			MaleHandsSyncFlag = enable;
+			MaleHandsSyncFlag[left ? 0 : 1] = enable;
 		}
 
 		public void LateUpdate()
@@ -929,9 +926,12 @@ namespace SetParentKK
 
 			if (SyncMaleHands.Value)
 			{
-				SyncMaleHandsToggle(enable: true);
+				SyncMaleHandsToggle(enable: true, left: true);
+				SyncMaleHandsToggle(enable: true, left: false);
 			}
-			syncMaleHandsButton.SetActive(true);
+
+			foreach (GameObject button in syncMaleHandsButton)
+				button.SetActive(true);
 
 			setFlag = true;
 		}
@@ -966,23 +966,19 @@ namespace SetParentKK
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
 
-			if (MaleHandsSyncFlag)
-			{
-				SyncMaleHandsToggle(enable: false);
-			}
-			else
-			{
-				//If male hands are not anchored to controllers, then male shoulders are fixed and need to be restored to default as SetParent becomes disabled 
-				male_shoulder_R_bd.bone = null;
-				male_shoulder_L_bd.bone = null;
-				maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
-				maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
-			}
+			SyncMaleHandsToggle(enable: false, left: true);
+			SyncMaleHandsToggle(enable: false, left: false);
+
+			male_shoulder_R_bd.bone = null;
+			male_shoulder_L_bd.bone = null;
+			maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
+			maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
 
 			male_hips_bd.bone = null;
 			maleFBBIK.solver.bodyEffector.positionWeight = 0f;
 
-			syncMaleHandsButton.SetActive(false);
+			foreach (GameObject button in syncMaleHandsButton)
+				button.SetActive(false);
 			
 			setFlag = false;
 		}
@@ -1176,13 +1172,17 @@ namespace SetParentKK
 			{
 				//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
 				//Does not run if male hands are in sync with controllers to allow further movement of the hands
-				if (!MaleHandsSyncFlag)
-				{
-					male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
+				if (!MaleHandsSyncFlag[0])
+				{			
 					male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
-					maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
 					maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
 				}
+				if (!MaleHandsSyncFlag[1])
+				{
+					male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
+					maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
+				}
+
 				//Fix male hips to animation position to prevent male genital from drifting due to pulling from limb chains
 				male_hips_bd.bone = male_cf_pv_hips;
 				maleFBBIK.solver.bodyEffector.positionWeight = 1f;
@@ -1811,7 +1811,7 @@ namespace SetParentKK
 
 		private Text txtLimbAuto;
 
-		private GameObject syncMaleHandsButton;
+		private GameObject[] syncMaleHandsButton = new GameObject[2];
 
 		private Vector3[] vecSpinePos = new Vector3[SmoothBuffer];
 
@@ -1827,7 +1827,7 @@ namespace SetParentKK
 
 		internal bool parentIsLeft;
 
-		private bool MaleHandsSyncFlag;
+		private bool[] MaleHandsSyncFlag = new bool[2];
 
 		private float[] lastTriggerRelease = new float[4] { 0, 0 ,0 ,0};
 	}
