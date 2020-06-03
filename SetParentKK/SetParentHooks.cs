@@ -58,6 +58,9 @@ namespace SetParentKK
 		[HarmonyPatch(typeof(VRViveController), "IsPressDown")]
 		public static bool IsPressDownPre(VRViveController __instance, ref bool __result)
 		{
+			if (!DisableParentInput.Value)
+				return true;
+			
 			if ((setParentObj?.setFlag ?? false) && setParentObj.parentController == __instance.gameObject)
 			{
 				__result = false;
@@ -74,6 +77,9 @@ namespace SetParentKK
 		[HarmonyPatch(typeof(VRViveController), "IsPressUp")]
 		public static bool IsPressUpPre(VRViveController __instance, ref bool __result)
 		{
+			if (!DisableParentInput.Value)
+				return true;
+
 			if ((setParentObj?.setFlag ?? false) && setParentObj.parentController == __instance.gameObject)
 			{
 				__result = false;

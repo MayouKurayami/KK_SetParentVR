@@ -69,6 +69,10 @@ namespace SetParentKK
 		[AcceptableValueRange(0, float.MaxValue, false)]
 		public static ConfigWrapper<float> MenuUpProximity { get; private set; }
 
+		[DisplayName("Disable Input of Parent Controller")]
+		[Description("If enabled, input for the parent controller will be turned off to prevent accidental input")]
+		public static ConfigWrapper<bool> DisableParentInput { get; private set; }
+
 
 		///
 		//////////////////// Keyboard Shortcuts /////////////////////////// 
@@ -190,6 +194,7 @@ namespace SetParentKK
 			MenuUpProximity = new ConfigWrapper<float>(nameof(MenuUpProximity), this, 0.25f);
 			StretchLimitArms = new ConfigWrapper<float>(nameof(StretchLimitArms), this, 0.5f);
 			StretchLimitLegs = new ConfigWrapper<float>(nameof(StretchLimitLegs), this, 0.7f);
+			DisableParentInput = new ConfigWrapper<bool>(nameof(DisableParentInput), this, true);
 
 			LimbReleaseKey = new SavedKeyboardShortcut(nameof(LimbReleaseKey), this, new KeyboardShortcut(KeyCode.None));
 			SetParentToggle = new SavedKeyboardShortcut(nameof(SetParentToggle), this, new KeyboardShortcut(KeyCode.None));
