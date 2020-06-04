@@ -189,7 +189,7 @@ namespace SetParentKK
 				SetControllerColliders(leftController);
 				SetControllerColliders(rightController);
 			}
-			if (SetMaleCollider.Value)
+			if (SetMaleFeetCollider.Value)
 			{
 				SetMaleFeetColliders();
 			}
@@ -565,7 +565,7 @@ namespace SetParentKK
 			//The actual parenting is taken care of by ControllerCharacterAdjustment() called from the trigger press
 			if (setFlag)
 			{
-				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentCon.Value) ? true : false;
+				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentConAlways.Value) ? true : false;
 
 				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
 				if (SetControllerCollider.Value)
@@ -609,7 +609,7 @@ namespace SetParentKK
 				if (limbs[limbIndex].AnchorObj)
 					FixLimbToggle(limbs[limbIndex]);
 
-				if (MaleHandsDisplay.Value < HideHandMode.AlwaysShow)
+				if (GropeHandsDisplay.Value < HideHandMode.AlwaysShow)
 					itemHands[limbIndex - 4].enabled = true;
 
 				foreach (SkinnedMeshRenderer mesh in controller.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
@@ -890,7 +890,7 @@ namespace SetParentKK
 			}	
 			else
 			{
-				if (HideParentCon.Value)
+				if (HideParentConAlways.Value)
 				{
 					parentController.transform.Find("Model").gameObject.SetActive(false);
 					if (SetControllerCollider.Value)
@@ -1095,7 +1095,7 @@ namespace SetParentKK
 		/// </summary>
 		private void MaleIKs()
 		{
-			bool hideGropeHands = setFlag && hFlag.mode != HFlag.EMode.aibu && MaleHandsDisplay.Value < HideHandMode.AlwaysShow;
+			bool hideGropeHands = setFlag && hFlag.mode != HFlag.EMode.aibu && GropeHandsDisplay.Value < HideHandMode.AlwaysShow;
 
 			//Algorithm for the male hands
 			for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
@@ -1114,7 +1114,7 @@ namespace SetParentKK
 					//If settings is set to auto (neither AlwaysShow or AlwaysHide), hide them only when the controller gets close
 					if (hideGropeHands)
 					{
-						if (MaleHandsDisplay.Value == HideHandMode.AlwaysHide)
+						if (GropeHandsDisplay.Value == HideHandMode.AlwaysHide)
 							itemHands[i - 4].enabled = false;
 						else if ((itemHands[i - 4].transform.position - limbs[i].AnchorObj.transform.position).magnitude > 0.2f)
 							itemHands[i - 4].enabled = true;
