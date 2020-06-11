@@ -232,19 +232,18 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("左足固定/解除", new Vector3(-26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("右足固定/解除", new Vector3(26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("左手固定/解除", new Vector3(-26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("右手固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("男の左足固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 13f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 13f, 0f), () => PushPRButton(), objRightMenuCanvas);
-			txtLimbAuto = CreateButton("手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
-			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);		
-
-			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 39f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[0], true), objRightMenuCanvas);
-			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 39f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[1], false), objRightMenuCanvas);
+			CreateButton("男の左足固定/解除", new Vector3(-26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("男の右足固定/解除", new Vector3(26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("女左足固定/解除", new Vector3(-26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
+			CreateButton("女右足固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
+			CreateButton("女左手固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
+			CreateButton("女右手固定/解除", new Vector3(26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
+			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[0], true), objRightMenuCanvas);
+			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[1], false), objRightMenuCanvas);
+			txtLimbAuto = CreateButton("女手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
+			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushPLButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushPRButton(), objRightMenuCanvas);
 
 			CreateButton("ヌク", new Vector3(-26f, 52f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
 
@@ -292,13 +291,13 @@ namespace SetParentKK
 			CreateButton("正常位", new Vector3(-26f, -39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00")), objLeftMenuCanvas);
 			CreateButton("開脚正常位", new Vector3(26f, -39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00")), objLeftMenuCanvas);
 			CreateButton("脚持つ正常位", new Vector3(-26f, -26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24")), objLeftMenuCanvas);
-			CreateButton("脚持つ(強弱差分)", new Vector3(26f, -26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas);
+			CreateButton("脚持つ(強弱あり)", new Vector3(26f, -26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas);
 
 			CreateButton("側位(片足上げ)", new Vector3(-26f, -13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06")), objLeftMenuCanvas);
 			CreateButton("机側位", new Vector3(26f, -13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16")), objLeftMenuCanvas);
 
 			CreateButton("駅弁", new Vector3(-26f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22")), objLeftMenuCanvas);
-			CreateButton("駅弁(強弱差分)", new Vector3(26f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas);
+			CreateButton("駅弁(強弱あり)", new Vector3(26f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas);
 
 			CreateButton("立位", new Vector3(-26f, 13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas);
 			CreateButton("プール", new Vector3(26f, 13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas);
@@ -317,7 +316,7 @@ namespace SetParentKK
 			CreateButton("跳び箱後背位", new Vector3(26f, 78f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
 
 			CreateButton("騎乗位", new Vector3(-26f, 91f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas);
-			CreateButton("騎乗位(強弱差分)", new Vector3(26f, 91f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
+			CreateButton("騎乗位(強弱あり)", new Vector3(26f, 91f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
 
 			CreateButton("座位対面", new Vector3(-26f, 104f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09")), objLeftMenuCanvas);
 			CreateButton("座位背面", new Vector3(26f, 104f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10")), objLeftMenuCanvas);
@@ -1004,14 +1003,14 @@ namespace SetParentKK
 			});
 			Text text = textObject.GetComponent<Text>();
 			Image image = buttonObject.AddComponent<Image>();
-			image.rectTransform.sizeDelta = new Vector2(0.24f, 0.06f);
+			image.rectTransform.sizeDelta = new Vector2(0.25f, 0.06f);
 			image.color = new Color(0.8f, 0.8f, 0.8f);
 			Button button = buttonObject.AddComponent<Button>();
 			ColorBlock colors = button.colors;
 			colors.highlightedColor = Color.red;
 			colors.pressedColor = Color.cyan;
 			button.colors = colors;
-			text.rectTransform.sizeDelta = new Vector2(0.24f, 0.06f);
+			text.rectTransform.sizeDelta = new Vector2(0.25f, 0.06f);
 			text.font = Font.CreateDynamicFontFromOSFont("Arial", 13);
 			text.fontSize = 13;
 			text.alignment = TextAnchor.MiddleCenter;
