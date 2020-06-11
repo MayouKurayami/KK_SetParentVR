@@ -108,74 +108,74 @@ namespace SetParentKK
 			BaseData male_leg_R_bd = maleFBBIK.solver.rightFootEffector.target.GetComponent<BaseData>();
 
 			limbs[(int)LimbName.FemaleLeftHand] = new Limb(
-				LimbName.FemaleLeftHand, 
-				null, 
-				female_cf_pv_hand_L, 
-				femaleFBBIK.solver.leftHandEffector, 
-				femaleFBBIK.solver.leftHandEffector.target, 
-				female_hand_L_bd, 
-				femaleFBBIK.solver.leftArmChain);
+				limbpart: LimbName.FemaleLeftHand, 
+				anchorObj: null, 
+				animPos: female_cf_pv_hand_L, 
+				effector: femaleFBBIK.solver.leftHandEffector, 
+				origTarget: femaleFBBIK.solver.leftHandEffector.target, 
+				targetBone: female_hand_L_bd, 
+				chain: femaleFBBIK.solver.leftArmChain);
 
 			limbs[(int)LimbName.FemaleRightHand] = new Limb(
-				LimbName.FemaleRightHand, 
-				null, 
-				female_cf_pv_hand_R, 
-				femaleFBBIK.solver.rightHandEffector, 
-				femaleFBBIK.solver.rightHandEffector.target, 
-				female_hand_R_bd, 
-				femaleFBBIK.solver.rightArmChain);
+				limbpart: LimbName.FemaleRightHand,
+				anchorObj: null,
+				animPos: female_cf_pv_hand_R,
+				effector: femaleFBBIK.solver.rightHandEffector,
+				origTarget: femaleFBBIK.solver.rightHandEffector.target,
+				targetBone: female_hand_R_bd,
+				chain: femaleFBBIK.solver.rightArmChain);
 
 			limbs[(int)LimbName.FemaleLeftFoot] = new Limb(
-				LimbName.FemaleLeftFoot, 
-				null, 
-				female_cf_pv_leg_L, 
-				femaleFBBIK.solver.leftFootEffector, 
-				femaleFBBIK.solver.leftFootEffector.target, 
-				female_leg_L_bd, 
-				femaleFBBIK.solver.leftLegChain);
+				limbpart: LimbName.FemaleLeftFoot,
+				anchorObj: null,
+				animPos: female_cf_pv_leg_L,
+				effector: femaleFBBIK.solver.leftFootEffector,
+				origTarget: femaleFBBIK.solver.leftFootEffector.target,
+				targetBone: female_leg_L_bd,
+				chain: femaleFBBIK.solver.leftLegChain);
 
 			limbs[(int)LimbName.FemaleRightFoot] = new Limb(
-				LimbName.FemaleRightFoot, 
-				null, 
-				female_cf_pv_leg_R, 
-				femaleFBBIK.solver.rightFootEffector, 
-				femaleFBBIK.solver.rightFootEffector.target, 
-				female_leg_R_bd, 
-				femaleFBBIK.solver.rightLegChain);
+				limbpart: LimbName.FemaleRightFoot,
+				anchorObj: null,
+				animPos: female_cf_pv_leg_R,
+				effector: femaleFBBIK.solver.rightFootEffector,
+				origTarget: femaleFBBIK.solver.rightFootEffector.target,
+				targetBone: female_leg_R_bd,
+				chain: femaleFBBIK.solver.rightLegChain);
 
 			limbs[(int)LimbName.MaleLeftHand] = new Limb(
-				LimbName.MaleLeftHand, 
-				null, 
-				male_cf_pv_hand_L, 
-				maleFBBIK.solver.leftHandEffector, 
-				maleFBBIK.solver.leftHandEffector.target, 
-				male_hand_L_bd,
-				maleFBBIK.solver.leftArmChain);
+				limbpart: LimbName.MaleLeftHand,
+				anchorObj: null,
+				animPos: male_cf_pv_hand_L,
+				effector: maleFBBIK.solver.leftHandEffector,
+				origTarget: maleFBBIK.solver.leftHandEffector.target,
+				targetBone: male_hand_L_bd,
+				chain: maleFBBIK.solver.leftArmChain);
 
 			limbs[(int)LimbName.MaleRightHand] = new Limb(
-				LimbName.MaleRightHand, 
-				null, 
-				male_cf_pv_hand_R, 
-				maleFBBIK.solver.rightHandEffector, 
-				maleFBBIK.solver.rightHandEffector.target, 
-				male_hand_R_bd,
-				maleFBBIK.solver.rightArmChain);
+				limbpart: LimbName.MaleRightHand,
+				anchorObj: null,
+				animPos: male_cf_pv_hand_R,
+				effector: maleFBBIK.solver.rightHandEffector,
+				origTarget: maleFBBIK.solver.rightHandEffector.target,
+				targetBone: male_hand_R_bd,
+				chain: maleFBBIK.solver.rightArmChain);
 
 			limbs[(int)LimbName.MaleLeftFoot] = new Limb(
-				LimbName.MaleLeftFoot, 
-				null, 
-				male_cf_pv_leg_L, 
-				maleFBBIK.solver.leftFootEffector, 
-				maleFBBIK.solver.leftFootEffector.target, 
-				male_leg_L_bd);
+				limbpart: LimbName.MaleLeftFoot,
+				anchorObj: null,
+				animPos: male_cf_pv_leg_L,
+				effector: maleFBBIK.solver.leftFootEffector,
+				origTarget: maleFBBIK.solver.leftFootEffector.target,
+				targetBone: male_leg_L_bd);
 
 			limbs[(int)LimbName.MaleRightFoot] = new Limb(
-				LimbName.MaleRightFoot, 
-				null, 
-				male_cf_pv_leg_R, 
-				maleFBBIK.solver.rightFootEffector, 
-				maleFBBIK.solver.rightFootEffector.target, 
-				male_leg_R_bd);
+				limbpart: LimbName.MaleRightFoot,
+				anchorObj: null,
+				animPos: male_cf_pv_leg_R,
+				effector: maleFBBIK.solver.rightFootEffector,
+				origTarget: maleFBBIK.solver.rightFootEffector.target,
+				targetBone: male_leg_R_bd);
 
 
 			SetBodyColliders();
