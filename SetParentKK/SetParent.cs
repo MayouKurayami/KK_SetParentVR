@@ -40,10 +40,16 @@ namespace SetParentKK
 			hFlag = hSprite.flags;
 			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			cameraEye = hSprite.managerVR.objCamera;
-			leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
-			rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
-			itemHands[0] = Traverse.Create(leftController.transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
-			itemHands[1] = Traverse.Create(rightController.transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+			controllers = new Dictionary<Side, GameObject>()
+			{
+				{ Side.Left, hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject },
+				{ Side.Right, hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject }
+			};
+
+			controllers[Side.Left] = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
+			controllers[Side.Right] = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
+			itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+			itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 
 			male = (ChaControl)Traverse.Create(hSprite).Field("male").GetValue();
 			female = ((List<ChaControl>)Traverse.Create(hSprite).Field("females").GetValue())[0];
@@ -94,12 +100,7 @@ namespace SetParentKK
 			Transform male_cf_pv_leg_R = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_R");
 			Transform male_cf_pv_leg_L = male_cf_n_height.Find("cf_pv_root/cf_pv_leg_L");
 
-			male_cf_pv_shoulder_R = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_R");
-			male_cf_pv_shoulder_L = male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_L");
 			male_cf_pv_hips = male_cf_n_height.Find("cf_pv_root/cf_pv_hips");
-
-			male_shoulder_R_bd = maleFBBIK.solver.rightShoulderEffector.target.GetComponent<BaseData>();
-			male_shoulder_L_bd = maleFBBIK.solver.leftShoulderEffector.target.GetComponent<BaseData>();
 			male_hips_bd = maleFBBIK.solver.bodyEffector.target.GetComponent<BaseData>();
 
 			BaseData male_hand_L_bd = maleFBBIK.solver.leftHandEffector.target.GetComponent<BaseData>();
@@ -150,7 +151,10 @@ namespace SetParentKK
 				effector: maleFBBIK.solver.leftHandEffector,
 				origTarget: maleFBBIK.solver.leftHandEffector.target,
 				targetBone: male_hand_L_bd,
-				chain: maleFBBIK.solver.leftArmChain);
+				chain: maleFBBIK.solver.leftArmChain,
+				parentJointBone: maleFBBIK.solver.leftShoulderEffector.target.GetComponent<BaseData>(),
+				parentJointEffector: maleFBBIK.solver.leftShoulderEffector,
+				parentJointAnimPos: male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_L"));
 
 			limbs[(int)LimbName.MaleRightHand] = new Limb(
 				limbpart: LimbName.MaleRightHand,
@@ -159,7 +163,10 @@ namespace SetParentKK
 				effector: maleFBBIK.solver.rightHandEffector,
 				origTarget: maleFBBIK.solver.rightHandEffector.target,
 				targetBone: male_hand_R_bd,
-				chain: maleFBBIK.solver.rightArmChain);
+				chain: maleFBBIK.solver.rightArmChain,
+				parentJointBone: maleFBBIK.solver.rightShoulderEffector.target.GetComponent<BaseData>(),
+				parentJointEffector: maleFBBIK.solver.rightShoulderEffector,
+				parentJointAnimPos: male_cf_n_height.Find("cf_pv_root/cf_pv_hips/cf_ik_hips/cf_kk_shoulder/cf_pv_shoulder_R"));
 
 			limbs[(int)LimbName.MaleLeftFoot] = new Limb(
 				limbpart: LimbName.MaleLeftFoot,
@@ -186,9 +193,10 @@ namespace SetParentKK
 
 			if (SetControllerCollider.Value)
 			{
-				SetControllerColliders(leftController);
-				SetControllerColliders(rightController);
+				foreach (KeyValuePair<Side, GameObject> pair in controllers)
+					SetControllerColliders(pair.Value);
 			}
+
 			if (SetMaleFeetCollider.Value)
 			{
 				SetMaleFeetColliders();
@@ -238,12 +246,12 @@ namespace SetParentKK
 			CreateButton("女右足固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
 			CreateButton("女左手固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
 			CreateButton("女右手固定/解除", new Vector3(26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[0], true), objRightMenuCanvas);
-			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!MaleHandsSyncFlag[1], false), objRightMenuCanvas);
+			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleLeftHand].AnchorObj, LimbName.MaleLeftHand), objRightMenuCanvas);
+			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleRightHand].AnchorObj, LimbName.MaleRightHand), objRightMenuCanvas);
 			txtLimbAuto = CreateButton("女手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
 			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushPRButton(), objRightMenuCanvas);			
 
 			CreateButton("ヌク", new Vector3(-26f, 52f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
 
@@ -567,7 +575,8 @@ namespace SetParentKK
 				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentConAlways.Value) ? true : false;
 
 				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
-				if (SetControllerCollider.Value)
+
+				if (SetControllerCollider.Value && !IsMaleSideSync(parentIsLeft))
 					parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = parentHandShow;
 			}
 		}
@@ -576,46 +585,52 @@ namespace SetParentKK
 		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
 		/// </summary>
 		/// <param name="enable">To enable or disable the functionality</param>
-		private void SyncMaleHandsToggle(bool enable, bool left)
+		private void SyncMaleHandsToggle(bool enable, LimbName limb)
 		{
 			if (!setFlag || hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
 				return;
 
-			BaseData shoulderBD = left ? male_shoulder_L_bd : male_shoulder_R_bd;
-			IKEffector shoulderEffector = left ? maleFBBIK.solver.leftShoulderEffector : maleFBBIK.solver.rightShoulderEffector;
-			int limbIndex = left ? (int)LimbName.MaleLeftHand : (int)LimbName.MaleRightHand;
-			GameObject controller = left ? leftController : rightController;
+			if (limb < LimbName.MaleLeftHand || limb > LimbName.MaleRightHand)
+				return;
+
+			Side sideIndex = (Side)(limb - 4);
 
 			if (enable)
 			{
-				FixLimbToggle(limbs[limbIndex]);
-				limbs[limbIndex].AnchorObj.transform.parent = controller.transform;
+				FixLimbToggle(limbs[(int)limb]);
+				limbs[(int)limb].AnchorObj.transform.parent = controllers[sideIndex].transform;
 
 				//Reposition anchor to align the male hand model to the controller
-				limbs[limbIndex].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
-				limbs[limbIndex].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, left ? 90f : -90f, 0f) * Quaternion.Euler(0, left ? -30f : 30f, 0f);
+				limbs[(int)limb].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
+				limbs[(int)limb].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, sideIndex == Side.Left ? 90f : -90f, 0f) * Quaternion.Euler(0, sideIndex == Side.Left ? -30f : 30f, 0f);
 
 				//Hide controller hand model
-				foreach (SkinnedMeshRenderer mesh in controller.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
 					mesh.enabled = false;
 
 				//Restore male shoulder parameters to default as shoulder fixing will be disabled when hands are anchored to the controllers
-				shoulderBD.bone = null;
-				shoulderEffector.positionWeight = 0f;
+				limbs[(int)limb].ParentJointBone.bone = null;
+				limbs[(int)limb].ParentJointEffector.positionWeight = 0f;
+
+				//Enable collider for the hand that is being synced, no reason to hide it as it is now visible
+				if (SetControllerCollider.Value)
+					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
 			}
 			else
 			{
-				if (limbs[limbIndex].AnchorObj)
-					FixLimbToggle(limbs[limbIndex]);
+				if (limbs[(int)limb].AnchorObj)
+					FixLimbToggle(limbs[(int)limb]);
 
 				if (GropeHandsDisplay.Value < HideHandMode.AlwaysShow)
-					itemHands[limbIndex - 4].enabled = true;
+					itemHands[(int)limb - 4].enabled = true;
 
-				foreach (SkinnedMeshRenderer mesh in controller.transform.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
 					mesh.enabled = true;
-			}
 
-			MaleHandsSyncFlag[left ? 0 : 1] = enable;
+				//Disable the collider if config is set to hide parent controller and the hand is of that controller
+				if (SetControllerCollider.Value && controllers[sideIndex] == parentController && (HideParentConAlways.Value || SetParentMode.Value < ParentMode.AnimationOnly))
+					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+			}
 		}
 
 		public void LateUpdate()
@@ -633,28 +648,28 @@ namespace SetParentKK
 			//Find and assign left and right controllers variables if they are null
 			if (leftDevice == null)
 			{
-				if (leftController == null)
+				if (controllers[Side.Left] == null)
 				{
-					leftController = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
+					controllers[Side.Left] = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
 					if (SetControllerCollider.Value)
-						SetControllerColliders(leftController);
+						SetControllerColliders(controllers[Side.Left]);
 
-					itemHands[0] = Traverse.Create(leftController.transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+					itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 				}
-				leftVVC = leftController.GetComponent<VRViveController>();
+				leftVVC = controllers[Side.Left].GetComponent<VRViveController>();
 				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
 			}
 			if (rightDevice == null)
 			{
-				if (rightController == null)
+				if (controllers[Side.Right] == null)
 				{
-					rightController = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
+					controllers[Side.Right] = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
 					if (SetControllerCollider.Value)
-						SetControllerColliders(rightController);
+						SetControllerColliders(controllers[Side.Right]);
 
-					itemHands[1] = Traverse.Create(rightController.transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
+					itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 				}
-				rightVVC = rightController.GetComponent<VRViveController>();
+				rightVVC = controllers[Side.Right].GetComponent<VRViveController>();
 				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
 			}
 
@@ -692,9 +707,9 @@ namespace SetParentKK
 				{
 					Vector3 vector;
 					if (parentIsLeft)
-						vector = cameraEye.transform.position - rightController.transform.position;
+						vector = cameraEye.transform.position - controllers[Side.Right].transform.position;
 					else
-						vector = cameraEye.transform.position - leftController.transform.position;
+						vector = cameraEye.transform.position - controllers[Side.Left].transform.position;
 
 					if (vector.magnitude <= MenuUpProximity.Value)
 					{
@@ -751,19 +766,19 @@ namespace SetParentKK
 				if (LeftGripPressing())
 					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
 				else
-					ControllerLimbActions(leftController, IsDoubleClick(TriggerState.Left, 0.25f));
+					ControllerLimbActions(controllers[Side.Left], IsDoubleClick(TriggerState.Left, 0.25f));
 			}				
 			if (RightTriggerRelease())
 			{
 				if (RightGripPressing())
 					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
 				else
-					ControllerLimbActions(rightController, IsDoubleClick(TriggerState.Right, 0.25f));
+					ControllerLimbActions(controllers[Side.Right], IsDoubleClick(TriggerState.Right, 0.25f));
 			}			
 
 			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
 			if (Input.GetKeyDown(LimbReleaseKey.Value.MainKey) && LimbReleaseKey.Value.Modifiers.All(x => Input.GetKey(x)))
-				ControllerLimbActions(leftController, doubleClick: true, forceAll: true);
+				ControllerLimbActions(controllers[Side.Left], doubleClick: true, forceAll: true);
 			
 			if (Input.GetKeyDown(MaleFeetToggle.Value.MainKey) && MaleFeetToggle.Value.Modifiers.All(x => Input.GetKey(x)))
 				ControllerMaleFeetToggle();			
@@ -877,27 +892,31 @@ namespace SetParentKK
 			}
 			parentIsLeft = _parentIsLeft;
 			nowAnimState = hFlag.nowAnimStateName;		
-			parentController = _parentIsLeft ? leftController : rightController;
+			parentController = _parentIsLeft ? controllers[Side.Left] : controllers[Side.Right];
 
 			if (femaleSpinePos == null)
 			{
 				femaleSpinePos = new GameObject("femaleSpinePos");
 			}
+
 			if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
 			{
-				SetParentToController(parentController, femaleSpinePos, femaleBase, true);
+				SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 			}	
 			else
 			{
+				femaleSpinePos.transform.position = femaleBase.transform.position;
+				femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
+
+				//Since we're in AnimationOnly mode, we don't need to hide the parent controller and disable its collider
+				//unless the config HideParentConAlways is set to true, in which case we hide the parent controller, and only disable its collider if male hand is not sync'ed to it.
 				if (HideParentConAlways.Value)
 				{
 					parentController.transform.Find("Model").gameObject.SetActive(false);
-					if (SetControllerCollider.Value)
+
+					if (SetControllerCollider.Value && !IsMaleSideSync(parentIsLeft))
 						parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 				}
-
-				femaleSpinePos.transform.position = femaleBase.transform.position;
-				femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
 			}
 			
 			for (int i = 0; i < 20; i++)
@@ -917,13 +936,13 @@ namespace SetParentKK
 			}
 			if (SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMode.Value == ParentMode.AnimationOnly)
 			{
-				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, leftController, rightController);
+				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
 			}
 
 			if (SyncMaleHands.Value)
 			{
-				SyncMaleHandsToggle(enable: true, left: true);
-				SyncMaleHandsToggle(enable: true, left: false);
+				for (LimbName i = LimbName.MaleLeftHand; i <= LimbName.MaleRightHand; i++)
+					SyncMaleHandsToggle(enable: true, i);
 			}
 
 			setFlag = true;
@@ -946,12 +965,13 @@ namespace SetParentKK
 
 			LimbAutoAttachToggle(true);
 
-			leftController.transform.Find("Model").gameObject.SetActive(true);
-			rightController.transform.Find("Model").gameObject.SetActive(true);
+			foreach (KeyValuePair<Side, GameObject> pair in controllers)
+				pair.Value.transform.Find("Model").gameObject.SetActive(true);
+
 			if (SetControllerCollider.Value)
 			{
-				leftController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
-				rightController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
+				foreach (KeyValuePair<Side, GameObject> pair in controllers)
+					pair.Value.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
 			}
 			
 			if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
@@ -959,13 +979,12 @@ namespace SetParentKK
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
 
-			SyncMaleHandsToggle(enable: false, left: true);
-			SyncMaleHandsToggle(enable: false, left: false);
-
-			male_shoulder_R_bd.bone = null;
-			male_shoulder_L_bd.bone = null;
-			maleFBBIK.solver.rightShoulderEffector.positionWeight = 0f;
-			maleFBBIK.solver.leftShoulderEffector.positionWeight = 0f;
+			for (LimbName i = LimbName.MaleLeftHand; i <= LimbName.MaleRightHand; i++)
+			{
+				SyncMaleHandsToggle(enable: false, i);
+				limbs[(int)i].ParentJointBone.bone = null;
+				limbs[(int)i].ParentJointEffector.positionWeight = 0f;
+			}				
 
 			male_hips_bd.bone = null;
 			maleFBBIK.solver.bodyEffector.positionWeight = 0f;
@@ -1141,6 +1160,14 @@ namespace SetParentKK
 					limbs[i].Effector.positionWeight = 1f;
 					limbs[i].Effector.rotationWeight = 1f;
 				}
+
+				//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
+				//Does not run if male hands are in sync with controllers to allow further movement of the hands
+				if (setFlag)
+				{
+					limbs[i].ParentJointBone.bone = limbs[i].ParentJointAnimPos;
+					limbs[i].ParentJointEffector.positionWeight = 1f;
+				}
 			}
 
 			//Algorithm for the male feet
@@ -1159,19 +1186,6 @@ namespace SetParentKK
 			
 			if (setFlag)
 			{
-				//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
-				//Does not run if male hands are in sync with controllers to allow further movement of the hands
-				if (!MaleHandsSyncFlag[0])
-				{			
-					male_shoulder_L_bd.bone = male_cf_pv_shoulder_L;
-					maleFBBIK.solver.leftShoulderEffector.positionWeight = 1f;
-				}
-				if (!MaleHandsSyncFlag[1])
-				{
-					male_shoulder_R_bd.bone = male_cf_pv_shoulder_R;
-					maleFBBIK.solver.rightShoulderEffector.positionWeight = 1f;
-				}
-
 				//Fix male hips to animation position to prevent male genital from drifting due to pulling from limb chains
 				male_hips_bd.bone = male_cf_pv_hips;
 				maleFBBIK.solver.bodyEffector.positionWeight = 1f;
@@ -1408,19 +1422,26 @@ namespace SetParentKK
 				animSpeedController.SetController(_rightController, _leftController, this);
 		}
 
-		private void SetParentToController (GameObject controller, GameObject parentDummy, GameObject target, bool hideModel)
+		private void SetParentToController (bool isLeft, GameObject parentDummy, GameObject target, bool hideModel)
 		{
-			parentDummy.transform.parent = controller.transform;
+			Side side = isLeft ? Side.Left : Side.Right;
+			
+			parentDummy.transform.parent = controllers[side].transform;
 			if (hideModel)
 			{
-				controller.transform.Find("Model").gameObject.SetActive(false);
-				if (SetControllerCollider.Value)
-					controller.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				controllers[side].transform.Find("Model").gameObject.SetActive(false);
+
+				LimbName limb = isLeft ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
+				if (SetControllerCollider.Value && !limbs[(int)limb].AnchorObj)
+				{
+					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				}		
 			}
 					
 			parentDummy.transform.position = target.transform.position;
 			parentDummy.transform.rotation = target.transform.rotation;
 		}
+
 		/// <summary>
 		/// Handles transition between controller-to-character parenting states
 		/// </summary>
@@ -1446,12 +1467,12 @@ namespace SetParentKK
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						femaleSpinePos.transform.parent = null;
 					else
-						SetParentToController(parentController, femaleSpinePos, femaleBase, true);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 					break;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value != ParentMode.PositionOnly)
-						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
+						AddAnimSpeedController(obj_chaF_001, parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						femaleSpinePos.transform.parent = null;
 					male_p_cf_bodybone.transform.parent = male.objTop.transform;
@@ -1459,9 +1480,9 @@ namespace SetParentKK
 
 				case CtrlState.Stationary:
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
-						SetParentToController(parentController, femaleSpinePos, femaleBase, true);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 					if (SetParentMode.Value != ParentMode.PositionOnly)
-						AddAnimSpeedController(obj_chaF_001, parentIsLeft, leftController, rightController);
+						AddAnimSpeedController(obj_chaF_001, parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
 					break;
 			}
 			
@@ -1472,16 +1493,16 @@ namespace SetParentKK
 					return CtrlState.None;
 
 				case CtrlState.MaleControl:
-					male_p_cf_bodybone.transform.parent = parentIsLeft ? rightController.transform : leftController.transform;
+					male_p_cf_bodybone.transform.parent = parentIsLeft ? controllers[Side.Right].transform : controllers[Side.Left].transform;
 					return CtrlState.MaleControl;
 
 				case CtrlState.FemaleControl:
-					SetParentToController(parentIsLeft ? rightController : leftController, femaleSpinePos, femaleBase, false);
+					SetParentToController(!parentIsLeft, femaleSpinePos, femaleBase, false);
 					return CtrlState.FemaleControl;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						SetParentToController(parentController, femaleSpinePos, femaleBase, false);
+						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
@@ -1628,6 +1649,18 @@ namespace SetParentKK
 				return true;
 			}
 		}
+
+		/// <summary>
+		/// Check if a specified male limb is synchronized to the corresponding controller
+		/// </summary>
+		/// <param name="side">The particular side to check</param>
+		/// <returns></returns>
+		internal bool IsMaleSideSync(bool side)
+		{
+			LimbName parentLimb = side ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
+
+			return limbs[(int)parentLimb].AnchorObj;
+		}
 		
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character
@@ -1661,6 +1694,12 @@ namespace SetParentKK
 			RightGripped
 		}
 
+		internal enum Side
+		{
+			Left,
+			Right
+		}
+
 		internal class Limb
 		{
 			internal GameObject AnchorObj;
@@ -1672,7 +1711,13 @@ namespace SetParentKK
 			internal LimbName LimbPart;
 			internal BaseData TargetBone;
 
-			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, BaseData targetBone, FBIKChain chain = null, bool fix = false)
+			internal BaseData ParentJointBone;
+			internal IKEffector ParentJointEffector;
+			internal Transform ParentJointAnimPos;
+
+			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, 
+				BaseData targetBone, FBIKChain chain = null, BaseData parentJointBone = null, IKEffector parentJointEffector = null, 
+				Transform parentJointAnimPos = null, bool fix = false)
 			{
 				LimbPart = limbpart;
 				AnchorObj = anchorObj;
@@ -1682,6 +1727,10 @@ namespace SetParentKK
 				OrigTarget = origTarget;
 				TargetBone = targetBone;
 				Fixed = fix;
+
+				ParentJointBone = parentJointBone;
+				ParentJointEffector = parentJointEffector;
+				ParentJointAnimPos = parentJointAnimPos;
 			}
 		}
 
@@ -1706,10 +1755,8 @@ namespace SetParentKK
 
 		private string nowAnimState = "";
 
-		private GameObject leftController;
-
-		private GameObject rightController;
-
+		private Dictionary<Side, GameObject> controllers;
+		
 		internal GameObject parentController;
 
 		private GameObject cameraEye;
@@ -1778,15 +1825,7 @@ namespace SetParentKK
 
 		private GameObject maleCrotchPos;
 
-		private Transform male_cf_pv_shoulder_R;
-
-		private Transform male_cf_pv_shoulder_L;
-
 		private Transform male_cf_pv_hips;
-
-		private BaseData male_shoulder_R_bd;
-
-		private BaseData male_shoulder_L_bd;
 
 		private BaseData male_hips_bd;
 
@@ -1813,8 +1852,6 @@ namespace SetParentKK
 		internal bool limbAutoAttach = true;
 
 		internal bool parentIsLeft;
-
-		private bool[] MaleHandsSyncFlag = new bool[2];
 
 		private float[] lastTriggerRelease = new float[4] { 0, 0 ,0 ,0};
 	}
