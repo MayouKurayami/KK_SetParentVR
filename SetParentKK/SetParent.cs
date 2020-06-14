@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using Illusion.Component.Correct;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using VRTK;
-using static SetParentKK.SetParentLoader;
 using Harmony;
 using RootMotion.FinalIK;
+using static SetParentKK.KK_SetParentVR;
 
 namespace SetParentKK
 {
-	public class SetParent : MonoBehaviour
+	public partial class SetParent : MonoBehaviour
 	{
 		const int SmoothBuffer = 20;
+
+
 		public void Init(HSprite _hsprite, List<MotionIK> _lstMotionIK)
 		{
 			hSprite = _hsprite;
@@ -186,10 +183,9 @@ namespace SetParentKK
 
 
 			SetBodyColliders();
+
 			foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
-			{
 				SetObjectColliders(transform);
-			}
 
 			if (SetControllerCollider.Value)
 			{
@@ -198,440 +194,9 @@ namespace SetParentKK
 			}
 
 			if (SetMaleFeetCollider.Value)
-			{
 				SetMaleFeetColliders();
-			}
-		}
-
-		private void InitCanvas()
-		{
-			if (GazeControl.Value)
-			{
-				VRTK_UIPointer vrtk_UIPointer = cameraEye.AddComponent<VRTK_UIPointer>();
-				vrtk_UIPointer.activationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
-				vrtk_UIPointer.activationMode = VRTK_UIPointer.ActivationMethods.AlwaysOn;
-				vrtk_UIPointer.selectionButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
-				vrtk_UIPointer.clickMethod = VRTK_UIPointer.ClickMethods.ClickOnButtonUp;
-				vrtk_UIPointer.clickAfterHoverDuration = 1f;
-				vrtk_UIPointer.controller = cameraEye.AddComponent<VRTK_ControllerEvents>();
-			}
-
-			//Initialize right menu
-			objRightMenuCanvas = new GameObject("CanvasSetParent", new Type[]
-			{
-				typeof(Canvas)
-			});
-			canvasRight = objRightMenuCanvas.GetComponent<Canvas>();
-			objRightMenuCanvas.AddComponent<GraphicRaycaster>();
-			objRightMenuCanvas.AddComponent<VRTK_UICanvas>();
-			objRightMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasRightScaler = objRightMenuCanvas.AddComponent<CanvasScaler>();
-			canvasRightScaler.dynamicPixelsPerUnit = 20000f;
-			canvasRightScaler.referencePixelsPerUnit = 80000f;
-			canvasRight.renderMode = RenderMode.WorldSpace;
-			objRightMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			eventSystemSetParent = new GameObject("CanvasSetParentEventSystem", new Type[]
-			{
-				typeof(EventSystem)
-			});
-			eventSystemSetParent.AddComponent<StandaloneInputModule>();
-			eventSystemSetParent.transform.SetParent(objRightMenuCanvas.transform);
-
-			////////////////
-			//Populate right side floating menu with buttons
-			////////////////
-			CreateButton("男の左足固定/解除", new Vector3(-26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("女左足固定/解除", new Vector3(-26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("女右足固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
-			CreateButton("女左手固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
-			CreateButton("女右手固定/解除", new Vector3(26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleLeftHand].AnchorObj, LimbName.MaleLeftHand), objRightMenuCanvas);
-			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleRightHand].AnchorObj, LimbName.MaleRightHand), objRightMenuCanvas);
-			txtLimbAuto = CreateButton("女手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => LimbAutoAttachToggle(), objRightMenuCanvas);
-			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => ParentModeChangeButton(), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushPRButton(), objRightMenuCanvas);			
-
-			CreateButton("ヌク", new Vector3(-26f, 52f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
-
-			CreateButton("モーション 強弱", new Vector3(-26f, 65f, 0f), () => PushMotionChangeButton(), objRightMenuCanvas);
-			CreateButton("モーション 開始/停止", new Vector3(26f, 65f, 0f), () => PushModeChangeButton(), objRightMenuCanvas);
 			
-			CreateButton("中に出すよ", new Vector3(-26f, 78f, 0f), () => PushFIButton(), objRightMenuCanvas);
-			CreateButton("外に出すよ", new Vector3(26f, 78f, 0f), () => PushFOButton(), objRightMenuCanvas);
-			CreateButton("入れるよ", new Vector3(-26f, 91f, 0f), () => hSprite.OnInsertClick(), objRightMenuCanvas);
-			CreateButton("イレル", new Vector3(26f, 91f, 0f), () => hSprite.OnInsertNoVoiceClick(), objRightMenuCanvas);
-			CreateButton("アナル入れるよ", new Vector3(-26f, 104f, 0f), () => hSprite.OnInsertAnalClick(), objRightMenuCanvas);
-			CreateButton("アナルイレル", new Vector3(26f, 104f, 0f), () => hSprite.OnInsertAnalNoVoiceClick(), objRightMenuCanvas);
-
-			Vector3 point = femaleAim.transform.position - cameraEye.transform.position;
-			point.y = 0f;
-			point.Normalize();
-			canvasRight.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, 90f, 0f) * point * 1.5f;
-			canvasRight.transform.forward = (canvasRight.transform.position - cameraEye.transform.position).normalized;
-
-
-			//Initialize left menu
-			objLeftMenuCanvas = new GameObject("CanvasMotion", new Type[]
-			{
-				typeof(Canvas)
-			});
-			canvasLeft = objLeftMenuCanvas.GetComponent<Canvas>();
-			objLeftMenuCanvas.AddComponent<GraphicRaycaster>();
-			objLeftMenuCanvas.AddComponent<VRTK_UICanvas>();
-			objLeftMenuCanvas.AddComponent<VRTK_UIGraphicRaycaster>();
-			canvasLeftScaler = objLeftMenuCanvas.AddComponent<CanvasScaler>();
-			canvasLeftScaler.dynamicPixelsPerUnit = 20000f;
-			canvasLeftScaler.referencePixelsPerUnit = 80000f;
-			canvasLeft.renderMode = RenderMode.WorldSpace;
-			objLeftMenuCanvas.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-			eventSystemMotion = new GameObject("CanvasEventSystemMotion", new Type[]
-			{
-				typeof(EventSystem)
-			});
-			eventSystemMotion.AddComponent<StandaloneInputModule>();
-			eventSystemMotion.transform.SetParent(objLeftMenuCanvas.transform);
-
-			////////////////
-			//Populate left side floating menu with buttons
-			////////////////
-			CreateButton("正常位", new Vector3(-26f, -39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_00")), objLeftMenuCanvas);
-			CreateButton("開脚正常位", new Vector3(26f, -39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n00")), objLeftMenuCanvas);
-			CreateButton("脚持つ正常位", new Vector3(-26f, -26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n24")), objLeftMenuCanvas);
-			CreateButton("脚持つ(強弱あり)", new Vector3(26f, -26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_06_00.unity3d", "khs_f_n23")), objLeftMenuCanvas);
-
-			CreateButton("側位(片足上げ)", new Vector3(-26f, -13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n06")), objLeftMenuCanvas);
-			CreateButton("机側位", new Vector3(26f, -13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n16")), objLeftMenuCanvas);
-
-			CreateButton("駅弁", new Vector3(-26f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n22")), objLeftMenuCanvas);
-			CreateButton("駅弁(強弱あり)", new Vector3(26f, 0f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n08")), objLeftMenuCanvas);
-
-			CreateButton("立位", new Vector3(-26f, 13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n07")), objLeftMenuCanvas);
-			CreateButton("プール", new Vector3(26f, 13f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n20")), objLeftMenuCanvas);
-			
-			CreateButton("跪く後背位", new Vector3(-26f, 26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_02")), objLeftMenuCanvas);
-			CreateButton("腕引っ張り後背位", new Vector3(26f, 26f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n02")), objLeftMenuCanvas);
-			CreateButton("椅子に後背位", new Vector3(-26f, 39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_11")), objLeftMenuCanvas);
-			CreateButton("椅子腕引っ張り後背位", new Vector3(26f, 39f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n11")), objLeftMenuCanvas);
-			CreateButton("壁に後背位", new Vector3(-26f, 52f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_18")), objLeftMenuCanvas);
-			CreateButton("壁に片足上げ後背位", new Vector3(26f, 52f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n18")), objLeftMenuCanvas);
-
-			CreateButton("フェンス後背位", new Vector3(-26f, 65f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n21")), objLeftMenuCanvas);
-			CreateButton("壁に押し付け後背位", new Vector3(26f, 65f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_20_00.unity3d", "khs_f_n28")), objLeftMenuCanvas);
-
-			CreateButton("寝後背位", new Vector3(-26f, 78f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n26")), objLeftMenuCanvas);
-			CreateButton("跳び箱後背位", new Vector3(26f, 78f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_12_00.unity3d", "khs_f_n25")), objLeftMenuCanvas);
-
-			CreateButton("騎乗位", new Vector3(-26f, 91f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_13_00.unity3d", "khs_f_n27")), objLeftMenuCanvas);
-			CreateButton("騎乗位(強弱あり)", new Vector3(26f, 91f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n04")), objLeftMenuCanvas);	
-
-			CreateButton("座位対面", new Vector3(-26f, 104f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n09")), objLeftMenuCanvas);
-			CreateButton("座位背面", new Vector3(26f, 104f, 0f), () => StartCoroutine(ChangeMotion("h/anim/female/02_00_00.unity3d", "khs_f_n10")), objLeftMenuCanvas);
-			
-
-			point = femaleAim.transform.position - cameraEye.transform.position;
-			point.y = 0f;
-			point.Normalize();
-			canvasLeft.transform.position = new Vector3(femaleAim.transform.position.x, cameraEye.transform.position.y - 0.4f, femaleAim.transform.position.z) + Quaternion.Euler(0f, -90f, 0f) * point * 1.5f;
-			canvasLeft.transform.forward = (canvasLeft.transform.position - cameraEye.transform.position).normalized;
-		}
-
-		private void SetBodyColliders()
-		{
-			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
-			{
-				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
-				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
-				collider.transform.parent = limbs[i].Effector.bone;
-				collider.transform.localPosition = Vector3.zero;
-			}
-
-			shoulderCollider = new GameObject("SPCollider");
-			shoulderCollider.transform.parent = cameraEye.transform;
-			shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
-			shoulderCollider.transform.localRotation = Quaternion.identity;
-			BoxCollider boxCollider2 = shoulderCollider.AddComponent<BoxCollider>();
-			boxCollider2.isTrigger = true;
-			boxCollider2.center = Vector3.zero;
-			boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
-			shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
-		}
-
-		private void SetControllerColliders(GameObject controller)
-		{
-			GameObject CtrlCollider = new GameObject("ControllerCollider");
-			CtrlCollider.transform.parent = controller.transform;
-			CtrlCollider.transform.localPosition = Vector3.zero;
-			CtrlCollider.transform.localRotation = Quaternion.identity;
-			SphereCollider sphereCollider = CtrlCollider.AddComponent<SphereCollider>();
-			sphereCollider.isTrigger = true;
-			sphereCollider.center = Vector3.zero;
-			sphereCollider.radius = 0.05f;
-			CtrlCollider.AddComponent<Rigidbody>().isKinematic = true;
-		}
-
-		private void SetMaleFeetColliders()
-		{
-			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-			{
-				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
-				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
-				collider.transform.parent = limbs[i].Effector.bone;
-				collider.transform.localPosition = Vector3.zero;
-			}
-		}
-
-		internal void SetObjectColliders(Transform transform)
-		{
-			MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
-			if (!(meshFilter == null) && transform.Find("SPCollider") == null)
-			{
-				GameObject mapObjCollider = new GameObject("SPCollider");
-				mapObjCollider.transform.parent = transform.transform;
-				mapObjCollider.transform.localPosition = Vector3.zero;
-				mapObjCollider.transform.localRotation = Quaternion.identity;
-				mapObjCollider.AddComponent<Rigidbody>().isKinematic = true;
-				if (meshFilter.mesh.bounds.size.x < 0.03f || meshFilter.mesh.bounds.size.y < 0.03f || meshFilter.mesh.bounds.size.z < 0.03f)
-				{
-					BoxCollider boxCollider = mapObjCollider.AddComponent<BoxCollider>();
-					boxCollider.isTrigger = true;
-					boxCollider.center = meshFilter.mesh.bounds.center;
-					boxCollider.size = meshFilter.mesh.bounds.size;
-					if (boxCollider.size.x < 0.03f)
-					{
-						boxCollider.size += new Vector3(0.04f, 0f, 0f);
-					}
-					if (boxCollider.size.y < 0.03f)
-					{
-						boxCollider.size += new Vector3(0f, 0.04f, 0f);
-					}
-					if (boxCollider.size.z < 0.03f)
-					{
-						boxCollider.size += new Vector3(0f, 0f, 0.04f);
-					}
-				}
-				else
-				{
-					MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
-					meshCollider.convex = false;
-					meshCollider.sharedMesh = meshFilter.mesh;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Toggle for creating/destroying anchor objects for attaching the limbs onto
-		/// </summary>
-		/// <param name="limb">the limb to attach/detach</param>
-		/// <param name="fix">flag to indicate whether limb should be automatically detached</param>
-		internal void FixLimbToggle(Limb limb, bool fix = false)
-		{
-			if (!limb.AnchorObj)
-			{
-				limb.AnchorObj = new GameObject(limb.LimbPart.ToString() + "Anchor");
-				limb.AnchorObj.transform.position = limb.Effector.bone.position;
-				limb.AnchorObj.transform.rotation = limb.Effector.bone.rotation;
-				limb.Effector.target = limb.AnchorObj.transform;
-				limb.Fixed = fix;
-				return;
-			}
-			UnityEngine.Object.Destroy(limb.AnchorObj);
-			limb.Effector.target = limb.OrigTarget;
-			limb.Fixed = false;
-
-			//When the IK target is set to the anchor object and a motion change undergoes, the Basedata bone of the original target would be set to null due to some unknown reason,
-			//causing the effector bone to not approach the target correctly.
-			//This resets motionIK using the current animation to prevent bone target Basedata being set to null
-			if (limb.TargetBone.bone == null)
-				lstMotionIK.ForEach((MotionIK motionIK) => motionIK.Calc(hFlag.nowAnimStateName));
-		}
-
-		/// <summary>
-		/// Change female animation/position
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="name"></param>
-		private IEnumerator ChangeMotion(string path, string name)
-		{
-			LimbAutoAttachToggle(true);
-
-			if (femaleSpinePos == null)
-			{
-				femaleSpinePos = new GameObject("femaleSpinePos");
-			}
-			femaleSpinePos.transform.position = femaleBase.transform.position;
-			femaleSpinePos.transform.rotation = femaleBase.transform.rotation;
-
-			CtrlState oldState = currentCtrlstate;
-			currentCtrlstate = CtrlState.Following;
-
-			Animator component = female_p_cf_bodybone.GetComponent<Animator>();
-			RuntimeAnimatorController runtimeAnimatorController = CommonLib.LoadAsset<RuntimeAnimatorController>(path, name, false, string.Empty);
-			AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(component.runtimeAnimatorController);
-			foreach (AnimationClip animationClip in new AnimatorOverrideController(runtimeAnimatorController).animationClips)
-			{
-				animatorOverrideController[animationClip.name] = animationClip;
-			}
-			animatorOverrideController.name = runtimeAnimatorController.name;
-			component.runtimeAnimatorController = animatorOverrideController;
-			AssetBundleManager.UnloadAssetBundle(path, true, null, false);
-
-			for (int k = 0; k < 2; k++)
-			{
-				yield return null;
-			}
-			currentCtrlstate = oldState;
-			yield break;
-		}
-
-		private void PushPLButton()
-		{
-			if (!setFlag)
-			{
-				SetP(true);
-			}
-			else
-			{
-				UnsetP();
-			}
-		}
-
-		private void PushPRButton()
-		{
-			if (!setFlag)
-			{
-				SetP(false);
-			}
-			else
-			{
-				UnsetP();
-			}
-		}
-
-		/// <summary>
-		/// Start/stop piston movement
-		/// </summary>
-		private void PushModeChangeButton()
-		{
-			hFlag.click = HFlag.ClickKind.modeChange;
-		}
-
-		/// <summary>
-		/// Toggle between strong/weak motion
-		/// </summary>
-		private void PushMotionChangeButton()
-		{
-			hFlag.click = HFlag.ClickKind.motionchange;
-			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
-			if (component != null)
-			{
-				component.weakMotion = !component.weakMotion;
-			}
-		}
-
-		private void LimbAutoAttachToggle(bool forceON = false)
-		{
-			limbAutoAttach = forceON ? true : !limbAutoAttach;
-			txtLimbAuto.text = limbAutoAttach ? "手足固定 Turn Off" : "手足固定 Turn On";
-		}
-
-		private void PushFIButton()
-		{
-			hSprite.OnInsideClick();
-			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
-			if (component != null)
-			{
-				component.fcount = 0f;
-				component.moveFlag = false;
-			}
-		}
-
-		private void PushFOButton()
-		{
-			hSprite.OnOutsideClick();
-			AnimSpeedController component = obj_chaF_001.GetComponent<AnimSpeedController>();
-			if (component != null)
-			{
-				component.fcount = 0f;
-				component.moveFlag = false;
-			}
-		}
-
-		/// <summary>
-		/// Iterate between the three different Parenting Modes: Animation Only, Position Only, and Both
-		/// </summary>
-		private void ParentModeChangeButton()
-		{
-			int index = (int)SetParentMode.Value + 1;
-			SetParentMode.Value =  (ParentMode)(index % Enum.GetNames(typeof(ParentMode)).Length);
-			txtSetParentMode.text = SetParentMode.Value.ToString();
-
-			//Update parent controller hand visibility and collider if not in AnimationOnly mode, 
-			//as they should be hidden and disabled when the parent controller is being used to control female position.
-			//The actual parenting is taken care of by ControllerCharacterAdjustment() called from the trigger press
-			if (setFlag)
-			{
-				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentConAlways.Value) ? true : false;
-
-				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
-
-				if (SetControllerCollider.Value && !IsMaleSideSync(parentIsLeft))
-					parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = parentHandShow;
-			}
-		}
-
-		/// <summary>
-		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
-		/// </summary>
-		/// <param name="enable">To enable or disable the functionality</param>
-		private void SyncMaleHandsToggle(bool enable, LimbName limb)
-		{
-			if (!setFlag || hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
-				return;
-
-			if (limb < LimbName.MaleLeftHand || limb > LimbName.MaleRightHand)
-				return;
-
-			Side sideIndex = (Side)(limb - 4);
-
-			if (enable)
-			{
-				FixLimbToggle(limbs[(int)limb]);
-				limbs[(int)limb].AnchorObj.transform.parent = controllers[sideIndex].transform;
-
-				//Reposition anchor to align the male hand model to the controller
-				limbs[(int)limb].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
-				limbs[(int)limb].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, sideIndex == Side.Left ? 90f : -90f, 0f) * Quaternion.Euler(0, sideIndex == Side.Left ? -30f : 30f, 0f);
-
-				//Hide controller hand model
-				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-					mesh.enabled = false;
-
-				//Restore male shoulder parameters to default as shoulder fixing will be disabled when hands are anchored to the controllers
-				limbs[(int)limb].ParentJointBone.bone = null;
-				limbs[(int)limb].ParentJointEffector.positionWeight = 0f;
-
-				//Enable collider for the hand that is being synced, no reason to hide it as it is now visible
-				if (SetControllerCollider.Value)
-					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
-			}
-			else
-			{
-				if (limbs[(int)limb].AnchorObj)
-					FixLimbToggle(limbs[(int)limb]);
-
-				if (GropeHandsDisplay.Value < HideHandMode.AlwaysShow)
-					itemHands[(int)limb - 4].enabled = true;
-
-				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-					mesh.enabled = true;
-
-				//Disable the collider if config is set to hide parent controller and the hand is of that controller
-				if (SetControllerCollider.Value && controllers[sideIndex] == parentController && (HideParentConAlways.Value || SetParentMode.Value < ParentMode.AnimationOnly))
-					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
-			}
-		}
+		}		
 
 		public void LateUpdate()
 		{
@@ -963,7 +528,7 @@ namespace SetParentKK
 					FixLimbToggle(limb);
 			}
 
-			LimbAutoAttachToggle(true);
+			PushLimbAutoAttachButton(true);
 
 			foreach (KeyValuePair<Side, GameObject> pair in controllers)
 				pair.Value.transform.Find("Model").gameObject.SetActive(true);
@@ -992,6 +557,90 @@ namespace SetParentKK
 			setFlag = false;
 		}
 
+		private void SetBodyColliders()
+		{
+			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
+			{
+				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
+				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
+				collider.transform.parent = limbs[i].Effector.bone;
+				collider.transform.localPosition = Vector3.zero;
+			}
+
+			shoulderCollider = new GameObject("SPCollider");
+			shoulderCollider.transform.parent = cameraEye.transform;
+			shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
+			shoulderCollider.transform.localRotation = Quaternion.identity;
+			BoxCollider boxCollider2 = shoulderCollider.AddComponent<BoxCollider>();
+			boxCollider2.isTrigger = true;
+			boxCollider2.center = Vector3.zero;
+			boxCollider2.size = new Vector3(0.4f, 0.2f, 0.25f);
+			shoulderCollider.AddComponent<Rigidbody>().isKinematic = true;
+		}
+
+		private void SetControllerColliders(GameObject controller)
+		{
+			GameObject CtrlCollider = new GameObject("ControllerCollider");
+			CtrlCollider.transform.parent = controller.transform;
+			CtrlCollider.transform.localPosition = Vector3.zero;
+			CtrlCollider.transform.localRotation = Quaternion.identity;
+			SphereCollider sphereCollider = CtrlCollider.AddComponent<SphereCollider>();
+			sphereCollider.isTrigger = true;
+			sphereCollider.center = Vector3.zero;
+			sphereCollider.radius = 0.05f;
+			CtrlCollider.AddComponent<Rigidbody>().isKinematic = true;
+		}
+
+		private void SetMaleFeetColliders()
+		{
+			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
+			{
+				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
+				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
+				collider.transform.parent = limbs[i].Effector.bone;
+				collider.transform.localPosition = Vector3.zero;
+			}
+		}
+
+		internal void SetObjectColliders(Transform transform)
+		{
+			MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
+			if (!(meshFilter == null) && transform.Find("SPCollider") == null)
+			{
+				GameObject mapObjCollider = new GameObject("SPCollider");
+				mapObjCollider.transform.parent = transform.transform;
+				mapObjCollider.transform.localPosition = Vector3.zero;
+				mapObjCollider.transform.localRotation = Quaternion.identity;
+				mapObjCollider.AddComponent<Rigidbody>().isKinematic = true;
+				if (meshFilter.mesh.bounds.size.x < 0.03f || meshFilter.mesh.bounds.size.y < 0.03f || meshFilter.mesh.bounds.size.z < 0.03f)
+				{
+					BoxCollider boxCollider = mapObjCollider.AddComponent<BoxCollider>();
+					boxCollider.isTrigger = true;
+					boxCollider.center = meshFilter.mesh.bounds.center;
+					boxCollider.size = meshFilter.mesh.bounds.size;
+					if (boxCollider.size.x < 0.03f)
+					{
+						boxCollider.size += new Vector3(0.04f, 0f, 0f);
+					}
+					if (boxCollider.size.y < 0.03f)
+					{
+						boxCollider.size += new Vector3(0f, 0.04f, 0f);
+					}
+					if (boxCollider.size.z < 0.03f)
+					{
+						boxCollider.size += new Vector3(0f, 0f, 0.04f);
+					}
+				}
+				else
+				{
+					MeshCollider meshCollider = mapObjCollider.AddComponent<MeshCollider>();
+					meshCollider.convex = false;
+					meshCollider.sharedMesh = meshFilter.mesh;
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Initialize and position objects representing male's neck and crotch to be used for rotation calculation
 		/// </summary>
@@ -1011,36 +660,6 @@ namespace SetParentKK
 			maleCrotchPos.transform.position = maleCrotch.transform.position;
 			maleCrotchPos.transform.rotation = maleCrotch.transform.rotation;
 			maleCrotchPos.transform.parent = male_p_cf_bodybone.transform;
-		}
-
-		private Text CreateButton(string buttonText, Vector3 localPosition, UnityAction action, GameObject parentObject)
-		{
-			GameObject buttonObject = new GameObject("button");
-			GameObject textObject = new GameObject("text", new Type[]
-			{
-				typeof(Text)
-			});
-			Text text = textObject.GetComponent<Text>();
-			Image image = buttonObject.AddComponent<Image>();
-			image.rectTransform.sizeDelta = new Vector2(0.25f, 0.06f);
-			image.color = new Color(0.8f, 0.8f, 0.8f);
-			Button button = buttonObject.AddComponent<Button>();
-			ColorBlock colors = button.colors;
-			colors.highlightedColor = Color.red;
-			colors.pressedColor = Color.cyan;
-			button.colors = colors;
-			text.rectTransform.sizeDelta = new Vector2(0.25f, 0.06f);
-			text.font = Font.CreateDynamicFontFromOSFont("Arial", 13);
-			text.fontSize = 13;
-			text.alignment = TextAnchor.MiddleCenter;
-			text.text = buttonText;
-			buttonObject.transform.SetParent(parentObject.transform);
-			buttonObject.transform.localPosition = localPosition;
-			textObject.transform.SetParent(buttonObject.transform);
-			textObject.transform.localPosition = Vector3.zero;
-			buttonObject.GetComponent<Button>().onClick.AddListener(action);
-
-			return text;
 		}
 
 		/// <summary>
@@ -1108,256 +727,41 @@ namespace SetParentKK
 			}
 		}
 
-		/// <summary>
-		/// Release and attach male limbs based on the distance between the attaching target position and the default animation position
-		/// </summary>
-		private void MaleIKs()
+		private void AddAnimSpeedController(GameObject character, bool _parentIsLeft, GameObject _leftController, GameObject _rightController)
 		{
-			bool hideGropeHands = setFlag && hFlag.mode != HFlag.EMode.aibu && GropeHandsDisplay.Value < HideHandMode.AlwaysShow;
-
-			//Algorithm for the male hands
-			for (int i = (int)LimbName.MaleLeftHand; i <= (int)LimbName.MaleRightHand; i++)
+			if (character.GetComponent<AnimSpeedController>() != null)
 			{
-				//If anchors exist for the male hands, that means they are following the controllers
-				//Lower bendConstraint weight to allow rotation of the arm
-				//Set chain pull weight to zero to avoid arms from pulling the body (may not be effective however)
-				if (limbs[i].AnchorObj)
-				{
-					limbs[i].Effector.positionWeight = 1f;
-					limbs[i].Effector.rotationWeight = 1f;
-					limbs[i].Chain.bendConstraint.weight = 0.2f;
-					limbs[i].Chain.pull = 0f;
-
-					//Hide/unhide the additional hands that show up when groping, depending on config setting
-					//If settings is set to auto (neither AlwaysShow or AlwaysHide), hide them only when the controller gets close
-					if (hideGropeHands)
-					{
-						if (GropeHandsDisplay.Value == HideHandMode.AlwaysHide)
-							itemHands[i - 4].enabled = false;
-						else if ((itemHands[i - 4].transform.position - limbs[i].AnchorObj.transform.position).magnitude > 0.2f)
-							itemHands[i - 4].enabled = true;
-						else
-							itemHands[i - 4].enabled = false;
-					}
-					continue;
-				}
-
-				//Restore IK parameters to default if hands are not attached
-				limbs[i].Chain.bendConstraint.weight = 1f;
-				limbs[i].Chain.pull = 1f;
-
-				//To prevent excessive stretching or the hands being at a weird angle with the default IKs (e.g., grabing female body parts),
-				//if rotation difference between the IK effector and original animation is beyond threshold, set IK weights to 0. 
-				//Set IK weights to 1 if otherwise.
-				float twist = Quaternion.Angle(limbs[i].Effector.target.rotation, limbs[i].AnimPos.rotation);
-				if (twist > 45f)
-				{
-					limbs[i].Effector.positionWeight = 0f;
-					limbs[i].Effector.rotationWeight = 0f;
-				}
-				else
-				{
-					limbs[i].Effector.positionWeight = 1f;
-					limbs[i].Effector.rotationWeight = 1f;
-				}
-
-				//Assign bone to male shoulder effectors and fix it in place to prevent hands from pulling the body
-				//Does not run if male hands are in sync with controllers to allow further movement of the hands
-				if (setFlag)
-				{
-					limbs[i].ParentJointBone.bone = limbs[i].ParentJointAnimPos;
-					limbs[i].ParentJointEffector.positionWeight = 1f;
-				}
-			}
-
-			//Algorithm for the male feet
-			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-			{
-				//Release the male feet from attachment if streched beyond threshold
-				if(limbs[i].AnchorObj && !limbs[i].Fixed && (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude > 0.2f)
-				{
-					FixLimbToggle(limbs[i]);
-				}
-				else
-				{
-					limbs[i].Effector.positionWeight = 1f;
-				}
-			}
-			
-			if (setFlag)
-			{
-				//Fix male hips to animation position to prevent male genital from drifting due to pulling from limb chains
-				male_hips_bd.bone = male_cf_pv_hips;
-				maleFBBIK.solver.bodyEffector.positionWeight = 1f;
-				maleFBBIK.solver.bodyEffector.rotationWeight = 1f;
-			}
-		}
-
-		/// <summary>
-		/// Release and attach female limbs based on the distance between the attaching target position and the default animation position
-		/// </summary>
-		/// Attachment onto anchor points created by SetParent will enjoy a larger degree of freedom before being released
-		private void FemaleIKs()
-		{
-			//Algorithm for female hands
-			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightHand; i++)
-			{
-				//Reset parameters to default values		
-				limbs[i].Effector.positionWeight = 1f;
-				limbs[i].Effector.rotationWeight = 1f;
-
-				//Calculate distance between effector target and original animation to determine stretching
-				float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-
-				if (limbs[i].AnchorObj)
-				{
-					//If limb is manually held or placed, disable bending goal to avoid unnatural bending
-					if (limbs[i].Fixed)
-					{
-						limbs[i].Chain.bendConstraint.weight = 0f;
-					}
-					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
-					else if (distance > StretchLimitArms.Value)
-					{
-						FixLimbToggle(limbs[i]);
-						continue;		
-					}
-					//Optimize IK behaviors if arms are attached to objects
-					limbs[i].Effector.maintainRelativePositionWeight = 1f;
-					limbs[i].Chain.push = 0.1f;
-					limbs[i].Chain.pushParent = 0.5f;
-				}	
-				else
-				{
-					//Arms are not attached to objects, so restore IK parameters to default values
-					limbs[i].Chain.bendConstraint.weight = 1f;
-					limbs[i].Effector.maintainRelativePositionWeight = 0f;
-					limbs[i].Chain.push = 0f;
-					limbs[i].Chain.pushParent = 0f;
-
-					//If arms are not attached to objects, we still need to take care of the default IK's (e.g., hands sticking to male)
-					//If stretching is beyond a set threshold then gradually reduce effector weights to 0
-					if (distance > 0.15f)
-					{
-						limbs[i].Effector.positionWeight = (0.3f - distance) / 0.15f;
-						limbs[i].Effector.rotationWeight = (0.3f - distance) / 0.15f;
-					}		
-				}			
-			}
-
-			//Algorithm for female feet
-			for (int i = (int)LimbName.FemaleLeftFoot; i <= (int)LimbName.FemaleRightFoot; i++)
-			{
-				if (limbs[i].AnchorObj)
-				{
-					//Use distance between effecotr target and animation position to determine stretching
-					//Since feet don't have default IK's (they don't grab onto anything by default), 
-					//we only need to release them from grabbing onto objects if stretched too far
-					float distance = (limbs[i].Effector.target.position - limbs[i].AnimPos.position).magnitude;
-
-					//If limb is manually held or placed, disable bending goal to avoid unnatural bending
-					if (limbs[i].Fixed)
-					{
-						limbs[i].Chain.bendConstraint.weight = 0f;
-					}
-					//If stretched beyond set threshold and limbs do not have fixed flag enabled, release the limb
-					else if (distance > StretchLimitLegs.Value)
-					{
-						FixLimbToggle(limbs[i]);
-						continue;
-					}
-					//Adjust IK parameters to optimize behavior
-					//Set effector weights to 1 just in case
-					limbs[i].Effector.positionWeight = 1f;
-					limbs[i].Effector.rotationWeight = 1f;
-					limbs[i].Chain.push = 0.1f;
-					limbs[i].Chain.pushParent = 0.5f;	
-				}
-				else
-				{	
-					//Restore IK parameters to default. 
-					//No need to adjust effector weights because the defaults are already 1
-					limbs[i].Chain.push = 0f;
-					limbs[i].Chain.pushParent = 0f;
-					limbs[i].Chain.bendConstraint.weight = 1f;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Given the controller input, freeze or release limbs 
-		/// </summary>
-		/// <param name="controller">The controller being pressed</param>
-		/// <param name="timeNoClick">Time since the last click, for double click registration</param>
-		/// <param name="forceAll">Whether to force release all limbs</param>
-		private void ControllerLimbActions(GameObject controller, bool doubleClick, bool forceAll = false)
-		{
-			//If time since last click is greater than 0.25 second, register as single click and freeze the limb that is currently following this controller
-			if (!doubleClick)
-			{
-				for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
-				{
-					if (limbs[i].AnchorObj && limbs[i].AnchorObj.transform.parent && limbs[i].AnchorObj.transform.parent.parent == controller.transform)
-						limbs[i].AnchorObj.transform.parent = null;
-				}
-			}
-			//double click registered
-			else
-			{
-				bool singleLimbRelease = false;
-				//If not forcing all limbs' release, release any limb that is within proximity of the controller
-				if (!forceAll)
-				{
-					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
-					{
-						if (limbs[i].AnchorObj && (limbs[i].AnchorObj.transform.position - controller.transform.position).magnitude < 0.2f)
-						{
-							FixLimbToggle(limbs[i]);
-							singleLimbRelease = true;
-						}
-					}
-				}
-				// If no a single limb is close to the controller, release all limbs
-				if (singleLimbRelease == false)
-				{
-					for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
-					{
-						if (limbs[i].AnchorObj)
-							FixLimbToggle(limbs[i]);
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Fix male feet in place, or release them if they're already fixed
-		/// </summary>
-		private void ControllerMaleFeetToggle(bool doubleClick = true)
-		{
-			if (!doubleClick)
 				return;
-			
-			bool releaseAll = true;
-			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-			{
-				if (!limbs[i].AnchorObj)
-				{
-					FixLimbToggle(limbs[i], fix: true);
-					releaseAll = false;
-				}
-				else if (!limbs[i].Fixed)
-				{
-					limbs[i].Fixed = true;
-					releaseAll = false;
-				}
 			}
 
-			//Release both feet if and only if both feet are alrady fixed
-			if (releaseAll)
+			AnimSpeedController animSpeedController = character.AddComponent<AnimSpeedController>();
+			if (_parentIsLeft)
 			{
-				for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-					FixLimbToggle(limbs[i]);
+				animSpeedController.SetController(_leftController, _rightController, this);
+				return;
 			}
+			else
+				animSpeedController.SetController(_rightController, _leftController, this);
+		}
+
+		private void SetParentToController (bool isLeft, GameObject parentDummy, GameObject target, bool hideModel)
+		{
+			Side side = isLeft ? Side.Left : Side.Right;
+			
+			parentDummy.transform.parent = controllers[side].transform;
+			if (hideModel)
+			{
+				controllers[side].transform.Find("Model").gameObject.SetActive(false);
+
+				LimbName limb = isLeft ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
+				if (SetControllerCollider.Value && !limbs[(int)limb].AnchorObj)
+				{
+					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				}		
+			}
+					
+			parentDummy.transform.position = target.transform.position;
+			parentDummy.transform.rotation = target.transform.rotation;
 		}
 
 		/// <summary>
@@ -1400,46 +804,9 @@ namespace SetParentKK
 			else
 			{
 				if (currentCtrlstate != CtrlState.None)
-					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.None);	
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.None);
 				return;
 			}
-		}
-
-		private void AddAnimSpeedController(GameObject character, bool _parentIsLeft, GameObject _leftController, GameObject _rightController)
-		{
-			if (character.GetComponent<AnimSpeedController>() != null)
-			{
-				return;
-			}
-
-			AnimSpeedController animSpeedController = character.AddComponent<AnimSpeedController>();
-			if (_parentIsLeft)
-			{
-				animSpeedController.SetController(_leftController, _rightController, this);
-				return;
-			}
-			else
-				animSpeedController.SetController(_rightController, _leftController, this);
-		}
-
-		private void SetParentToController (bool isLeft, GameObject parentDummy, GameObject target, bool hideModel)
-		{
-			Side side = isLeft ? Side.Left : Side.Right;
-			
-			parentDummy.transform.parent = controllers[side].transform;
-			if (hideModel)
-			{
-				controllers[side].transform.Find("Model").gameObject.SetActive(false);
-
-				LimbName limb = isLeft ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
-				if (SetControllerCollider.Value && !limbs[(int)limb].AnchorObj)
-				{
-					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
-				}		
-			}
-					
-			parentDummy.transform.position = target.transform.position;
-			parentDummy.transform.rotation = target.transform.rotation;
 		}
 
 		/// <summary>
@@ -1535,132 +902,6 @@ namespace SetParentKK
 
 			return false;
 		}
-
-		private bool RightTrackPadPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 32) ?? false);
-		}
-
-		private bool LeftTrackPadPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 32) ?? false);
-		}
-
-		private bool RightTrackPadUp()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
-		}
-
-		private bool LeftTrackPadUp()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
-		}
-
-		private bool RightTrackPadDown()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
-		}
-
-		private bool LeftTrackPadDown()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
-		}
-
-		private bool RightMenuPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 1) ?? false);
-		}
-
-		private bool RightMenuPressDown()
-		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 1) ?? false);
-		}
-
-		private bool LeftMenuPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 1) ?? false);
-		}
-
-		private bool LeftMenuPressDown()
-		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 1) ?? false);
-		}
-
-		private bool RightTriggerPressDown()
-		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerPressDown()
-		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 33) ?? false);
-		}
-
-		private bool RightTriggerRelease()
-		{
-			return (rightVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressUp((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerRelease()
-		{
-			return (leftVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressUp((ulong)1 << 33) ?? false);
-		}
-
-		private bool RightTriggerPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftGripPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 3) ?? false);
-		}
-
-		private bool LeftGripPressDown()
-		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 3) ?? false);
-		}
-
-		private bool RightGripPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 3) ?? false);
-		}
-
-		private bool RightGripPressDown()
-		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 3) ?? false);
-		}
-
-		private bool IsDoubleClick(TriggerState input, float threshold)
-		{
-			if (Time.time - lastTriggerRelease[(int)input] > threshold)
-			{
-				lastTriggerRelease[(int)input] = Time.time;
-				return false;
-			}
-			else
-			{
-				lastTriggerRelease[(int)input] = Time.time;
-				return true;
-			}
-		}
-
-		/// <summary>
-		/// Check if a specified male limb is synchronized to the corresponding controller
-		/// </summary>
-		/// <param name="side">The particular side to check</param>
-		/// <returns></returns>
-		internal bool IsMaleSideSync(bool side)
-		{
-			LimbName parentLimb = side ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
-
-			return limbs[(int)parentLimb].AnchorObj;
-		}
 		
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character
@@ -1674,64 +915,10 @@ namespace SetParentKK
 			FemaleControl
 		}
 
-		public enum LimbName
-		{
-			FemaleLeftHand,
-			FemaleRightHand,
-			FemaleLeftFoot,
-			FemaleRightFoot,
-			MaleLeftHand,
-			MaleRightHand,
-			MaleLeftFoot,
-			MaleRightFoot
-		}
-
-		private enum TriggerState
-		{
-			Left,
-			Right,
-			LeftGripped,
-			RightGripped
-		}
-
 		internal enum Side
 		{
 			Left,
 			Right
-		}
-
-		internal class Limb
-		{
-			internal GameObject AnchorObj;
-			internal Transform AnimPos;
-			internal IKEffector Effector;
-			internal FBIKChain Chain;
-			internal Transform OrigTarget;
-			internal bool Fixed;
-			internal LimbName LimbPart;
-			internal BaseData TargetBone;
-
-			internal BaseData ParentJointBone;
-			internal IKEffector ParentJointEffector;
-			internal Transform ParentJointAnimPos;
-
-			internal Limb(LimbName limbpart, GameObject anchorObj, Transform animPos, IKEffector effector, Transform origTarget, 
-				BaseData targetBone, FBIKChain chain = null, BaseData parentJointBone = null, IKEffector parentJointEffector = null, 
-				Transform parentJointAnimPos = null, bool fix = false)
-			{
-				LimbPart = limbpart;
-				AnchorObj = anchorObj;
-				AnimPos = animPos;
-				Effector = effector;
-				Chain = chain;
-				OrigTarget = origTarget;
-				TargetBone = targetBone;
-				Fixed = fix;
-
-				ParentJointBone = parentJointBone;
-				ParentJointEffector = parentJointEffector;
-				ParentJointAnimPos = parentJointAnimPos;
-			}
 		}
 
 
@@ -1754,8 +941,6 @@ namespace SetParentKK
 		private List<MotionIK> lstMotionIK;
 
 		private string nowAnimState = "";
-
-		private Dictionary<Side, GameObject> controllers;
 		
 		internal GameObject parentController;
 
@@ -1765,37 +950,9 @@ namespace SetParentKK
 
 		private GameObject femaleAim;
 
-		private FieldInfo f_device;
-
-		private VRViveController leftVVC;
-
-		private VRViveController rightVVC;
-
-		private SteamVR_Controller.Device leftDevice;
-
-		private SteamVR_Controller.Device rightDevice;
-
-		private Canvas canvasRight;
-
-		private GameObject objRightMenuCanvas;
-
-		private CanvasScaler canvasRightScaler;
-
-		private GameObject eventSystemSetParent;
-
-		private Canvas canvasLeft;
-
-		private GameObject objLeftMenuCanvas;
-
-		private CanvasScaler canvasLeftScaler;
-
-		private GameObject eventSystemMotion;
-
 		private float hideCount;
 
 		internal HSprite hSprite;
-
-		internal Limb[] limbs = new Limb[8];
 
 		private GameObject obj_chaF_001;
 
@@ -1828,16 +985,6 @@ namespace SetParentKK
 		private Transform male_cf_pv_hips;
 
 		private BaseData male_hips_bd;
-
-		private SkinnedMeshRenderer[] itemHands = new SkinnedMeshRenderer[2];
-
-		private Text txtSetParentL;
-
-		private Text txtSetParentR;
-
-		private Text txtSetParentMode;
-
-		private Text txtLimbAuto;
 
 		private Vector3[] vecSpinePos = new Vector3[SmoothBuffer];
 

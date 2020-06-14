@@ -37,10 +37,13 @@
     <Compile Include="AnimSpeedController.cs" />
     <Compile Include="FixBodyParts.cs" />
     <Compile Include="KoikatuVRAssistPluginHooks.cs" />
-    <Compile Include="SetParentLoader.cs" />
+    <Compile Include="SetParentBodyParts.cs" />
+    <Compile Include="SetParentControllerInput.cs" />
+    <Compile Include="KK_SetParentVR.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetParent.cs" />
-    <Compile Include="SetParentHooks.cs" />
+    <Compile Include="Hooks.cs" />
+    <Compile Include="SetParentUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.ComponentModel;
 using UnityEngine;
 using BepInEx;
@@ -9,7 +8,7 @@ using Harmony;
 namespace SetParentKK
 {
 	[BepInPlugin(GUID, PluginName, Version)]
-	public class SetParentLoader : BaseUnityPlugin
+	public class KK_SetParentVR : BaseUnityPlugin
 	{
 		public const string GUID = "MK.KK_SetParentVR";
 		public const string Version = "2.1.0";
@@ -169,7 +168,7 @@ namespace SetParentKK
 				return;
 
 			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
-			harmony.PatchAll(typeof(SetParentHooks));
+			harmony.PatchAll(typeof(Hooks));
 			if (Type.GetType("KoikatuVRAssistPlugin.GripMoveAssistObj, KoikatuVRAssistPlugin") != null)
 			{
 				BepInEx.Logger.Log(LogLevel.Debug, PluginName + ": KoikatuVRAssist patched for compatibility");

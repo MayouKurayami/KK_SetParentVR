@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using static SetParentKK.SetParentLoader;
+using static SetParentKK.KK_SetParentVR;
 
 [assembly: AssemblyVersion(Version)]
 [assembly: AssemblyTitle(AssembName)]

@@ -3,7 +3,7 @@ using System;
 using Harmony;
 using UnityEngine;
 using KoikatuVRAssistPlugin;
-using static SetParentKK.SetParentLoader;
+using static SetParentKK.KK_SetParentVR;
 using static SetParentKK.SetParent;
 
 
