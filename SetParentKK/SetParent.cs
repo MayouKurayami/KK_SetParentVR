@@ -43,8 +43,6 @@ namespace SetParentKK
 				{ Side.Right, hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject }
 			};
 
-			controllers[Side.Left] = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
-			controllers[Side.Right] = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
 			itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 			itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 
@@ -399,8 +397,6 @@ namespace SetParentKK
 				//Update player's shoulder collider's rotation to always be facing the girl
 				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
 
-				
-
 
 				txtSetParentL.text = "親子付け Turn Off";
 				txtSetParentR.text = "親子付け Turn Off";
@@ -501,7 +497,7 @@ namespace SetParentKK
 			}
 			if (SetParentMode.Value == ParentMode.PositionAndAnimation || SetParentMode.Value == ParentMode.AnimationOnly)
 			{
-				AddAnimSpeedController(obj_chaF_001, _parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
+				AddAnimSpeedController(obj_chaF_001);
 			}
 
 			if (SyncMaleHands.Value)
@@ -727,7 +723,7 @@ namespace SetParentKK
 			}
 		}
 
-		private void AddAnimSpeedController(GameObject character, bool _parentIsLeft, GameObject _leftController, GameObject _rightController)
+		private void AddAnimSpeedController(GameObject character)
 		{
 			if (character.GetComponent<AnimSpeedController>() != null)
 			{
@@ -735,13 +731,8 @@ namespace SetParentKK
 			}
 
 			AnimSpeedController animSpeedController = character.AddComponent<AnimSpeedController>();
-			if (_parentIsLeft)
-			{
-				animSpeedController.SetController(_leftController, _rightController, this);
-				return;
-			}
-			else
-				animSpeedController.SetController(_rightController, _leftController, this);
+
+			animSpeedController.SetController(controllers[Side.Left], controllers[Side.Right], this);
 		}
 
 		private void SetParentToController (bool isLeft, GameObject parentDummy, GameObject target, bool hideModel)
@@ -839,7 +830,7 @@ namespace SetParentKK
 
 				case CtrlState.Following:
 					if (SetParentMode.Value != ParentMode.PositionOnly)
-						AddAnimSpeedController(obj_chaF_001, parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
+						AddAnimSpeedController(obj_chaF_001);
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						femaleSpinePos.transform.parent = null;
 					male_p_cf_bodybone.transform.parent = male.objTop.transform;
@@ -849,7 +840,7 @@ namespace SetParentKK
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
 						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
 					if (SetParentMode.Value != ParentMode.PositionOnly)
-						AddAnimSpeedController(obj_chaF_001, parentIsLeft, controllers[Side.Left], controllers[Side.Right]);
+						AddAnimSpeedController(obj_chaF_001);
 					break;
 			}
 			

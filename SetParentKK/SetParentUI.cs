@@ -316,7 +316,7 @@ namespace SetParentKK
 			//The actual parenting is taken care of by ControllerCharacterAdjustment() called from the trigger press
 			if (setFlag)
 			{
-				bool parentHandShow = (SetParentMode.Value == ParentMode.AnimationOnly && !HideParentConAlways.Value) ? true : false;
+				bool parentHandShow = SetParentMode.Value == ParentMode.AnimationOnly && !HideParentConAlways.Value;
 
 				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
 
