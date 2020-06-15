@@ -37,11 +37,13 @@ namespace SetParentKK
 			hFlag = hSprite.flags;
 			f_device = typeof(VRViveController).GetField("device", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			cameraEye = hSprite.managerVR.objCamera;
-			controllers = new Dictionary<Side, GameObject>()
+			controllers[Side.Left] = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
+			controllers[Side.Right] = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;		
+			foreach (Side side in Enum.GetValues(typeof(Side)))
 			{
-				{ Side.Left, hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject },
-				{ Side.Right, hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject }
-			};
+				viveControllers[side] = controllers[side].GetComponent<VRViveController>();
+				steamVRDevices[side] = f_device.GetValue(viveControllers[side]) as SteamVR_Controller.Device;
+			}
 
 			itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 			itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
@@ -209,7 +211,7 @@ namespace SetParentKK
 			}
 
 			//Find and assign left and right controllers variables if they are null
-			if (leftDevice == null)
+			if (steamVRDevices[Side.Left] == null)
 			{
 				if (controllers[Side.Left] == null)
 				{
@@ -219,10 +221,11 @@ namespace SetParentKK
 
 					itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 				}
-				leftVVC = controllers[Side.Left].GetComponent<VRViveController>();
-				leftDevice = (f_device.GetValue(leftVVC) as SteamVR_Controller.Device);
+
+				viveControllers[Side.Left] = controllers[Side.Left].GetComponent<VRViveController>();
+				steamVRDevices[Side.Left] = f_device.GetValue(viveControllers[Side.Left]) as SteamVR_Controller.Device;
 			}
-			if (rightDevice == null)
+			if (steamVRDevices[Side.Right] == null)
 			{
 				if (controllers[Side.Right] == null)
 				{
@@ -232,8 +235,9 @@ namespace SetParentKK
 
 					itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
 				}
-				rightVVC = controllers[Side.Right].GetComponent<VRViveController>();
-				rightDevice = (f_device.GetValue(rightVVC) as SteamVR_Controller.Device);
+
+				viveControllers[Side.Right] = controllers[Side.Right].GetComponent<VRViveController>();
+				steamVRDevices[Side.Right] = f_device.GetValue(viveControllers[Side.Right]) as SteamVR_Controller.Device;
 			}
 
 			//Initiate canvas if it's null
@@ -242,7 +246,7 @@ namespace SetParentKK
 			else
 			{
 				//Hold button for 1 second to hide/unhide floating menu
-				if (RightMenuPressing() || LeftMenuPressing())
+				if (MenuPressing(Side.Left) || MenuPressing(Side.Right))
 				{
 					hideCount += Time.deltaTime;
 					if (hideCount >= 1f)
@@ -300,17 +304,17 @@ namespace SetParentKK
 				//* Set parent to the left controller if activated by keypress
 				if (!setFlag)
 				{
-					if (RightMenuPressing() && RightTriggerPressDown())
+					if (MenuPressing(Side.Right) && TriggerPressDown(Side.Right))
 					{
-						SetP(true);
+						SetP(_parentIsLeft: true);
 					}
-					else if (LeftMenuPressing() && LeftTriggerPressDown())
+					else if (MenuPressing(Side.Left) && TriggerPressDown(Side.Left))
 					{
-						SetP(false);
+						SetP(_parentIsLeft: false);
 					}
 					else
 					{
-						SetP(true);
+						SetP(_parentIsLeft: true);
 					}
 				}
 				else
@@ -320,20 +324,16 @@ namespace SetParentKK
 			}
 
 			//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
-			if (LeftTriggerRelease())
+			foreach (Side side in Enum.GetValues(typeof(Side)))
 			{
-				if (LeftGripPressing())
-					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
-				else
-					ControllerLimbActions(controllers[Side.Left], IsDoubleClick(TriggerState.Left, 0.25f));
-			}				
-			if (RightTriggerRelease())
-			{
-				if (RightGripPressing())
-					ControllerMaleFeetToggle(IsDoubleClick(TriggerState.LeftGripped, 0.3f));
-				else
-					ControllerLimbActions(controllers[Side.Right], IsDoubleClick(TriggerState.Right, 0.25f));
-			}			
+				if (TriggerRelease(side))
+				{
+					if (GripPressing(side))
+						ControllerMaleFeetToggle(IsDoubleClick((TriggerState)side + 2, 0.3f));
+					else
+						ControllerLimbActions(controllers[side], IsDoubleClick((TriggerState)side, 0.25f));
+				}
+			}		
 
 			//If keyboard shortcut for limb release is pressed, call function to interact with limbs with paramemters that will ensure the release of all limbs
 			if (Input.GetKeyDown(LimbReleaseKey.Value.MainKey) && LimbReleaseKey.Value.Modifiers.All(x => Input.GetKey(x)))
@@ -767,25 +767,27 @@ namespace SetParentKK
 			//	4. Female body parented to non parent controller 
 			//	5. If no matching controller input is present, return to default state of parenting
 			///////////////////
-			if (hFlag.timeNoClickItem == 0 && (parentIsLeft ? (RightTriggerPressing() && !RightGripPressing()) : (LeftTriggerPressing() && !LeftGripPressing())))
+			Side nonParentSide = ParentSideEnum(oppositeSide: true);
+
+			if (hFlag.timeNoClickItem == 0 && TriggerPressing(nonParentSide) && !GripPressing(nonParentSide))
 			{
 				if (currentCtrlstate != CtrlState.Stationary)
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Stationary);
 				return;
 			}
-			else if (parentIsLeft ? (RightTriggerPressing() && RightGripPressing()) : (LeftTriggerPressing() && LeftGripPressing()))
+			else if (TriggerPressing(nonParentSide) && GripPressing(nonParentSide))
 			{
 				if (currentCtrlstate != CtrlState.Following)
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Following);
 				return;
 			}
-			else if (parentIsLeft ? (RightGripPressing() && RightTrackPadDown()) : (LeftGripPressing() && LeftTrackPadDown()))
+			else if (GripPressing(nonParentSide) && TrackPadDown(nonParentSide))
 			{
 				if (currentCtrlstate != CtrlState.MaleControl)
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.MaleControl);
 				return;
 			}
-			else if (parentIsLeft ? (RightGripPressing() && RightTrackPadUp()) : (LeftGripPressing() && LeftTrackPadUp()))
+			else if (GripPressing(nonParentSide) && TrackPadUp(nonParentSide))
 			{
 				if (currentCtrlstate != CtrlState.FemaleControl)
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.FemaleControl);
@@ -883,9 +885,9 @@ namespace SetParentKK
 
 		private bool SetParentToggleCondition()
 		{
-			if (RightMenuPressing() && RightTriggerPressing() && (RightMenuPressDown() || RightTriggerPressDown()))
+			if (MenuPressing(Side.Right) && TriggerPressing(Side.Right) && (MenuPressDown(Side.Right) || TriggerPressDown(Side.Right)))
 				return true;
-			else if (LeftMenuPressing() && LeftTriggerPressing() && (LeftMenuPressDown() || LeftTriggerPressDown()))
+			else if (MenuPressing(Side.Left) && TriggerPressing(Side.Left) && (MenuPressDown(Side.Left) || TriggerPressDown(Side.Left)))
 				return true;
 			else if (Input.GetKeyDown(SetParentToggle.Value.MainKey) && SetParentToggle.Value.Modifiers.All(x => Input.GetKey(x)))
 				return true;
@@ -907,7 +909,14 @@ namespace SetParentKK
 		/// <returns></returns>
 		internal LimbName ParentSideMaleHand(bool oppositeSide = false) => (parentIsLeft ^ oppositeSide) ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
 
-		
+		/// <summary>
+		/// Returns the side that the parent controller is on
+		/// </summary>
+		/// <param name="oppositeSide">Whether to return the opposite side of the parent</param>
+		/// <returns></returns>
+		internal Side ParentSideEnum(bool oppositeSide = false) => (parentIsLeft ^ oppositeSide) ? Side.Left : Side.Right;
+
+
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character
 		/// </summary>

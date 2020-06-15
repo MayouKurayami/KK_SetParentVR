@@ -8,115 +8,63 @@ namespace SetParentKK
 {
 	public partial class SetParent
 	{
-		private Dictionary<Side, GameObject> controllers;
+		private Dictionary<Side, GameObject> controllers = new Dictionary<Side, GameObject>();
 
 		private FieldInfo f_device;
 
-		private VRViveController leftVVC;
-		private VRViveController rightVVC;
+		private Dictionary<Side, VRViveController> viveControllers = new Dictionary<Side, VRViveController>();
 
-		private SteamVR_Controller.Device leftDevice;
-		private SteamVR_Controller.Device rightDevice;
+		private Dictionary<Side, SteamVR_Controller.Device> steamVRDevices = new Dictionary<Side, SteamVR_Controller.Device>();
 
 
-		private bool RightTrackPadPressing()
+		private bool TrackPadPressing(Side side)
 		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 32) ?? false);
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (steamVRDevices[side]?.GetPress((ulong)1 << 32) ?? false);
 		}
 
-		private bool LeftTrackPadPressing()
+		private bool TrackPadUp(Side side)
 		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 32) ?? false);
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || steamVRDevices[side]?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
 		}
 
-		private bool RightTrackPadUp()
+		private bool TrackPadDown(Side side)
 		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || steamVRDevices[side]?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
 		}
 
-		private bool LeftTrackPadUp()
+		private bool MenuPressing(Side side)
 		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Up, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y > 0.7f;
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (steamVRDevices[side]?.GetPress((ulong)1 << 1) ?? false);
 		}
 
-		private bool RightTrackPadDown()
+		private bool MenuPressDown(Side side)
 		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || rightDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
+			return (viveControllers[side]?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (steamVRDevices[side]?.GetPressDown((ulong)1 << 1) ?? false);
 		}
 
-		private bool LeftTrackPadDown()
+		private bool TriggerPressDown(Side side)
 		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Touchpad_Down, -1) ?? false) || leftDevice?.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0).y < -0.7f;
+			return (viveControllers[side]?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (steamVRDevices[side]?.GetPressDown((ulong)1 << 33) ?? false);
 		}
 
-		private bool RightMenuPressing()
+		private bool TriggerRelease(Side side)
 		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 1) ?? false);
+			return (viveControllers[side]?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (steamVRDevices[side]?.GetPressUp((ulong)1 << 33) ?? false);
 		}
 
-		private bool RightMenuPressDown()
+		private bool TriggerPressing(Side side)
 		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 1) ?? false);
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (steamVRDevices[side]?.GetPress((ulong)1 << 33) ?? false);
 		}
 
-		private bool LeftMenuPressing()
+		private bool GripPressing(Side side)
 		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 1) ?? false);
+			return (viveControllers[side]?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (steamVRDevices[side]?.GetPress((ulong)1 << 3) ?? false);
 		}
 
-		private bool LeftMenuPressDown()
+		private bool GripPressDown(Side side)
 		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Menu, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 1) ?? false);
-		}
-
-		private bool RightTriggerPressDown()
-		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerPressDown()
-		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 33) ?? false);
-		}
-
-		private bool RightTriggerRelease()
-		{
-			return (rightVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPressUp((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerRelease()
-		{
-			return (leftVVC?.IsPressUp(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPressUp((ulong)1 << 33) ?? false);
-		}
-
-		private bool RightTriggerPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftTriggerPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Trigger, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 33) ?? false);
-		}
-
-		private bool LeftGripPressing()
-		{
-			return (leftVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPress((ulong)1 << 3) ?? false);
-		}
-
-		private bool LeftGripPressDown()
-		{
-			return (leftVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (leftDevice?.GetPressDown((ulong)1 << 3) ?? false);
-		}
-
-		private bool RightGripPressing()
-		{
-			return (rightVVC?.IsState(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPress((ulong)1 << 3) ?? false);
-		}
-
-		private bool RightGripPressDown()
-		{
-			return (rightVVC?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (rightDevice?.GetPressDown((ulong)1 << 3) ?? false);
+			return (viveControllers[side]?.IsPressDown(VRViveController.EViveButtonKind.Grip, -1) ?? false) || (steamVRDevices[side]?.GetPressDown((ulong)1 << 3) ?? false);
 		}
 
 		private bool IsDoubleClick(TriggerState input, float threshold)
