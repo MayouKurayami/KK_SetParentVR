@@ -85,8 +85,8 @@ namespace SetParentKK
 		{
 			Left,
 			Right,
-			LeftGripped,
-			RightGripped
+			LeftWhileGripped,
+			RightWhileGripped
 		}
 	}
 }
