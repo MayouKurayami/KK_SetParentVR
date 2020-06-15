@@ -502,8 +502,8 @@ namespace SetParentKK
 
 			if (SyncMaleHands.Value)
 			{
-				for (LimbName i = LimbName.MaleLeftHand; i <= LimbName.MaleRightHand; i++)
-					SyncMaleHandsToggle(enable: true, i);
+				foreach (Side side in Enum.GetValues(typeof(Side)))
+					SyncMaleHandsToggle(enable: true, side);
 			}
 
 			setFlag = true;
@@ -540,12 +540,14 @@ namespace SetParentKK
 				UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
 			}
 
+			foreach (Side side in Enum.GetValues(typeof(Side)))
+				SyncMaleHandsToggle(enable: false, side);
+
 			for (LimbName i = LimbName.MaleLeftHand; i <= LimbName.MaleRightHand; i++)
 			{
-				SyncMaleHandsToggle(enable: false, i);
 				limbs[(int)i].ParentJointBone.bone = null;
 				limbs[(int)i].ParentJointEffector.positionWeight = 0f;
-			}				
+			}	
 
 			male_hips_bd.bone = null;
 			maleFBBIK.solver.bodyEffector.positionWeight = 0f;

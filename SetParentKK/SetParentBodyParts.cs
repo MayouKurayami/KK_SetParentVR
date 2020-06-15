@@ -341,27 +341,24 @@ namespace SetParentKK
 		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
 		/// </summary>
 		/// <param name="enable">To enable or disable the functionality</param>
-		private void SyncMaleHandsToggle(bool enable, LimbName limb)
+		private void SyncMaleHandsToggle(bool enable, Side side)
 		{
 			if (!setFlag || hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
 				return;
 
-			if (limb < LimbName.MaleLeftHand || limb > LimbName.MaleRightHand)
-				return;
-
-			Side sideIndex = (Side)(limb - 4);
+			LimbName limb = side == Side.Left ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
 
 			if (enable)
 			{
 				FixLimbToggle(limbs[(int)limb]);
-				limbs[(int)limb].AnchorObj.transform.parent = controllers[sideIndex].transform;
+				limbs[(int)limb].AnchorObj.transform.parent = controllers[side].transform;
 
 				//Reposition anchor to align the male hand model to the controller
 				limbs[(int)limb].AnchorObj.transform.localPosition = new Vector3(0, 0, -0.1f);
-				limbs[(int)limb].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, sideIndex == Side.Left ? 90f : -90f, 0f) * Quaternion.Euler(0, sideIndex == Side.Left ? -30f : 30f, 0f);
+				limbs[(int)limb].AnchorObj.transform.localRotation = Quaternion.Euler(-90f, side == Side.Left ? 90f : -90f, 0f) * Quaternion.Euler(0, side == Side.Left ? -30f : 30f, 0f);
 
 				//Hide controller hand model
-				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+				foreach (SkinnedMeshRenderer mesh in controllers[side].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
 					mesh.enabled = false;
 
 				//Restore male shoulder parameters to default as shoulder fixing will be disabled when hands are anchored to the controllers
@@ -370,7 +367,7 @@ namespace SetParentKK
 
 				//Enable collider for the hand that is being synced, no reason to hide it as it is now visible
 				if (SetControllerCollider.Value)
-					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
+					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = true;
 			}
 			else
 			{
@@ -380,12 +377,12 @@ namespace SetParentKK
 				if (GropeHandsDisplay.Value < HideHandMode.AlwaysShow)
 					itemHands[(int)limb - 4].enabled = true;
 
-				foreach (SkinnedMeshRenderer mesh in controllers[sideIndex].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+				foreach (SkinnedMeshRenderer mesh in controllers[side].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
 					mesh.enabled = true;
 
 				//Disable the collider if config is set to hide parent controller and the hand is of that controller
-				if (SetControllerCollider.Value && controllers[sideIndex] == parentController && (HideParentConAlways.Value || SetParentMode.Value < ParentMode.AnimationOnly))
-					controllers[sideIndex].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+				if (SetControllerCollider.Value && controllers[side] == parentController && (HideParentConAlways.Value || SetParentMode.Value < ParentMode.AnimationOnly))
+					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 			}
 		}
 

@@ -70,8 +70,8 @@ namespace SetParentKK
 			CreateButton("女右足固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
 			CreateButton("女左手固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
 			CreateButton("女右手固定/解除", new Vector3(26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightHand], true), objRightMenuCanvas);
-			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleLeftHand].AnchorObj, LimbName.MaleLeftHand), objRightMenuCanvas);
-			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleRightHand].AnchorObj, LimbName.MaleRightHand), objRightMenuCanvas);
+			CreateButton("男の左手親子付け ON/OFF", new Vector3(-26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleLeftHand].AnchorObj, Side.Left), objRightMenuCanvas);
+			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleRightHand].AnchorObj, Side.Right), objRightMenuCanvas);
 			txtLimbAuto = CreateButton("女手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => PushLimbAutoAttachButton(), objRightMenuCanvas);
 			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => PushParentModeChangeButton(), objRightMenuCanvas);
 			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushPLButton(), objRightMenuCanvas);
