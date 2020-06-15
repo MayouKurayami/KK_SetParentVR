@@ -385,19 +385,5 @@ namespace SetParentKK
 					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 			}
 		}
-
-		/// <summary>
-		/// Check if a specified male limb is synchronized to the corresponding controller
-		/// </summary>
-		/// <param name="side">The particular side to check</param>
-		/// <returns></returns>
-		internal bool IsMaleSideSync(bool side)
-		{
-			LimbName parentLimb = side ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
-
-			return limbs[(int)parentLimb].AnchorObj;
-		}
-
-
 	}
 }

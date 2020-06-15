@@ -268,11 +268,7 @@ namespace SetParentKK
 				//When SetParent is active, display the menu regardless of being hidden when user brings controller within set distance to the headset
 				if (setFlag)
 				{
-					Vector3 vector;
-					if (parentIsLeft)
-						vector = cameraEye.transform.position - controllers[Side.Right].transform.position;
-					else
-						vector = cameraEye.transform.position - controllers[Side.Left].transform.position;
+					Vector3 vector = cameraEye.transform.position - ParentSideController(oppositeSide: true).transform.position; ;
 
 					if (vector.magnitude <= MenuUpProximity.Value)
 					{
@@ -453,7 +449,7 @@ namespace SetParentKK
 			}
 			parentIsLeft = _parentIsLeft;
 			nowAnimState = hFlag.nowAnimStateName;		
-			parentController = _parentIsLeft ? controllers[Side.Left] : controllers[Side.Right];
+			parentController = ParentSideController();
 
 			if (femaleSpinePos == null)
 			{
@@ -462,7 +458,7 @@ namespace SetParentKK
 
 			if (SetParentMode.Value == ParentMode.PositionOnly || SetParentMode.Value == ParentMode.PositionAndAnimation)
 			{
-				SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
+				SetParentToController(femaleSpinePos, femaleBase, true);
 			}	
 			else
 			{
@@ -475,7 +471,7 @@ namespace SetParentKK
 				{
 					parentController.transform.Find("Model").gameObject.SetActive(false);
 
-					if (SetControllerCollider.Value && !IsMaleSideSync(parentIsLeft))
+					if (SetControllerCollider.Value && !limbs[(int)ParentSideMaleHand()].AnchorObj)
 						parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 				}
 			}
@@ -737,19 +733,20 @@ namespace SetParentKK
 			animSpeedController.SetController(controllers[Side.Left], controllers[Side.Right], this);
 		}
 
-		private void SetParentToController (bool isLeft, GameObject parentDummy, GameObject target, bool hideModel)
+
+		private void SetParentToController (GameObject parentDummy, GameObject target, bool hideModel, bool notParentSide = false)
 		{
-			Side side = isLeft ? Side.Left : Side.Right;
+			GameObject controller = ParentSideController(notParentSide);
 			
-			parentDummy.transform.parent = controllers[side].transform;
+			parentDummy.transform.parent = controller.transform;
+
 			if (hideModel)
 			{
-				controllers[side].transform.Find("Model").gameObject.SetActive(false);
+				controller.transform.Find("Model").gameObject.SetActive(false);
 
-				LimbName limb = isLeft ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
-				if (SetControllerCollider.Value && !limbs[(int)limb].AnchorObj)
+				if (SetControllerCollider.Value && !limbs[(int)ParentSideMaleHand(notParentSide)].AnchorObj)
 				{
-					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
+					controller.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 				}		
 			}
 					
@@ -827,7 +824,7 @@ namespace SetParentKK
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
 						femaleSpinePos.transform.parent = null;
 					else
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
+						SetParentToController(femaleSpinePos, femaleBase, true);
 					break;
 
 				case CtrlState.Following:
@@ -840,7 +837,7 @@ namespace SetParentKK
 
 				case CtrlState.Stationary:
 					if (SetParentMode.Value != ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, true);
+						SetParentToController(femaleSpinePos, femaleBase, true);
 					if (SetParentMode.Value != ParentMode.PositionOnly)
 						AddAnimSpeedController(obj_chaF_001);
 					break;
@@ -853,16 +850,16 @@ namespace SetParentKK
 					return CtrlState.None;
 
 				case CtrlState.MaleControl:
-					male_p_cf_bodybone.transform.parent = parentIsLeft ? controllers[Side.Right].transform : controllers[Side.Left].transform;
+					male_p_cf_bodybone.transform.parent = ParentSideController(oppositeSide: true).transform;
 					return CtrlState.MaleControl;
 
 				case CtrlState.FemaleControl:
-					SetParentToController(!parentIsLeft, femaleSpinePos, femaleBase, false);
+					SetParentToController(femaleSpinePos, femaleBase, false, notParentSide: true);
 					return CtrlState.FemaleControl;
 
 				case CtrlState.Following:
 					if (SetParentMode.Value == ParentMode.AnimationOnly)
-						SetParentToController(parentIsLeft, femaleSpinePos, femaleBase, false);
+						SetParentToController(femaleSpinePos, femaleBase, false);
 					if (obj_chaF_001.GetComponent<AnimSpeedController>() != null)
 					{
 						UnityEngine.Object.Destroy(obj_chaF_001.GetComponent<AnimSpeedController>());
@@ -895,6 +892,21 @@ namespace SetParentKK
 
 			return false;
 		}
+
+		/// <summary>
+		/// Returns the controller that's acting as parent.
+		/// </summary>
+		/// <param name="oppositeSide">Whether to return the opposite side of the parent</param>
+		/// <returns></returns>
+		internal GameObject ParentSideController(bool oppositeSide = false) => (parentIsLeft ^ oppositeSide) ? controllers[Side.Left] : controllers[Side.Right];
+
+		/// <summary>
+		/// Returns the male hand that's on the same side as the parenting controller.
+		/// </summary>
+		/// <param name="oppositeSide">Whether to return the opposite side of the parent</param>
+		/// <returns></returns>
+		internal LimbName ParentSideMaleHand(bool oppositeSide = false) => (parentIsLeft ^ oppositeSide) ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
+
 		
 		/// <summary>
 		/// Describes the parenting relationship between the controller and the female/male character

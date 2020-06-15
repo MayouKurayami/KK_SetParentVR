@@ -320,7 +320,7 @@ namespace SetParentKK
 
 				parentController.transform.Find("Model").gameObject.SetActive(parentHandShow);
 
-				if (SetControllerCollider.Value && !IsMaleSideSync(parentIsLeft))
+				if (SetControllerCollider.Value && !limbs[(int)ParentSideMaleHand()].AnchorObj)
 					parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = parentHandShow;
 			}
 		}
