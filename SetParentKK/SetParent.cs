@@ -269,35 +269,12 @@ namespace SetParentKK
 				}
 			}			
 			
-			//////////////
-			//Activate/deactivate SetParent functionality by
-			//* Pressing keyboard shortcut or 
-			//* Pressing menu button and trigger at the same time
-			//////////////
-			if (SetParentToggleCondition())
+			if (SetParentToggleCondition(out bool isParentLeft))
 			{
-				//Toggle parenting based on current parenting status
-				//* Set parent to the opposite controller of the one pressing the buttons, since the controller that's parenting the female would become invisible and unable to receive input
-				//* Set parent to the left controller if activated by keypress
 				if (!setFlag)
-				{
-					if (MenuPressing(Side.Right) && TriggerPressDown(Side.Right))
-					{
-						SetP(_parentIsLeft: true);
-					}
-					else if (MenuPressing(Side.Left) && TriggerPressDown(Side.Left))
-					{
-						SetP(_parentIsLeft: false);
-					}
-					else
-					{
-						SetP(_parentIsLeft: true);
-					}
-				}
+					SetP(isParentLeft);
 				else
-				{
 					UnsetP();
-				}
 			}
 
 			//If trigger is pressed, call function to interact with limbs. Otherwise increase timer since last trigger press
@@ -860,15 +837,30 @@ namespace SetParentKK
 			}
 		}
 
-		private bool SetParentToggleCondition()
+		/// <summary>
+		/// Returns true if menu button and trigger are pressed at the same time, or if the keyboard shortcut for activating SetParent is pressed.
+		/// </summary>
+		/// <param name="isParentLeft">Returns true if the right controller is pressed. Otherwise returns false.</param>
+		/// <returns></returns>
+		private bool SetParentToggleCondition(out bool isParentLeft)
 		{
 			if (MenuPressing(Side.Right) && TriggerPressing(Side.Right) && (MenuPressDown(Side.Right) || TriggerPressDown(Side.Right)))
+			{
+				isParentLeft = true;
 				return true;
+			}		
 			else if (MenuPressing(Side.Left) && TriggerPressing(Side.Left) && (MenuPressDown(Side.Left) || TriggerPressDown(Side.Left)))
+			{
+				isParentLeft = false;
 				return true;
+			}	
 			else if (Input.GetKeyDown(SetParentToggle.Value.MainKey) && SetParentToggle.Value.Modifiers.All(x => Input.GetKey(x)))
+			{
+				isParentLeft = true;
 				return true;
+			}
 
+			isParentLeft = false;
 			return false;
 		}
 
