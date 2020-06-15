@@ -210,34 +210,11 @@ namespace SetParentKK
 				femaleExists = true;
 			}
 
-			//Find and assign left and right controllers variables if they are null
-			if (steamVRDevices[Side.Left] == null)
+			//Controllers may be inactive while game is running, the below code will attempt to find and assign left and right steamVR devices every frame if they are null
+			foreach (Side side in (Side[])Enum.GetValues(typeof(Side)))
 			{
-				if (controllers[Side.Left] == null)
-				{
-					controllers[Side.Left] = hSprite.managerVR.objMove.transform.Find("Controller (left)").gameObject;
-					if (SetControllerCollider.Value)
-						SetControllerColliders(controllers[Side.Left]);
-
-					itemHands[0] = Traverse.Create(controllers[Side.Left].transform.Find("Model/p_handL").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
-				}
-
-				viveControllers[Side.Left] = controllers[Side.Left].GetComponent<VRViveController>();
-				steamVRDevices[Side.Left] = f_device.GetValue(viveControllers[Side.Left]) as SteamVR_Controller.Device;
-			}
-			if (steamVRDevices[Side.Right] == null)
-			{
-				if (controllers[Side.Right] == null)
-				{
-					controllers[Side.Right] = hSprite.managerVR.objMove.transform.Find("Controller (right)").gameObject;
-					if (SetControllerCollider.Value)
-						SetControllerColliders(controllers[Side.Right]);
-
-					itemHands[1] = Traverse.Create(controllers[Side.Right].transform.Find("Model/p_handR").GetComponent<VRHandCtrl>()).Field("dicItem").GetValue<Dictionary<int, VRHandCtrl.AibuItem>>()[0].objBody.GetComponent<SkinnedMeshRenderer>();
-				}
-
-				viveControllers[Side.Right] = controllers[Side.Right].GetComponent<VRViveController>();
-				steamVRDevices[Side.Right] = f_device.GetValue(viveControllers[Side.Right]) as SteamVR_Controller.Device;
+				if (steamVRDevices[side] == null)
+					steamVRDevices[side] = f_device.GetValue(viveControllers[side]) as SteamVR_Controller.Device;
 			}
 
 			//Initiate canvas if it's null
