@@ -277,7 +277,7 @@ namespace SetParentKK
 		private void PushLimbAutoAttachButton(bool forceON = false)
 		{
 			limbAutoAttach = forceON ? true : !limbAutoAttach;
-			txtLimbAuto.text = limbAutoAttach ? "手足固定 Turn Off" : "手足固定 Turn On";
+			txtLimbAuto.text = limbAutoAttach ? "女手足固定 Turn Off" : "女手足固定 Turn On";
 		}
 
 		private void PushFIButton()
