@@ -182,7 +182,7 @@ namespace SetParentKK
 				targetBone: male_leg_R_bd);
 
 
-			SetBodyColliders();
+			SetShoulderColliders();
 
 			foreach (Transform transform in GameObject.Find("Map").GetComponentsInChildren<Transform>())
 				SetObjectColliders(transform);
@@ -193,9 +193,16 @@ namespace SetParentKK
 					SetControllerColliders(pair.Value);
 			}
 
+			for (LimbName i = LimbName.FemaleLeftHand; i <= LimbName.FemaleRightFoot; i++)
+			{
+				SetLimbColliders(i);
+			}
+
 			if (SetMaleFeetCollider.Value)
-				SetMaleFeetColliders();
-			
+			{
+				for (LimbName i = LimbName.MaleLeftFoot; i <= LimbName.MaleRightFoot; i++)
+					SetLimbColliders(i);
+			}			
 		}		
 
 		public void LateUpdate()
@@ -499,16 +506,8 @@ namespace SetParentKK
 			setFlag = false;
 		}
 
-		private void SetBodyColliders()
+		private void SetShoulderColliders()
 		{
-			for (int i = (int)LimbName.FemaleLeftHand; i <= (int)LimbName.FemaleRightFoot; i++)
-			{
-				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
-				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
-				collider.transform.parent = limbs[i].Effector.bone;
-				collider.transform.localPosition = Vector3.zero;
-			}
-
 			shoulderCollider = new GameObject("SPCollider");
 			shoulderCollider.transform.parent = cameraEye.transform;
 			shoulderCollider.transform.localPosition = new Vector3(0f, -0.25f, -0.15f);
@@ -533,15 +532,13 @@ namespace SetParentKK
 			CtrlCollider.AddComponent<Rigidbody>().isKinematic = true;
 		}
 
-		private void SetMaleFeetColliders()
+		private void SetLimbColliders(LimbName limb)
 		{
-			for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
-			{
-				GameObject collider = new GameObject(limbs[i].LimbPart.ToString() + "Collider");
-				collider.AddComponent<FixBodyParts>().Init(this, limbs[i].LimbPart);
-				collider.transform.parent = limbs[i].Effector.bone;
-				collider.transform.localPosition = Vector3.zero;
-			}
+			GameObject collider = new GameObject(limbs[(int)limb].LimbPart.ToString() + "Collider");
+			collider.AddComponent<FixBodyParts>().Init(this, limbs[(int)limb].LimbPart);
+			collider.transform.parent = limbs[(int)limb].Effector.bone;
+			collider.transform.localPosition = Vector3.zero;
+			
 		}
 
 		internal void SetObjectColliders(Transform transform)
