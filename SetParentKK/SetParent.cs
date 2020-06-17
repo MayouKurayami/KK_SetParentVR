@@ -468,12 +468,6 @@ namespace SetParentKK
 			UnityEngine.Object.Destroy(maleCrotchPos);
 			femaleSpinePos.transform.parent = null;
 
-			foreach (Limb limb in limbs)
-			{
-				if (limb.AnchorObj)
-					FixLimbToggle(limb);
-			}
-
 			PushLimbAutoAttachButton(true);
 
 			foreach (KeyValuePair<Side, GameObject> pair in controllers)

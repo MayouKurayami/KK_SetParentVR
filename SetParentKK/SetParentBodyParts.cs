@@ -341,16 +341,18 @@ namespace SetParentKK
 		/// Initialize or disable male hands from anchoring to the controllers, depends on the passed parameter
 		/// </summary>
 		/// <param name="enable">To enable or disable the functionality</param>
-		private void SyncMaleHandsToggle(bool enable, Side side)
+		internal void SyncMaleHandsToggle(bool enable, Side side)
 		{
-			if (!setFlag || hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
+			if (hFlag.mode <= HFlag.EMode.aibu || (hFlag.mode >= HFlag.EMode.masturbation && hFlag.mode <= HFlag.EMode.lesbian))
 				return;
 
 			LimbName limb = side == Side.Left ? LimbName.MaleLeftHand : LimbName.MaleRightHand;
 
 			if (enable)
 			{
-				FixLimbToggle(limbs[(int)limb]);
+				if (!limbs[(int)limb].AnchorObj)
+					FixLimbToggle(limbs[(int)limb]);
+
 				limbs[(int)limb].AnchorObj.transform.parent = controllers[side].transform;
 
 				//Reposition anchor to align the male hand model to the controller
@@ -380,8 +382,8 @@ namespace SetParentKK
 				foreach (SkinnedMeshRenderer mesh in controllers[side].transform.GetComponentsInChildren<SkinnedMeshRenderer>(true))
 					mesh.enabled = true;
 
-				//Disable the collider if config is set to hide parent controller and the hand is of that controller
-				if (SetControllerCollider.Value && controllers[side] == parentController && (HideParentConAlways.Value || SetParentMode.Value < ParentMode.AnimationOnly))
+				//Disable the collider if the controller model is currently hidden
+				if (SetControllerCollider.Value && controllers[side].transform.Find("Model").gameObject.activeSelf == false)
 					controllers[side].transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = false;
 			}
 		}

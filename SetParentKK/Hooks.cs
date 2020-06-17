@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿using System;
+using Harmony;
 using System.Collections.Generic;
 using UnityEngine;
 using static ItemObject;
@@ -29,7 +30,14 @@ namespace SetParentKK
 			_isForceCameraReset = true;
 			if (setParentObj != null)
 			{
+				foreach (SetParent.Limb limb in setParentObj.limbs)
+				{
+					if (limb.AnchorObj)
+						setParentObj.FixLimbToggle(limb);
+				}
+
 				setParentObj.UnsetP();
+
 				setParentObj.male_p_cf_bodybone.transform.localPosition = Vector3.zero;
 				setParentObj.male_p_cf_bodybone.transform.localRotation = Quaternion.identity;
 				setParentObj.female_p_cf_bodybone.transform.localPosition = Vector3.zero;
