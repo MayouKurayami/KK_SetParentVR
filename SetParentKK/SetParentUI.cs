@@ -74,8 +74,8 @@ namespace SetParentKK
 			CreateButton("男の右手親子付け ON/OFF", new Vector3(26f, 13f, 0f), () => SyncMaleHandsToggle(!limbs[(int)LimbName.MaleRightHand].AnchorObj, Side.Right), objRightMenuCanvas);
 			txtLimbAuto = CreateButton("女手足固定 Turn Off", new Vector3(-26f, 26f, 0f), () => PushLimbAutoAttachButton(), objRightMenuCanvas);
 			txtSetParentMode = CreateButton(SetParentMode.Value.ToString(), new Vector3(26f, 26f, 0f), () => PushParentModeChangeButton(), objRightMenuCanvas);
-			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushPLButton(), objRightMenuCanvas);
-			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushPRButton(), objRightMenuCanvas);
+			txtSetParentL = CreateButton("左 親子付け Turn On", new Vector3(-26f, 39f, 0f), () => PushSetParentButton(isParentLeft: true), objRightMenuCanvas);
+			txtSetParentR = CreateButton("右 親子付け Turn On", new Vector3(26f, 39f, 0f), () => PushSetParentButton(isParentLeft: false), objRightMenuCanvas);
 
 			CreateButton("ヌク", new Vector3(-26f, 52f, 0f), () => hSprite.OnPullClick(), objRightMenuCanvas);
 
@@ -229,23 +229,11 @@ namespace SetParentKK
 			yield break;
 		}
 
-		private void PushPLButton()
+		private void PushSetParentButton(bool isParentLeft)
 		{
 			if (!setFlag)
 			{
-				SetP(true);
-			}
-			else
-			{
-				UnsetP();
-			}
-		}
-
-		private void PushPRButton()
-		{
-			if (!setFlag)
-			{
-				SetP(false);
+				SetP(isParentLeft);
 			}
 			else
 			{

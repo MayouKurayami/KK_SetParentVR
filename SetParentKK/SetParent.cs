@@ -353,16 +353,8 @@ namespace SetParentKK
 
 				//Update player's shoulder collider's rotation to always be facing the girl
 				shoulderCollider.transform.LookAt(femaleBase.transform, cameraEye.transform.up);
-
-
-				txtSetParentL.text = "親子付け Turn Off";
-				txtSetParentR.text = "親子付け Turn Off";
 			}
-			else
-			{
-				txtSetParentL.text = "左 親子付け Turn On";
-				txtSetParentR.text = "右 親子付け Turn On";
-			}
+
 
 			/////////////////////////////////////////////////////////
 			///Use arrays to store the position and rotation of the female pivot object during the last constant number of frames.
@@ -384,6 +376,7 @@ namespace SetParentKK
 				indexSpineRot = 0;
 			else
 				indexSpineRot++;
+
 			if (indexSpinePos >= (SmoothBuffer - 1))
 				indexSpinePos = 0;
 			else
@@ -463,6 +456,9 @@ namespace SetParentKK
 					SyncMaleHandsToggle(enable: true, side);
 			}
 
+			txtSetParentL.text = "親子付け Turn Off";
+			txtSetParentR.text = "親子付け Turn Off";
+
 			setFlag = true;
 		}
 
@@ -502,7 +498,10 @@ namespace SetParentKK
 
 			male_hips_bd.bone = null;
 			maleFBBIK.solver.bodyEffector.positionWeight = 0f;
-			
+
+			txtSetParentL.text = "左 親子付け Turn On";
+			txtSetParentR.text = "右 親子付け Turn On";
+
 			setFlag = false;
 		}
 
