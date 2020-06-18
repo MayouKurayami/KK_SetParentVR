@@ -206,9 +206,9 @@ namespace SetParentKK
 			MaleYaw = new ConfigWrapper<bool>(nameof(MaleYaw), this, true);
 			ParentPart = new ConfigWrapper<BodyPart>(nameof(ParentPart), this, BodyPart.Ass);
 			TrackingMode = new ConfigWrapper<bool>(nameof(TrackingMode), this, true);
-			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.3f);
+			StrongThresholdMultiplier = new ConfigWrapper<float>(nameof(StrongThresholdMultiplier), this, 1.1f);
 			StrongMotionThreshold = new ConfigWrapper<float>(nameof(StrongMotionThreshold), this, 0.04f);
-			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.025f);		
+			WeakMotionThreshold = new ConfigWrapper<float>(nameof(WeakMotionThreshold), this, 0.03f);		
 		}
 
 
