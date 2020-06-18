@@ -714,36 +714,27 @@ namespace SetParentKK
 			///////////////////
 			Side nonParentSide = ParentSideEnum(oppositeSide: true);
 
-			if (hFlag.timeNoClickItem == 0 && TriggerPressing(nonParentSide) && !GripPressing(nonParentSide))
+			if (GripPressing(nonParentSide))
 			{
-				if (currentCtrlstate != CtrlState.Stationary)
-					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Stationary);
-				return;
-			}
-			else if (TriggerPressing(nonParentSide) && GripPressing(nonParentSide))
-			{
-				if (currentCtrlstate != CtrlState.Following)
-					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Following);
-				return;
-			}
-			else if (GripPressing(nonParentSide) && TrackPadDown(nonParentSide))
-			{
-				if (currentCtrlstate != CtrlState.MaleControl)
+				if (currentCtrlstate != CtrlState.MaleControl && TrackPadDown(nonParentSide))
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.MaleControl);
-				return;
-			}
-			else if (GripPressing(nonParentSide) && TrackPadUp(nonParentSide))
-			{
-				if (currentCtrlstate != CtrlState.FemaleControl)
+
+				else if (currentCtrlstate != CtrlState.FemaleControl && TrackPadUp(nonParentSide))
 					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.FemaleControl);
-				return;
+
+				else if (currentCtrlstate != CtrlState.Following && TriggerPressing(nonParentSide))
+					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Following);
 			}
-			else
+			else if (currentCtrlstate != CtrlState.Stationary && TriggerPressing(nonParentSide) && hFlag.timeNoClickItem == 0)
 			{
-				if (currentCtrlstate != CtrlState.None)
-					currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.None);
-				return;
+				currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.Stationary);
 			}
+			else if (currentCtrlstate != CtrlState.None)
+			{
+				currentCtrlstate = ChangeControlState(currentCtrlstate, CtrlState.None);
+			}			
+
+			return;
 		}
 
 		/// <summary>
