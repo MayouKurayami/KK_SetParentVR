@@ -384,7 +384,7 @@ namespace SetParentKK
 
 
 			if ((setFlag && SetParentMode.Value < ParentMode.AnimationOnly) || currentCtrlstate == CtrlState.Following || currentCtrlstate == CtrlState.FemaleControl)
-				FemalePositionUpdate(femaleSpinePos);			
+				FemalePositionUpdate(femaleSpinePos);	
 		}
 
 		/// <summary>

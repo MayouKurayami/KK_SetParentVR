@@ -15,6 +15,8 @@ namespace SetParentKK
 		private Text txtSetParentR;
 		private Text txtSetParentMode;
 		private Text txtLimbAuto;
+		internal Text txtMaleLeftFoot;
+		internal Text txtMaleRightFoot;
 
 		private Canvas canvasRight;
 		private GameObject objRightMenuCanvas;
@@ -64,8 +66,8 @@ namespace SetParentKK
 			////////////////
 			//Populate right side floating menu with buttons
 			////////////////
-			CreateButton("男の左足固定/解除", new Vector3(-26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleLeftFoot], true), objRightMenuCanvas);
-			CreateButton("男の右足固定/解除", new Vector3(26f, -26f, 0f), () => FixLimbToggle(limbs[(int)LimbName.MaleRightFoot], true), objRightMenuCanvas);
+			txtMaleLeftFoot = CreateButton("男の左足固定", new Vector3(-26f, -26f, 0f), () => PushLimbButton(LimbName.MaleLeftFoot, txtMaleLeftFoot, "男の左足解除", "男の左足固定"), objRightMenuCanvas);
+			txtMaleRightFoot = CreateButton("男の右足固定", new Vector3(26f, -26f, 0f), () => PushLimbButton(LimbName.MaleRightFoot, txtMaleRightFoot, "男の右足解除", "男の右足固定"), objRightMenuCanvas);
 			CreateButton("女左足固定/解除", new Vector3(-26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftFoot], true), objRightMenuCanvas);
 			CreateButton("女右足固定/解除", new Vector3(26f, -13f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleRightFoot], true), objRightMenuCanvas);
 			CreateButton("女左手固定/解除", new Vector3(-26f, 0f, 0f), () => FixLimbToggle(limbs[(int)LimbName.FemaleLeftHand], true), objRightMenuCanvas);
@@ -310,6 +312,35 @@ namespace SetParentKK
 
 				if (SetControllerCollider.Value && !limbs[(int)ParentSideMaleHand()].AnchorObj)
 					parentController.transform.Find("ControllerCollider").GetComponent<SphereCollider>().enabled = parentHandShow;
+			}
+		}
+
+		/// <summary>
+		/// Forcibly fix the limb in place. Release the limb if it's currently fixed.
+		/// </summary>
+		/// <param name="limb">The limb to toggle</param>
+		/// <param name="buttonText">Text object of the button to change</param>
+		/// <param name="turnOffText">Button text to display when limb is currently fixed</param>
+		/// <param name="turnOnText">Button text to display when limb is currently not fixed</param>
+		private void PushLimbButton(LimbName limb, Text buttonText = null, string turnOffText = null, string turnOnText = null)
+		{		
+			if (!limbs[(int)limb].AnchorObj)
+			{
+				FixLimbToggle(limbs[(int)limb], true);
+				if (buttonText)
+					buttonText.text = turnOffText;
+			}
+			else if (!limbs[(int)limb].Fixed)
+			{
+				limbs[(int)limb].Fixed = true;
+				if (buttonText)
+					buttonText.text = turnOffText;
+			}
+			else
+			{
+				FixLimbToggle(limbs[(int)limb]);
+				if (buttonText)
+					buttonText.text = turnOnText;
 			}
 		}
 	}

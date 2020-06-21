@@ -334,6 +334,14 @@ namespace SetParentKK
 			{
 				for (int i = (int)LimbName.MaleLeftFoot; i <= (int)LimbName.MaleRightFoot; i++)
 					FixLimbToggle(limbs[i]);
+
+				txtMaleLeftFoot.text = "男の左足固定";
+				txtMaleRightFoot.text = "男の右足固定";
+			}
+			else
+			{
+				txtMaleLeftFoot.text = "男の左足解除";
+				txtMaleRightFoot.text = "男の右足解除";
 			}
 		}
 

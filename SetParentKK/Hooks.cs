@@ -35,6 +35,8 @@ namespace SetParentKK
 					if (limb.AnchorObj)
 						setParentObj.FixLimbToggle(limb);
 				}
+				setParentObj.txtMaleLeftFoot.text = "男の左足固定";
+				setParentObj.txtMaleRightFoot.text = "男の右足固定";
 
 				setParentObj.UnsetP();
 
