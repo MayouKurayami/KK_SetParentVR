@@ -24,10 +24,9 @@ namespace SetParentKK
 		}
 
 		[HarmonyPrefix]
-		[HarmonyPatch(typeof(VRHScene), "ChangeAnimator")]
-		public static void ChangeAnimatorPrefix(ref bool _isForceCameraReset)
+		[HarmonyPatch(typeof(VRHScene), "SetLocalPosition")]
+		public static void SetLocalPositionPrefix()
 		{
-			_isForceCameraReset = true;
 			if (setParentObj != null)
 			{
 				foreach (SetParent.Limb limb in setParentObj.limbs)
