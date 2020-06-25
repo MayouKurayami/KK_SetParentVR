@@ -37,4 +37,18 @@
 - Fix issue with male limbs pulling the head or body out of position  
 - Fix controller 3D model visibility not updating when changing SetParentMode via the floating menu  
 - Fix issues with modifiers not working for keyboard shortcuts  
-- Fix issues with controller shortcuts sometimes not properly toggling SetParent
+- Fix issues with controller shortcuts sometimes not properly toggling SetParent  
+
+### 2.1.8  
+- Improve config defaults  
+- Allow grabbing and holding the limbs of female even when SetParentVR is not enabled   
+- Allow male hands synchronization when SetParentVR is not enabled  
+- Make female limbs retain their positions when SetParentVR is disabled
+- Hide parenting controller in AnimationOnly mode, and add config option to unhide it  
+- Add config option to enable/disable input of parent controller  
+- Add buttons to toggle synchronization of each male hand separately
+- Improve behavior of buttons that toggle the forced fixing of male's feet
+- Fix controller colliders not working in some cases  
+- Fix SetParentVR not being reset when moving to different H points of the same position
+- Floating menu re-arrangement and other cosmetic changes  
+- Performance improvements and code refactoring
