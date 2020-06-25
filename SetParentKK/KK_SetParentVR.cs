@@ -11,7 +11,7 @@ namespace SetParentKK
 	public class KK_SetParentVR : BaseUnityPlugin
 	{
 		public const string GUID = "MK.KK_SetParentVR";
-		public const string Version = "2.1.0";
+		public const string Version = "2.1.8";
 		public const string PluginName = "SetParentVR";
 		public const string AssembName = "KK_SetParentVR";
 		internal static SetParent setParentObj;
@@ -61,8 +61,8 @@ namespace SetParentKK
 		[Description("Hides floating menu by default. \nBring it up by holding the menu/B button for more than 1 second, or bring the controller close to the headset when SetParent is active")]
 		public static ConfigWrapper<bool> MenuHideDefault { get; private set; }
 
-		[DisplayName("Hide Parent Controller in All Modes")]
-		[Description("Hides the parent controller even in animation only mode")]
+		[DisplayName("Hide Parent Controller in Animation Only Mode")]
+		[Description("Hides the parent controller even in animation only mode. \nDisable this to display parent controller in animation only mode while remain hidden in other modes.")]
 		public static ConfigWrapper<bool> HideParentConAlways { get; private set; }
 
 		[DisplayName("Make Male's Feet Stick to Objects")]
@@ -70,7 +70,7 @@ namespace SetParentKK
 		public static ConfigWrapper<bool> SetMaleFeetCollider { get; private set; }
 
 		[DisplayName("Synchronize Male's Hands with Controllers")]
-		[Description("If enabled, the male's hands and arms are synchronized to the controllers by default")]
+		[Description("If enabled, the male's hands and arms are synchronized to the controllers by default when SetParentVR is enabled")]
 		public static ConfigWrapper<bool> SyncMaleHands { get; private set; }
 
 		[DisplayName("Synchronize Male's Head with Headset")]
@@ -94,7 +94,7 @@ namespace SetParentKK
 		public static SavedKeyboardShortcut MaleFeetToggle { get; private set; }
 
 		[DisplayName("SetParent Toggle")]
-		[Description("Press this key to enable/disable SetParent plugin using the left controller as parent")]
+		[Description("Press this key to enable/disable SetParentVR plugin using the left controller as parent")]
 		public static SavedKeyboardShortcut SetParentToggle { get; private set; }
 
 
@@ -120,7 +120,7 @@ namespace SetParentKK
 		public static ConfigWrapper<int> MoveCoordinatePoolSize { get; private set; }
 
 		[Category("Advanced Settings")]
-		[DisplayName("Controller Movement Pool Size (frames)")]
+		[DisplayName("Controller Moved Distance Pool Size (frames)")]
 		[Description("Movement amount of the controller will be calculated using the sum of distance moved in this number of frames")]
 		[AcceptableValueRange(0, int.MaxValue, false)]
 		public static ConfigWrapper<int> MoveDistancePoolSize { get; private set; }
