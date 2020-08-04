@@ -8,6 +8,10 @@ using Harmony;
 namespace SetParentKK
 {
 	[BepInPlugin(GUID, PluginName, Version)]
+	[BepInProcess("Koikatu")]
+	[BepInProcess("KoikatuVR")]
+	[BepInProcess("Koikatsu Party")]
+	[BepInProcess("Koikatsu Party VR")]
 	public class KK_SetParentVR : BaseUnityPlugin
 	{
 		public const string GUID = "MK.KK_SetParentVR";
