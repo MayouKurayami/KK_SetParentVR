@@ -674,7 +674,7 @@ namespace SetParentKK
 
 			AnimSpeedController animSpeedController = character.AddComponent<AnimSpeedController>();
 
-			animSpeedController.SetController(controllers[Side.Left], controllers[Side.Right], this);
+			animSpeedController.SetController(parentController, ParentSideController(oppositeSide: true), this);
 		}
 
 

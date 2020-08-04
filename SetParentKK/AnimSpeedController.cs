@@ -5,10 +5,10 @@ namespace SetParentKK
 {
 	public class AnimSpeedController : MonoBehaviour
 	{
-		public void SetController(GameObject leftcon, GameObject rightcon, SetParent setParent)
+		public void SetController(GameObject parentCon, GameObject subCon, SetParent setParent)
 		{
-			parentController = leftcon;
-			subController = rightcon;
+			parentController = parentCon;
+			subController = subCon;
 			setParentObj = setParent;
 		}
 
