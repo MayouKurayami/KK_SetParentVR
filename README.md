@@ -149,9 +149,9 @@ Use the floating menu to switch to **Animation Only Mode** as a workaround, or s
 
 - Limited functionality in 3P. Currently only the first girl's position will be controlled. The plugin cannot control the position and pose of the second girl.  
 
-- With male following enabled, the shadow casted by the male body may be distracting. Use [KK_HAutosets](https://github.com/MayouKurayami/KK_HAutoSets) to disable it.
+- With male following enabled, the shadow casted by the male body may be distracting. Use [KK_HSceneOptions](https://github.com/MayouKurayami/KK_HSceneOptions) to disable it.
 
-- When using SetParentVR to control the animation speed, the female may stop speaking voiced lines due to the constant fluctuation in piston speed. Use the **Auto Voice Time** feature of [KK_HAutosets](https://github.com/MayouKurayami/KK_HAutoSets) to bypass this issue.
+- When using SetParentVR to control the animation speed, the female may stop speaking voice lines due to the constant fluctuation in piston speed. Use the **Speech Control** feature of [KK_HSceneOptions](https://github.com/MayouKurayami/KK_HSceneOptions) to bypass this issue.
 
 <br>
 
