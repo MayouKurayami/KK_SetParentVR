@@ -21,7 +21,6 @@ namespace SetParentKK
 			}
 			hFlag = setParentObj.hSprite.flags;
 			hSprite = setParentObj.hSprite;
-			base.StartCoroutine("GaugeControl");
 			LoadFromLoader();
 			nameAnimation = hFlag.nowAnimationInfo.nameAnimation;
 			parentConVecBefore = (parentConVecNow = parentController.transform.position);
@@ -178,10 +177,6 @@ namespace SetParentKK
 			subConVecBefore = subConVecNow;
 		}
 
-		private void OnDestroy()
-		{
-			base.StopCoroutine("GaugeControl");
-		}
 
 		private void SaveMoveDistance(float dis)
 		{
@@ -248,35 +243,6 @@ namespace SetParentKK
 			return num2;
 		}
 
-		private IEnumerator GaugeControl()
-		{
-			for (; ; )
-			{
-				yield return new WaitForSeconds(1f);
-				if (moveFlag)
-				{
-					if (hFlag.gaugeFemale < 99f && !hFlag.lockGugeFemale)
-					{
-						hFlag.gaugeFemale += 0.1f;
-					}
-					if (hFlag.gaugeMale < 99f && !hFlag.lockGugeMale)
-					{
-						hFlag.gaugeMale += 0.1f;
-					}
-				}
-				else
-				{
-					if (hFlag.gaugeFemale > 5f && !hFlag.lockGugeFemale)
-					{
-						hFlag.gaugeFemale -= 2f;
-					}
-					if (hFlag.gaugeMale > 5f && !hFlag.lockGugeMale)
-					{
-						hFlag.gaugeMale -= 2f;
-					}
-				}			
-			}
-		}
 
 		private SetParent setParentObj;
 		
