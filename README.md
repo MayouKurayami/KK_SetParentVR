@@ -12,18 +12,21 @@ The original plugin can be found on http://uppervolta-3d.net/illu/upload.php.
 - Afterschool DLC  
 - [Koikatsu Official VR Patch 0531](http://www.illusion.jp/preview/koikatu/download/vr.php)
 - BepInEx 4 and above  
+ To run it with BepInEx 5 you'd need [BepInEx 4 Patcher](https://github.com/BepInEx/BepInEx.BepInEx4Upgrader), included within HF Patch as an optional plugin   
 - (optional, recommended): [CrossFader](https://github.com/MayouKurayami/KK_CrossFader/releases) plugin
 - (optional, strongly recommended): [KoikatuVRAssistPlugin](https://mega.nz/#!YQZyWRwQ!C2FX0Iwp-X7F5z55ytTlQGkjfqH6kQP-wcDPfNBvT0s) plugin
 
 
 ## Installation  
-- Download the latest **KK_SetParentVR.dll** from [releases](https://github.com/MayouKurayami/KK_SetParentVR/releases).
-- Place **KK_SetParentVR.dll** in BepInEx root folder.  
-  - Remove the old IPA version plugin if you have it installed.  
-  - This is a BepInEx 4 plugin, to run it with BepInEx 5 you'd need [BepInEx 4 Patcher](https://github.com/BepInEx/BepInEx.BepInEx4Upgrader) (included with HF Patch)  
+- [Download **KK_SetParentVR zip** from the latest release](https://github.com/MayouKurayami/KK_SetParentVR/releases)  
+Extract it into your game directory (where the game exe and BepInEx folder are located). Replace old files if asked.  
+ *KK_SetParentVR.dll* should end up in the BepInEx root directory.
+
+- Remove the old IPA version (*SetParentKK.dll*) if you have it installed.  
 
 
-- **(Optional)** To translate the text on the floating menu, make sure the [AutoTranslator](https://github.com/bbepis/XUnity.AutoTranslator/releases) is installed **(also included with HF Patch)**.  Then make sure **EnableUGUI** is set to **True** under [*TextFrameworks*] in *BepInEx/config/AutoTranslatorConfig.ini*  
+- **(Optional)** To translate the text on the floating menu, make sure the [AutoTranslator](https://github.com/bbepis/XUnity.AutoTranslator/releases) is installed **(included within HF Patch)**  
+Then make sure **EnableUGUI** is set to **True** under [*TextFrameworks*] in *BepInEx/config/AutoTranslatorConfig.ini*  
 
 - Installation of the [**CrossFader**](https://github.com/MayouKurayami/KK_CrossFader/releases) plugin is recommended to ensure smooth transitions between animations and poses.
 
