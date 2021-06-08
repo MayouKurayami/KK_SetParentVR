@@ -172,13 +172,7 @@ namespace SetParentKK
 				return;
 
 			HarmonyInstance harmony = HarmonyInstance.Create(GUID);
-			harmony.PatchAll(typeof(Hooks));
-			if (Type.GetType("KoikatuVRAssistPlugin.GripMoveAssistObj, KoikatuVRAssistPlugin") != null)
-			{
-				BepInEx.Logger.Log(LogLevel.Debug, PluginName + ": KoikatuVRAssist patched for compatibility");
-				harmony.PatchAll(typeof(KoikatuVRAssistPluginHooks));
-			}
-		
+			harmony.PatchAll(typeof(Hooks));	
 		}
 
 		private void LoadFromModPref()
